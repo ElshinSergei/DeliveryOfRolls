@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="html(content)">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<body>
+
+<div th:if="${showHeader == true}">
+    <header th:replace="~{layout/header :: header}"></header>
+</div>
+
+<div>
+    <main th:replace="${content}"></main>
+</div>
+
+<div th:if="${showFooter == true}">
+    <footer th:replace="~{layout/footer :: footer}"></footer>
+</div>
+
+</body>
+</html>
