@@ -25,4 +25,6 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     // Удалить корзину по ID пользователя
     void deleteByUserId(Long userId);
 
+    // Поиск корзины по сессии
+    Optional<Cart> findBySessionId(String sessionId);
 }

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Мои заказы</title>
+</head>
+<body>
+<main>
+
+    <div class="profile-container">
+        <div class="profile-layout">
+            <!-- Боковое меню -->
+            <div class="sidebar">
+                <div class="user-info">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-name" th:text="${user.firstName + ' ' + user.lastName}">Иван Иванов</div>
+                    <div class="user-email" th:text="${user.email}">ivan@mail.com</div>
+                </div>
+                <hr>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/profile" class="nav-link" th:classappend="${pageTitle == 'Личный кабинет' ? 'active' : ''}">
+                            📋 Мой профиль
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/profile/orders" class="nav-link active">
+                            📦 Мои заказы
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/profile/edit" class="nav-link">
+                            ✏️ Редактировать
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Основной контент -->
+            <div class="content">
+                <h2>Мои заказы</h2>
+
+                <!-- Сообщения -->
+                <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+                <!-- Список заказов -->
+                <div th:if="${not #lists.isEmpty(orders)}">
+                    <div th:each="order : ${orders}" class="order-card">
+                        <!-- Заголовок заказа -->
+                        <div class="order-header">
+                            <div>
+                                <span class="order-id">Заказ #[[${order.id}]]</span>
+                                <span class="order-date" th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}">
+                                    14.02.2026 15:30
+                                </span>
+                            </div>
+                            <!-- Статус -->
+                            <span th:if="${order.status.name() == 'PENDING'}" class="badge badge-warning">⏳ Ожидает</span>
+                            <span th:if="${order.status.name() == 'CONFIRMED'}" class="badge badge-info">✅ Подтвержден</span>
+                            <span th:if="${order.status.name() == 'PREPARING'}" class="badge badge-primary">👨‍🍳 Готовится</span>
+                            <span th:if="${order.status.name() == 'READY_FOR_DELIVERY'}" class="badge badge-secondary">📦 Готов</span>
+                            <span th:if="${order.status.name() == 'ON_THE_WAY'}" class="badge badge-dark">🚚 В пути</span>
+                            <span th:if="${order.status.name() == 'DELIVERED'}" class="badge badge-success">🏁 Доставлен</span>
+                            <span th:if="${order.status.name() == 'COMPLETED'}" class="badge badge-secondary">✨ Завершен</span>
+                            <span th:if="${order.status.name() == 'CANCELLED'}" class="badge badge-danger">❌ Отменен</span>
+                        </div>
+
+                        <!-- Тело заказа -->
+                        <div class="order-body">
+                            <div class="order-info">
+                                <div>
+                                    <div class="info-label">Сумма</div>
+                                    <div class="info-value" th:text="${order.totalPrice != null ? #numbers.formatDecimal(order.totalPrice, 0, 0) : 0} + ' ₽'">
+                                        1250 ₽
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="info-label">Товаров</div>
+                                    <div class="info-value" th:text="${order.items.size()} + ' шт'">3 шт</div>
+                                </div>
+                                <div>
+                                    <div class="info-label">Доставка</div>
+                                    <div class="info-value" th:text="${order.deliveryType.name() == 'DELIVERY' ? 'Доставка' : 'Самовывоз'}">
+                                        Доставка
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Кнопки -->
+                        <div class="order-footer">
+                            <a th:href="@{/profile/orders/{id}(id=${order.id})}" class="btn btn-outline">
+                                👁️ Подробнее
+                            </a>
+                            <form th:action="@{/profile/orders/{id}/repeat(id=${order.id})}" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-primary">
+                                    🔄 Повторить
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Пустой список -->
+                <div th:if="${#lists.isEmpty(orders)}" class="empty-state">
+                    <div class="empty-icon">📦</div>
+                    <h3 style="margin-bottom: 10px;">У вас пока нет заказов</h3>
+                    <p style="color: #666; margin-bottom: 20px;">Перейдите в меню и выберите что-нибудь вкусное!</p>
+                    <a href="/menu" class="btn btn-primary" style="display: inline-block;">Перейти в меню</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

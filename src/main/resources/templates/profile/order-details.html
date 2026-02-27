@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">RedRolls - Главная</title>
+
+</head>
+<body>
+<main>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+
+        <div style="display: grid; grid-template-columns: 300px 1fr; gap: 30px;">
+            <!-- Боковое меню -->
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <div style="font-size: 80px; color: #dc3545;">👤</div>
+                    <h3 th:text="${user.firstName + ' ' + user.lastName}">Иван Иванов</h3>
+                    <p style="color: #666;" th:text="${user.email}">ivan@mail.com</p>
+                </div>
+
+                <hr>
+
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 10px;">
+                        <a href="/profile" style="display: block; padding: 10px; background: #dc3545; color: white; text-decoration: none; border-radius: 5px;">
+                            📋 Мой профиль
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 10px;">
+                        <a href="/profile/orders" style="display: block; padding: 10px; background: #6c757d; color: white; text-decoration: none; border-radius: 5px;">
+                            📦 Мои заказы
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 10px;">
+                        <a href="/profile/edit" style="display: block; padding: 10px; background: #28a745; color: white; text-decoration: none; border-radius: 5px;">
+                            ✏️ Редактировать профиль
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Основной контент -->
+            <div class="content">
+                <!-- Ссылка назад -->
+                <a href="/profile/orders" class="back-link">← Вернуться к списку заказов</a>
+
+                <!-- Заголовок заказа -->
+                <div class="order-header">
+                    <h1 class="order-title">Заказ <span class="order-id">#[[${order.id}]]</span></h1>
+                    <span th:if="${order.status.name() == 'PENDING'}" class="badge badge-warning">⏳ Ожидает подтверждения</span>
+                    <span th:if="${order.status.name() == 'CONFIRMED'}" class="badge badge-info">✅ Подтвержден</span>
+                    <span th:if="${order.status.name() == 'PREPARING'}" class="badge badge-primary">👨‍🍳 Готовится</span>
+                    <span th:if="${order.status.name() == 'READY_FOR_DELIVERY'}" class="badge badge-secondary">📦 Готов к выдаче</span>
+                    <span th:if="${order.status.name() == 'ON_THE_WAY'}" class="badge badge-dark">🚚 В пути</span>
+                    <span th:if="${order.status.name() == 'DELIVERED'}" class="badge badge-success">🏁 Доставлен</span>
+                    <span th:if="${order.status.name() == 'COMPLETED'}" class="badge badge-secondary">✨ Завершен</span>
+                    <span th:if="${order.status.name() == 'CANCELLED'}" class="badge badge-danger">❌ Отменен</span>
+                </div>
+
+                <!-- Сообщения -->
+                <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+                <!-- Информация о заказе -->
+                <div class="info-section">
+                    <!-- Информация о доставке -->
+                    <div class="info-card">
+                        <h3>Доставка</h3>
+                        <div class="info-row">
+                            <span class="info-label">Тип:</span>
+                            <span class="info-value" th:text="${order.deliveryType.name() == 'DELIVERY' ? 'Доставка курьером' : 'Самовывоз'}">
+                                Доставка курьером
+                            </span>
+                        </div>
+                        <div th:if="${order.deliveryType.name() == 'DELIVERY' and order.deliveryAddress != null}" class="info-row">
+                            <span class="info-label">Адрес:</span>
+                            <span class="info-value" th:text="${order.deliveryAddress}">ул. Пушкина, д. 10</span>
+                        </div>
+                        <div th:if="${order.deliveryTime != null}" class="info-row">
+                            <span class="info-label">Время:</span>
+                            <span class="info-value" th:text="${#temporals.format(order.deliveryTime, 'dd.MM.yyyy HH:mm')}">
+                                15.02.2026 18:30
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Дата заказа:</span>
+                            <span class="info-value" th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}">
+                                15.02.2026 15:30
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Информация об оплате -->
+                    <div class="info-card">
+                        <h3>Оплата</h3>
+                        <div class="info-row">
+                            <span class="info-label">Способ:</span>
+                            <span class="info-value" th:text="${order.paymentMethod.name() == 'CASH' ? 'Наличными' :
+                                                              order.paymentMethod.name() == 'CARD_ON_DELIVERY' ? 'Картой при получении' :
+                                                              order.paymentMethod.name() == 'CARD_ONLINE' ? 'Картой онлайн' : 'Не указано'}">
+                                Наличными
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Статус:</span>
+                            <span class="info-value">Оплата при получении</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Комментарий к заказу -->
+                <div th:if="${order.notes != null and !order.notes.isEmpty()}" class="special-instructions">
+                    <h4>📝 Комментарий к заказу</h4>
+                    <p th:text="${order.notes}">Позвонить за 10 минут, домофон 123</p>
+                </div>
+
+                <!-- Состав заказа -->
+                <h3 style="margin: 30px 0 15px;">Состав заказа</h3>
+                <div class="table-responsive">
+                    <table class="items-table">
+                        <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th class="text-center">Кол-во</th>
+                            <th class="text-right">Цена</th>
+                            <th class="text-right">Сумма</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${order.items}">
+                            <td>
+                                <span th:text="${item.dishName}">Филадельфия</span>
+                                <span th:if="${item.specialInstructions != null and !item.specialInstructions.isEmpty()}"
+                                      style="display: block; font-size: 12px; color: #666;">
+                                        📝 <span th:text="${item.specialInstructions}">без соуса</span>
+                                    </span>
+                            </td>
+                            <td class="text-center" th:text="${item.quantity}">2</td>
+                            <td class="text-right" th:text="${#numbers.formatDecimal(item.priceAtOrder, 0, 0)} + ' ₽'">350 ₽</td>
+                            <td class="text-right item-total" th:text="${#numbers.formatDecimal(item.totalPrice, 0, 0)} + ' ₽'">700 ₽</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Итоговая сумма -->
+                <div class="order-total">
+                    <span class="total-label">Итого:</span>
+                    <span class="total-amount" th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">1250 ₽</span>
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="order-actions">
+                    <a href="/profile/orders" class="btn btn-secondary">← Назад</a>
+                    <form th:action="@{/profile/orders/{id}/repeat(id=${order.id})}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-primary"
+                                th:disabled="${order.status.name() == 'CANCELLED'}">
+                            🔄 Повторить заказ
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

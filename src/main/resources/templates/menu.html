@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Доставка суши</title>
+</head>
+<body>
+<main class="container mt-4">
+    <!-- Заголовок -->
+    <div class="row mb-4">
+
+        <div class="col">
+            <h1 class="display-6" th:text="${pageTitle}">Меню</h1>
+        </div>
+
+        <div class="col-auto">
+            <a href="/" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> На главную
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Фильтр по категориям -->
+    <div class="mb-4">
+        <div class="d-flex flex-wrap gap-2">
+            <a href="/menu"
+               class="btn category-btn"
+               th:classappend="${activeCategoryId == 0} ? 'btn-primary active' : 'btn-outline-primary'">
+                Все блюда
+            </a>
+            <a th:each="category : ${categories}"
+               th:href="@{/menu/category/{id}(id=${category.id})}"
+               class="btn category-btn"
+               th:classappend="${activeCategoryId == category.id} ? 'btn-primary active' : 'btn-outline-primary'"
+               th:text="${category.name}">
+                Категория
+            </a>
+        </div>
+    </div>
+
+    <!-- Сетка блюд -->
+    <div class="dishes-grid">
+        <div th:each="dish : ${dishes}" >
+            <div class="card dish-card shadow-sm">
+                <!-- Изображение -->
+                <img th:src="${dish.imageUrl != null ? dish.imageUrl : '/images/no-image.jpg'}"
+                     class="card-img-top dish-img"
+                     th:alt="${dish.name}">
+
+                <div class="card-body">
+                    <!-- Название и цена -->
+                    <h5 class="card-title" th:text="${dish.name}">Название</h5>
+
+                    <!-- Категория -->
+                    <p class="small text-muted mb-2">
+                        <i class="bi bi-tag"></i>
+                        <span th:text="${dish.category.name}">Категория</span>
+                    </p>
+
+
+                    <!-- Описание -->
+                    <p class="card-text small text-muted mb-3"
+                       th:text="${#strings.abbreviate(dish.description, 100)}">
+                        Описание блюда
+                    </p>
+
+                    <!-- Характеристики -->
+                    <div class="d-flex justify-content-between small mb-3">
+                            <span class="text-muted">
+                                <i class="bi bi-scale"></i>
+                                <span th:text="${dish.weight} + ' г'">250 г</span>
+                            </span>
+                        <span th:if="${dish.calories != null}" class="text-muted">
+                                <i class="bi bi-fire"></i>
+                                <span th:text="${dish.calories} + ' ккал'">300 ккал</span>
+                            </span>
+                    </div>
+
+                    <!-- Ингредиенты -->
+                    <div class="mb-3" th:if="${not #lists.isEmpty(dish.ingredients)}">
+                        <small class="text-muted">
+                            <i class="bi bi-ingredients"></i>
+                            <span th:each="ingredient, stat : ${dish.ingredients}"
+                                  th:if="${stat.index < 2}">
+                                    <span th:text="${ingredient}"></span>
+                                    <span th:if="${not stat.last}">, </span>
+                                </span>
+                            <span th:if="${#lists.size(dish.ingredients) > 2}">...</span>
+                        </small>
+                    </div>
+
+                    <!-- Кнопки действий -->
+                    <div class="d-flex justify-content-between">
+
+                        <h6 class="text-primary fw-bold"
+                            th:text="${#numbers.formatDecimal(dish.price, 0, 0) + ' ₽'}">
+                            350 ₽
+                        </h6>
+
+                        <form th:action="@{/cart/add/{id}(id=${dish.getId()})}" method="POST">
+                            <button type="submit" class="btn btn-sm btn-success">
+                                 В корзину
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Если нет блюд -->
+    <div th:if="${dishes.isEmpty()}" class="text-center py-5">
+        <i class="bi bi-emoji-frown display-1 text-muted"></i>
+        <h3 class="mt-3">Блюд не найдено</h3>
+    </div>
+
+</main>
+</body>
+</html>

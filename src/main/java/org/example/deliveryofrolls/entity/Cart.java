@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,19 +29,32 @@ public class Cart {
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)  //orphanRemoval = true — удаленные элементы исчезают из БД
     private List<CartItem> items = new ArrayList<>();
 
-    private LocalDateTime lastUpdated;   //время последнего обновления
+    private String sessionId;
 
-    //Общая стоимость корзины
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    // Общая стоимость корзины
     public BigDecimal getTotalPrice() {
+        if (items == null || items.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
         return items.stream()
                 .map(CartItem::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    //Общее количество товаров
+    // Общее количество товаров
     public int getTotalItems() {
+        if (items == null || items.isEmpty()) {
+            return 0;
+        }
         return items.stream()
                 .mapToInt(CartItem::getQuantity)
                 .sum();
     }
+
 }

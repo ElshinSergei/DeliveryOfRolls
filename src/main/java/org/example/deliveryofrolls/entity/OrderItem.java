@@ -27,35 +27,25 @@ public class OrderItem {
     @JoinColumn(name = "dish_id", nullable = false)
     private Dish dish;
 
-    private int quantity;
-    private BigDecimal priceAtOrder; // цена на момент заказа
+    @Column(nullable = false)
+    private String dishName; // Сохраняем название на момент заказа
 
-    @ElementCollection  // Автоматически создает таблицу для хранения коллекции
-    @CollectionTable(name = "order_item_options",
-            joinColumns = @JoinColumn(name = "order_item_id"))
-    private List<SelectedOption> selectedOptions = new ArrayList<>();   // выбранные доп опции
+    @Column(nullable = false)
+    private int quantity;
+
+    @Column(nullable = false)
+    private BigDecimal priceAtOrder; // цена на момент заказа
 
     private String specialInstructions;   // особые пожелания
 
-    @Data
-    @Embeddable   // встраивается в основную таблицу
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SelectedOption {
-        private String optionName;
-        private BigDecimal additionalPrice;
-    }
+    @Column(nullable = false)
+    private BigDecimal totalPrice; // Сохраняем в БД для быстрых запросов
 
-    // Цена позиции в заказе
-    public BigDecimal getTotalPrice() {
-        // 1. Базовая цена блюда × количество
-        BigDecimal basePrice = priceAtOrder.multiply(BigDecimal.valueOf(quantity));
-        // 2. Цена всех выбранных опций × количество
-        BigDecimal optionsPrice = selectedOptions.stream()
-                .map(SelectedOption::getAdditionalPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .multiply(BigDecimal.valueOf(quantity));
-        // 3. Итог = базовая цена + цена опций
-        return basePrice.add(optionsPrice);
+    @PrePersist
+    @PreUpdate
+    public void calculateTotal() {
+        if (priceAtOrder != null) {
+            this.totalPrice = priceAtOrder.multiply(BigDecimal.valueOf(quantity));
+        }
     }
 }

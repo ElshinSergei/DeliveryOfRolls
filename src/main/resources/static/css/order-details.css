@@ -1,0 +1,236 @@
+.order-detail-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Заголовок заказа */
+.order-header-minimal {
+    background: #2d3748;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.order-header-minimal h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+}
+
+.order-header-minimal .order-date {
+    font-size: 14px;
+    color: #a0aec0;
+}
+
+.order-status-minimal {
+    background: #4a5568;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Информационные карточки */
+.info-grid-minimal {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.info-card-minimal {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #edf2f7;
+}
+
+.info-card-minimal h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.info-row-minimal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.info-row-minimal .label {
+    color: #718096;
+}
+
+.info-row-minimal .value {
+    font-weight: 500;
+    color: #1a202c;
+    min-width: 140px;
+    width: auto;
+    flex: none;
+}
+
+/* Таблица товаров */
+.items-section-minimal {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+    border: 1px solid #edf2f7;
+}
+
+.section-title-minimal {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #edf2f7;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.items-table-minimal {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.items-table-minimal th {
+    text-align: left;
+    padding: 12px 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #718096;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.items-table-minimal td {
+    padding: 12px 8px;
+    font-size: 14px;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.items-table-minimal tfoot td {
+    padding: 16px 8px 8px;
+    font-weight: 600;
+    border-bottom: none;
+}
+
+/* Комментарий */
+.comment-minimal {
+    background: #f7fafc;
+    border-radius: 6px;
+    padding: 16px;
+    margin-top: 16px;
+    border-left: 4px solid #4299e1;
+    font-size: 14px;
+    color: #2d3748;
+}
+
+/* Бейджи */
+.badge-minimal {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    display: block;
+    min-width: 140px;
+    text-align: center;
+    flex-shrink: 0;
+    width: auto;
+}
+
+.badge-registered {
+    background: #ebf8ff;
+    color: #2b6cb0;
+}
+
+.badge-guest {
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+/* Кнопки действий */
+.action-bar-minimal {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.btn-minimal {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-minimal-outline {
+    background: white;
+    color: #4a5568;
+    border-color: #e2e8f0;
+}
+
+.btn-minimal-outline:hover {
+    background: #f7fafc;
+}
+
+.btn-minimal-primary {
+    background: #4299e1;
+    color: white;
+    border-color: #4299e1;
+}
+
+.btn-minimal-primary:hover {
+    background: #3182ce;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .order-header-minimal {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .info-grid-minimal {
+        grid-template-columns: 1fr;
+    }
+
+    .action-bar-minimal {
+        flex-direction: column;
+    }
+
+    .btn-minimal {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+.order-detail-container .badge-minimal {
+    min-width: 140px !important;
+    max-width: none !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: auto !important;
+    white-space: nowrap !important;
+    box-shadow: none !important;
+}

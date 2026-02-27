@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Регистрация</title>
+</head>
+<body>
+<main>
+
+    <div class="register-box">
+        <h1>RedRolls</h1>
+        <h2>Создание аккаунта</h2>
+
+        <form th:action="@{/register}" th:object="${registerDTO}" method="post">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" th:field="*{email}"
+                       th:classappend="${#fields.hasErrors('email')} ? 'field-error' : ''"
+                       placeholder="example@mail.com" required>
+                <div th:if="${#fields.hasErrors('email')}"
+                     th:errors="*{email}" class="error"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Пароль</label>
+                <input type="password" th:field="*{password}"
+                       th:classappend="${#fields.hasErrors('password')} ? 'field-error' : ''"
+                       placeholder="Минимум 6 символов" required>
+                <div th:if="${#fields.hasErrors('password')}"
+                     th:errors="*{password}" class="error"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Имя</label>
+                <input type="text" th:field="*{firstName}"
+                       th:classappend="${#fields.hasErrors('firstName')} ? 'field-error' : ''"
+                       placeholder="Иван" required>
+                <div th:if="${#fields.hasErrors('firstName')}"
+                     th:errors="*{firstName}" class="error"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Фамилия</label>
+                <input type="text" th:field="*{lastName}"
+                       th:classappend="${#fields.hasErrors('lastName')} ? 'field-error' : ''"
+                       placeholder="Иванов" required>
+                <div th:if="${#fields.hasErrors('lastName')}"
+                     th:errors="*{lastName}" class="error"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Телефон</label>
+                <input type="tel" th:field="*{phone}"
+                       placeholder="+7 (999) 123-45-67" required>
+                <div th:if="${#fields.hasErrors('phone')}"
+                     th:errors="*{phone}" class="error"></div>
+            </div>
+
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+
+        <div class="login-link">
+            Уже есть аккаунт? <a href="/login" style="color: #dc3545;">Войти</a>
+        </div>
+    </div>
+
+
+
+</main>
+</body>
+</html>

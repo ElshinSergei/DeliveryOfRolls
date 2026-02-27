@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Управление категориями</title>
+</head>
+<body>
+<main>
+    <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+
+        <!-- Заголовок -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h2>📁 Управление категориями</h2>
+            <a href="/admin/categories/new"
+               style="background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                ➕ Добавить категорию
+            </a>
+        </div>
+
+        <!-- Сообщения -->
+        <div th:if="${success}" style="background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px;"
+             th:text="${success}"></div>
+        <div th:if="${error}" style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px;"
+             th:text="${error}"></div>
+
+        <!-- Проверка наличия категорий -->
+        <div th:if="${categories == null or categories.isEmpty()}">
+            <p style="text-align: center; padding: 50px; background: #f8f9fa; border-radius: 10px;">
+                Категорий пока нет
+            </p>
+        </div>
+
+        <!-- Таблица категорий (только если есть данные) -->
+        <div th:if="${categories != null and not categories.isEmpty()}">
+            <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <thead>
+                <tr style="background: #f8f9fa;">
+                    <th style="padding: 15px; text-align: left;">ID</th>
+                    <th style="padding: 15px; text-align: left;">Название</th>
+                    <th style="padding: 15px; text-align: left;">Описание</th>
+                    <th style="padding: 15px; text-align: center;">Блюд</th>
+                    <th style="padding: 15px; text-align: center;">Позиция</th>
+                    <th style="padding: 15px; text-align: left;">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="cat : ${categories}" style="border-bottom: 1px solid #e9ecef;">
+                    <td style="padding: 15px;" th:text="${cat.id}">1</td>
+                    <td style="padding: 15px;" th:text="${cat.name}">Роллы</td>
+                    <td style="padding: 15px;">
+                        <span th:text="${cat.description != null ? cat.description : '—'}">Описание</span>
+                    </td>
+                    <td style="padding: 15px; text-align: center;">
+                        <span class="count-badge" th:text="${cat.dishes != null ? cat.dishes.size() : 0}">5</span>
+                    </td>
+                    <td style="padding: 15px; text-align: center;">
+                        <span class="sort-badge" th:text="${cat.sortOrder != null ? cat.sortOrder : '0'}">1</span>
+                    </td>
+                    <td style="padding: 15px;">
+                        <a th:href="@{/admin/categories/{id}/edit(id=${cat.id})}"
+                           class="action-btn btn-edit">✏️</a>
+                        <form th:action="@{/admin/categories/{id}/delete(id=${cat.id})}"
+                              method="post" style="display: inline;">
+                            <button type="submit" class="action-btn btn-delete"
+                                    onclick="return confirm('Удалить категорию?');">🗑️</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -4,6 +4,7 @@ import org.example.deliveryofrolls.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,14 +17,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Проверка существования пользователя с таким email
     boolean existsByEmail(String email);
 
-    // Найти всех с определенной ролью
-    List<User> findAllByRole(User.Role role);
+    // Количество новых пользователей сегодня
+    Long countByRegisteredAtAfter(LocalDateTime startOfDay);
 
-    // Найти по телефону
-    Optional<User> findByPhone(String phone);
-
-    // Поиск по имени и фамилии
-    List<User> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
-            String firstName, String lastName);
+    // Список всех пользователей с сортировкой по дате регистрации
+    List<User> findAllByOrderByRegisteredAtDesc();
 
 }

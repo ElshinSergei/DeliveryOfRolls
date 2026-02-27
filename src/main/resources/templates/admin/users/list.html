@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Управление пользователями</title>
+</head>
+<body>
+<main>
+    <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+
+        <!-- Заголовок -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h3>👥 Управление пользователями</h3>
+        </div>
+
+        <!-- Сообщения -->
+        <div th:if="${success}" style="background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px;"
+             th:text="${success}"></div>
+        <div th:if="${error}" style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px;"
+             th:text="${error}"></div>
+
+        <!-- Проверка наличия пользователей -->
+        <div th:if="${users == null or users.isEmpty()}">
+            <p style="text-align: center; padding: 50px; background: #f8f9fa; border-radius: 10px;">
+                Пользователей пока нет
+            </p>
+        </div>
+
+        <!-- Таблица пользователей (только если есть данные) -->
+        <div th:if="${users != null and not users.isEmpty()}">
+            <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <thead>
+                <tr style="background: #f8f9fa;">
+                    <th style="padding: 15px; text-align: left;">ID</th>
+                    <th style="padding: 15px; text-align: left;">Пользователь</th>
+                    <th style="padding: 15px; text-align: left;">Email</th>
+                    <th style="padding: 15px; text-align: left;">Телефон</th>
+                    <th style="padding: 15px; text-align: center;">Роль</th>
+                    <th style="padding: 15px; text-align: center;">Статус</th>
+                    <th style="padding: 15px; text-align: center;">Заказов</th>
+                    <th style="padding: 15px; text-align: left;">Дата рег.</th>
+                    <th style="padding: 15px; text-align: left;">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}" style="border-bottom: 1px solid #e9ecef;">
+                    <td style="padding: 15px;" th:text="${user.id}">1</td>
+                    <td style="padding: 15px;">
+                        <span th:text="${user.firstName + ' ' + user.lastName}">Иван Иванов</span>
+                    </td>
+                    <td style="padding: 15px;" th:text="${user.email}">ivan@mail.com</td>
+                    <td style="padding: 15px;" th:text="${user.phone != null ? user.phone : '—'}">+7 (999) 123-45-67</td>
+                    <td style="padding: 15px; text-align: center;">
+                        <span th:if="${user.role.name() == 'ROLE_ADMIN'}" class="role-badge role-admin"
+                              th:text="${user.role.name().replace('ROLE_', '')}">ADMIN</span>
+                        <span th:if="${user.role.name() == 'ROLE_USER'}" class="role-badge role-user"
+                              th:text="${user.role.name().replace('ROLE_', '')}">USER</span>
+                    </td>
+                    <td style="padding: 15px; text-align: center;">
+                        <span th:if="${user.enabled}" class="status-active">Активен</span>
+                        <span th:if="${!user.enabled}" class="status-blocked">Заблокирован</span>
+                    </td>
+                    <td style="padding: 15px; text-align: center;">
+                        <span style="background: #e9ecef; color: #495057; padding: 5px 10px; border-radius: 15px;"
+                              th:text="${user.orders != null ? user.orders.size() : 0}">5</span>
+                    </td>
+                    <td style="padding: 15px;" th:text="${#temporals.format(user.registeredAt, 'dd.MM.yyyy')}">01.01.2024</td>
+                    <td style="padding: 15px;">
+                        <div style="display: flex; gap: 5px;">
+                            <a th:href="@{/admin/users/{id}(id=${user.id})}"
+                               style="background: #17a2b8; color: white; padding: 5px 10px; text-decoration: none; border-radius: 3px; margin-right: 5px;"
+                               title="Просмотр">👁️</a>
+                            <a th:href="@{/admin/users/{id}/edit(id=${user.id})}"
+                               style="background: #ffc107; color: #000; padding: 5px 10px; text-decoration: none; border-radius: 3px; margin-right: 5px;"
+                               title="Редактировать">✏️</a>
+                            <form th:action="@{/admin/users/{id}/toggle-status(id=${user.id})}"
+                                  method="post" style="display: inline;">
+                                <button type="submit"
+                                        style="background: #6c757d; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;"
+                                        th:title="${user.enabled} ? 'Заблокировать' : 'Разблокировать'">
+                                    <span th:text="${user.enabled} ? '🔒' : '🔓'"></span>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -1,7 +1,104 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <body>
 <header th:fragment="header">
+    <!-- Навигация -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-egg-fried me-2"></i>RedRolls
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav" aria-controls="navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Основное меню -->
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house-door"></i> Главная
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/menu">
+                            <i class="bi bi-menu-button-wide"></i> Меню
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/promotions">
+                            <i class="bi bi-percent"></i> Акции
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/delivery">
+                            <i class="bi bi-truck"></i> Доставка
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contacts">
+                            <i class="bi bi-telephone"></i> Контакты
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Правая часть навигации -->
+                <ul class="navbar-nav">
+                    <!-- Корзина (всегда видна) -->
+                    <li class="nav-item me-3">
+                        <a class="nav-link position-relative" href="/cart">
+                            <i class="bi bi-cart3 fs-5"></i>
+                            <span id="cartCount" class="badge bg-danger cart-badge"  th:text="${cart.items.size() ?: 0}">0</span>
+                        </a>
+                    </li>
+
+                    <!-- Авторизация -->
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="btn btn-outline-primary me-2" href="/login">
+                            <i class="bi bi-box-arrow-in-right"></i> Войти
+                        </a>
+                    </li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="btn btn-primary" href="/register">
+                            <i class="bi bi-person-plus"></i> Регистрация
+                        </a>
+                    </li>
+
+                    <!-- Профиль (только для авторизованных) -->
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown"
+                           role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i>
+                            <span sec:authentication="name"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="/profile">
+                                    <i class="bi bi-person"></i> Профиль
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/profile/orders">
+                                    <i class="bi bi-receipt"></i> Мои заказы
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post">
+                                    <button class="dropdown-item" type="submit">
+                                        <i class="bi bi-box-arrow-right"></i> Выйти
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
 
 
 </header>

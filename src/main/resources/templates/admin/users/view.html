@@ -1,0 +1,89 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Редактирование пользователя</title>
+</head>
+<body>
+<main>
+    <div class="container">
+        <div class="header">
+            <h1>👤 Просмотр пользователя</h1>
+            <a href="/admin/users" class="btn btn-back">← Назад</a>
+        </div>
+
+        <div class="user-card">
+            <div class="info-row">
+                <span class="info-label">ID:</span>
+                <span class="info-value" th:text="${user.id}">1</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Имя:</span>
+                <span class="info-value" th:text="${user.firstName + ' ' + user.lastName}">Иван Иванов</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span class="info-value" th:text="${user.email}">ivan@mail.com</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Телефон:</span>
+                <span class="info-value" th:text="${user.phone != null ? user.phone : '—'}">+7 (999) 123-45-67</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Роль:</span>
+                <span class="info-value" th:text="${user.role.name().replace('ROLE_', '')}">USER</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Статус:</span>
+                <span class="info-value">
+                    <span th:if="${user.enabled}" class="badge badge-active">Активен</span>
+                    <span th:if="${!user.enabled}" class="badge badge-blocked">Заблокирован</span>
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Дата регистрации:</span>
+                <span class="info-value" th:text="${#temporals.format(user.registeredAt, 'dd.MM.yyyy HH:mm')}">
+                    01.01.2024 15:30
+                </span>
+            </div>
+
+            <div style="text-align: right; margin-top: 30px;">
+                <a th:href="@{/admin/users/{id}/edit(id=${user.id})}" class="btn btn-edit">
+                    ✏️ Редактировать
+                </a>
+            </div>
+        </div>
+
+        <!-- Заказы пользователя -->
+        <h2 style="margin-top: 40px;">📦 Заказы пользователя</h2>
+        <table class="orders-table">
+            <thead>
+            <tr>
+                <th>ID заказа</th>
+                <th>Дата</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${user.orders}" th:if="${user.orders != null}">
+                <td>#[[${order.id}]]</td>
+                <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}">16.02.2026 15:30</td>
+                <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">1250 ₽</td>
+                <td th:text="${order.status}">DELIVERED</td>
+                <td>
+                    <a th:href="@{/admin/orders/{id}(id=${order.id})}" style="color: #007bff;">Просмотр</a>
+                </td>
+            </tr>
+            <tr th:if="${user.orders == null or user.orders.isEmpty()}">
+                <td colspan="5" style="text-align: center; padding: 30px; color: #666;">
+                    У пользователя пока нет заказов
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

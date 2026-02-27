@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="pagination(page, baseUrl, status, search, dateFrom, dateTo)"
+     class="pagination"
+     th:if="${page.totalPages > 1}">
+
+    <!-- Кнопка "Назад" (Первая + Предыдущая) -->
+    <a th:if="${page.hasPrevious()}"
+       th:href="@{${baseUrl}(page=0, size=${page.size},
+       status=${status}, search=${search},
+       dateFrom=${dateFrom}, dateTo=${dateTo})}"
+       class="pagination-item"
+       title="Первая страница">«</a>
+
+    <a th:if="${page.hasPrevious()}"
+       th:href="@{${baseUrl}(page=${page.number - 1}, size=${page.size},
+       status=${status}, search=${search},
+       dateFrom=${dateFrom}, dateTo=${dateTo})}"
+       class="pagination-item"
+       title="Предыдущая страница">‹</a>
+
+    <!-- Вывод номеров страниц -->
+    <th:block th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
+        <!-- Показываем первую страницу -->
+        <a th:if="${i == 0}"
+           th:href="@{${baseUrl}(page=${i}, size=${page.size},
+           status=${status}, search=${search},
+           dateFrom=${dateFrom}, dateTo=${dateTo})}"
+           class="pagination-item"
+           th:classappend="${i == page.number} ? 'active' : ''"
+           th:text="${i + 1}"></a>
+
+        <!-- Показываем многоточие, если нужно -->
+        <span th:if="${i == 1 and page.number > 3}"
+              class="pagination-dots">...</span>
+
+        <!-- Показываем страницы вокруг текущей -->
+        <a th:if="${i >= page.number - 2 and i <= page.number + 2 and i > 0 and i < page.totalPages - 1}"
+           th:href="@{${baseUrl}(page=${i}, size=${page.size},
+           status=${status}, search=${search},
+           dateFrom=${dateFrom}, dateTo=${dateTo})}"
+           class="pagination-item"
+           th:classappend="${i == page.number} ? 'active' : ''"
+           th:text="${i + 1}"></a>
+
+        <!-- Показываем многоточие, если нужно -->
+        <span th:if="${i == page.totalPages - 2 and page.number < page.totalPages - 4}"
+              class="pagination-dots">...</span>
+
+        <!-- Показываем последнюю страницу -->
+        <a th:if="${i == page.totalPages - 1}"
+           th:href="@{${baseUrl}(page=${i}, size=${page.size},
+           status=${status}, search=${search},
+           dateFrom=${dateFrom}, dateTo=${dateTo})}"
+           class="pagination-item"
+           th:classappend="${i == page.number} ? 'active' : ''"
+           th:text="${i + 1}"></a>
+    </th:block>
+
+    <!-- Кнопка "Вперед" (Следующая + Последняя) -->
+    <a th:if="${page.hasNext()}"
+       th:href="@{${baseUrl}(page=${page.number + 1}, size=${page.size},
+       status=${status}, search=${search},
+       dateFrom=${dateFrom}, dateTo=${dateTo})}"
+       class="pagination-item"
+       title="Следующая страница">›</a>
+
+    <a th:if="${page.hasNext()}"
+       th:href="@{${baseUrl}(page=${page.totalPages - 1}, size=${page.size},
+       status=${status}, search=${search},
+       dateFrom=${dateFrom}, dateTo=${dateTo})}"
+       class="pagination-item"
+       title="Последняя страница">»</a>
+
+</div>
+
+<!-- Информация о пагинации -->
+<div class="pagination-info" th:if="${page.totalPages > 1}">
+    Страница <span th:text="${page.number + 1}"></span> из
+    <span th:text="${page.totalPages}"></span>
+    (всего: <span th:text="${page.totalElements}"></span>)
+</div>
+
+</body>
+</html>

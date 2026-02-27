@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Доставка суши</title>
+</head>
+<body>
+<main>
+
+    <!-- Герой-секция корзины -->
+    <section class="cart-hero">
+
+        <div class="container">
+
+            <!-- Сообщения об успехе/ошибке -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span th:text="${successMessage}">Корзина очищена</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${errorMessage}">Ошибка</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="cart-hero-content">
+                <h1 class="cart-title">Корзина</h1>
+                <p class="cart-subtitle" th:if="${cart.getItems().isEmpty()}">
+                    Ваша корзина пуста
+                </p>
+                <p class="cart-subtitle" th:unless="${cart.getItems().isEmpty()}">
+                    <span th:text="${cart.getItems().size()}">3</span> товара на сумму
+                    <span class="cart-total-amount" th:text="${#numbers.formatDecimal(deliveryCost, 0, 0) + ' ₽'}">1 850 ₽</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Основной контент -->
+    <div class="container cart-container" th:unless="${cart.getItems().isEmpty()}">
+        <div class="cart-layout">
+            <!-- Левая колонка - товары -->
+            <div class="cart-items-section">
+                <!-- Заголовок товаров -->
+                <div class="cart-items-header">
+                    <h2 class="section-title">Товары в корзине</h2>
+
+                    <form th:action="@{/cart/clear}" method="post" class="clear-cart-form">
+                        <button type="submit" class="btn-clear-cart">
+                            <i class="bi bi-trash"></i> Очистить корзину
+                        </button>
+                    </form>
+
+                </div>
+
+                <!-- Список товаров -->
+                <div class="cart-items-list">
+                    <div th:each="item : ${cart.getItems()}" class="cart-item">
+                        <!-- Изображение -->
+                        <div class="cart-item-image">
+                            <img th:src="${item.dish.imageUrl != null ? item.dish.imageUrl : '/images/no-image.jpg'}"
+                                 alt="Блюдо"
+                                 th:alt="${item.dish.name}">
+                        </div>
+
+                        <!-- Информация о товаре -->
+                        <div class="cart-item-info">
+                            <div class="cart-item-header">
+                                <h3 class="cart-item-title" th:text="${item.dish.name}">Филадельфия</h3>
+                                <!-- ФОРМА для удаления позиции в корзине -->
+                                <form th:action="@{/cart/remove/{id}(id=${item.getId()})}" method="post">
+                                    <button type="submit" class="btn-remove-item">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </form>
+
+                            </div>
+
+                            <p class="cart-item-description"
+                               th:text="${#strings.abbreviate(item.dish.description, 120)}">Описание блюда
+                            </p>
+
+                            <div class="cart-item-meta">
+                                <span class="cart-item-weight">
+                                    <i class="bi bi-scale"></i>
+                                    <span th:text="${item.dish.weight} + ' г'">250 г</span>
+                                </span>
+                                <span class="cart-item-price"
+                                      th:text="${#numbers.formatDecimal(item.dish.price, 0, 0) + ' ₽'}">
+                                    Цена
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Количество и сумма -->
+                        <div class="cart-item-controls">
+                            <!-- Счетчик количества -->
+                            <div class="quantity-control">
+                                <form method="post" th:action="@{/cart/decrease/{id}(id=${item.getId()})}">
+                                    <button type="submit" class="quantity-btn minus" >
+                                        <i class="bi bi-dash"></i>
+                                    </button>
+                                </form>
+
+                                <span class="quantity-display" th:text="${item.getQuantity()}">1</span>
+
+                                <form method="post" th:action="@{/cart/increase/{id}(id=${item.getId()})}">
+                                    <button type="submit" class="quantity-btn plus">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                </form>
+
+                            </div>
+
+                            <!-- Итог по товару -->
+                            <div class="cart-item-total">
+                                <span class="total-amount"
+                                      th:text="${#numbers.formatDecimal(item.getTotalPrice(), 0, 0) + ' ₽'}">
+                                    700 ₽
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Правая колонка - итоги и оформление -->
+            <div class="cart-summary-section">
+                <div class="cart-summary-card">
+                    <h2 class="summary-title">Итоги заказа</h2>
+
+                    <!-- Стоимость товаров -->
+                    <div class="summary-row">
+                        <span class="summary-label">Товары</span>
+                        <span class="summary-value"
+                              th:text="${#numbers.formatDecimal(cart.getTotalPrice(), 0, 0) + ' ₽'}">
+                            1 650 ₽
+                        </span>
+                    </div>
+
+                    <form method="get" th:action="@{/order/checkout}">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            К оформлению
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Пустая корзина -->
+    <div class="container" th:if="${cart.getItems().isEmpty()}">
+        <div class="empty-cart">
+            <div class="empty-cart-icon">
+                <i class="bi bi-cart-x"></i>
+            </div>
+            <h2 class="empty-cart-title">Корзина пуста</h2>
+            <p class="empty-cart-text">
+                Добавьте что-нибудь из меню, чтобы сделать заказ
+            </p>
+            <div class="empty-cart-actions">
+                <a href="/menu" class="btn-primary">
+                    <i class="bi bi-arrow-left"></i> Вернуться в меню
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout:: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Управление заказами</title>
+</head>
+<body>
+<main>
+    <div class="admin-container">
+
+        <!-- Заголовок -->
+        <div class="admin-header">
+            <h3>📦 Управление заказами</h3>
+        </div>
+
+        <!-- Сообщения -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <!-- Блок фильтрации -->
+        <div class="filters-bar">
+            <form method="get" action="/admin/orders" style="display: flex; flex-wrap: wrap; gap: 10px; flex: 1; align-items: center;">
+                <!-- Поиск -->
+                <div class="filter-item">
+                    <i class="bi bi-search"></i>
+                    <input type="text" name="search" th:value="${searchQuery}"
+                           placeholder="Поиск...">
+                </div>
+
+                <!-- Статус -->
+                <div class="filter-item">
+                    <i class="bi bi-tag"></i>
+                    <select name="status">
+                        <option value="">Все статусы</option>
+                        <option th:each="s : ${statuses}"
+                                th:value="${s.name()}"
+                                th:text="${s.name()}"
+                                th:selected="${s.name() == selectedStatus}">
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Дата с -->
+                <div class="filter-item">
+                    <i class="bi bi-calendar"></i>
+                    <input type="date" name="dateFrom" th:value="${dateFrom}"
+                           placeholder="От">
+                </div>
+
+                <!-- Дата по -->
+                <div class="filter-item">
+                    <i class="bi bi-calendar"></i>
+                    <input type="date" name="dateTo" th:value="${dateTo}"
+                           placeholder="До">
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="filter-actions">
+                    <button type="submit" class="filter-submit">
+                        <i class="bi bi-check-lg"></i> Применить
+                    </button>
+                    <a href="/admin/orders" class="filter-reset">
+                        <i class="bi bi-x-lg"></i> Сброс
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Проверка наличия заказов -->
+        <div th:if="${orders == null or orders.isEmpty()}" class="empty-state">
+            <h3>Заказов пока нет</h3>
+        </div>
+
+        <!-- Таблица заказов -->
+        <div th:if="${orders != null and not orders.isEmpty()}">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>
+                        <a th:href="@{${baseUrl}(page=${orders.number}, size=${orders.size},
+                        sort='id,' + ${currentSortField == 'id' ? reverseSortDir : 'asc'},
+                        status=${selectedStatus},
+                        search=${searchQuery},
+                        dateFrom=${dateFrom},
+                        dateTo=${dateTo})}"
+                           class="sort-header" th:classappend="${currentSortField == 'id'} ? 'active' : ''">
+                            ID
+                            <span th:if="${currentSortField == 'id'}" class="sort-icon">
+                                <span th:if="${currentSortDir == 'asc'}">↑</span>
+                                <span th:if="${currentSortDir == 'desc'}">↓</span>
+                            </span>
+                        </a>
+                    </th>
+                    <th>
+                        <a th:href="@{${baseUrl}(page=${orders.number},
+                        size=${orders.size},
+                        sort='createdAt,' + ${currentSortField == 'createdAt' ? reverseSortDir : 'desc'},
+                        status=${selectedStatus},
+                        search=${searchQuery},
+                        dateFrom=${dateFrom},
+                        dateTo=${dateTo})}"
+                           class="sort-header" th:classappend="${currentSortField == 'createdAt'} ? 'active' : ''">
+                            Дата
+                            <span th:if="${currentSortField == 'createdAt'}" class="sort-icon">
+                                <span th:if="${currentSortDir == 'asc'}">↑</span>
+                                <span th:if="${currentSortDir == 'desc'}">↓</span>
+                            </span>
+                        </a>
+                    </th>
+                    <th>Клиент</th>
+                    <th>Телефон</th>
+                    <th class="text-center">
+                        <a th:href="@{${baseUrl}(page=${orders.number},
+                        size=${orders.size},
+                        sort='totalPrice,' + ${currentSortField == 'totalPrice' ? reverseSortDir : 'desc'},
+                        status=${selectedStatus},
+                        search=${searchQuery},
+                        dateFrom=${dateFrom},
+                        dateTo=${dateTo})}"
+                           class="sort-header" th:classappend="${currentSortField == 'totalPrice'} ? 'active' : ''">
+                            Сумма
+                            <span th:if="${currentSortField == 'totalPrice'}" class="sort-icon">
+                                <span th:if="${currentSortDir == 'asc'}">↑</span>
+                                <span th:if="${currentSortDir == 'desc'}">↓</span>
+                            </span>
+                        </a>
+                    </th>
+                    <th class="text-center">Тип</th>
+                    <th class="text-center">Оплата</th>
+                    <th class="text-center">Статус</th>
+                    <th>Действия</th>
+                </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                <tr th:each="order : ${orders.content}" th:id="|order-${order.id}|">
+                    <td>
+                        <strong>#[[${order.id}]]</strong>
+                    </td>
+                    <td>
+                        <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}">
+                            12.02.2026 15:30
+                        </span>
+                    </td>
+                    <td>
+                        <span th:text="${order.customerName}">Иван Иванов</span>
+                        <span th:if="${order.hasUser}" class="text-muted d-block">
+                            <i class="bi bi-person-check"></i> Зарегистрирован
+                        </span>
+                    </td>
+                    <td th:text="${order.customerPhone}">+7 (999) 123-45-67</td>
+                    <td class="text-center">
+                        <span class="price" th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">
+                            1250 ₽
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <th:block th:switch="${order.deliveryType}">
+                            <span th:case="'DELIVERY'" class="badge-info">Доставка</span>
+                            <span th:case="'PICKUP'" class="badge-secondary">Самовывоз</span>
+                        </th:block>
+                    </td>
+                    <td class="text-center">
+                        <th:block th:switch="${order.paymentMethod}">
+                            <span th:case="'CASH'" class="badge-warning">Наличные</span>
+                            <span th:case="'CARD_ON_DELIVERY'" class="badge-success">Картой при получении</span>
+                            <span th:case="'CARD_ONLINE'" class="badge-primary">Онлайн</span>
+                        </th:block>
+                    </td>
+                    <td class="text-center">
+                        <th:block th:switch="${order.status}">
+                            <span th:case="'PENDING'" class="status-pending">Ожидает</span>
+                            <span th:case="'CONFIRMED'" class="status-confirmed">Подтвержден</span>
+                            <span th:case="'PREPARING'" class="status-preparing">Готовится</span>
+                            <span th:case="'READY_FOR_DELIVERY'" class="status-ready">Готов к выдаче</span>
+                            <span th:case="'ON_THE_WAY'" class="status-ontheway">В пути</span>
+                            <span th:case="'DELIVERED'" class="status-delivered">Доставлен</span>
+                            <span th:case="'COMPLETED'" class="status-completed">Завершен</span>
+                            <span th:case="'CANCELLED'" class="status-cancelled">Отменен</span>
+                        </th:block>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a th:href="@{/admin/orders/{id}(id=${order.id})}"
+                               class="btn-view" title="Просмотр">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <button type="button"
+                                    class="btn-edit"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#statusModal"
+                                    th:data-order-id="${order.id}"
+                                    th:data-current-status="${order.status}"
+                                    title="Изменить статус">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- Пагинация -->
+            <div th:insert="~{fragments/pagination :: pagination(${orders}, ${baseUrl},
+            ${selectedStatus}, ${searchQuery}, ${dateFrom}, ${dateTo})}">
+            </div>
+
+            <!-- Модальное окно -->
+            <div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Изменить статус заказа #<span id="modalOrderId"></span></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form id="statusForm">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <div class="modal-body">
+                                <select name="status" class="form-select" id="modalStatusSelect">
+                                    <option value="PENDING">Ожидает</option>
+                                    <option value="CONFIRMED">Подтвержден</option>
+                                    <option value="PREPARING">Готовится</option>
+                                    <option value="READY_FOR_DELIVERY">Готов к выдаче</option>
+                                    <option value="ON_THE_WAY">В пути</option>
+                                    <option value="DELIVERED">Доставлен</option>
+                                    <option value="COMPLETED">Завершен</option>
+                                    <option value="CANCELLED">Отменен</option>
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                <button type="submit" class="btn btn-primary">Сохранить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+</main>
+</body>
+</html>

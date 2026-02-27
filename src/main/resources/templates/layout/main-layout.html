@@ -1,15 +1,25 @@
 <!DOCTYPE html>
 
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="html(content)">
-
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title th:text="${pageTitle}">Доставка суши</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <!-- СПЕЦИФИЧНЫЕ стили для страницы -->
+    <th:block th:if="${pageCss != null}">
+        <link rel="stylesheet" th:href="@{|/css/${pageCss}|}">
+    </th:block>
+
 </head>
 
 <body>
 
-<div th:if="${showHeader == true}">
+<div>
     <header th:replace="~{layout/header :: header}"></header>
 </div>
 
@@ -17,9 +27,10 @@
     <main th:replace="${content}"></main>
 </div>
 
-<div th:if="${showFooter == true}">
+<div>
     <footer th:replace="~{layout/footer :: footer}"></footer>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/script.js}"></script>
 </body>
 </html>

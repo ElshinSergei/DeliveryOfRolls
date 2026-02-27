@@ -1,0 +1,344 @@
+:root {
+    --sushi-primary: #ff6b6b;
+    --sushi-primary-dark: #ff5252;
+    --sushi-secondary: #4ecdc4;
+    --sushi-dark: #292f36;
+    --sushi-light: #f7fff7;
+    --sushi-gray: #6c757d;
+    --sushi-light-gray: #f8f9fa;
+    --sushi-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --sushi-border-radius: 12px;
+}
+
+body.sushi-page {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    color: var(--sushi-dark) !important;
+    background-color: var(--sushi-light) !important;
+    line-height: 1.6 !important;
+}
+
+/* Секция с горизонтальным скроллом - увеличиваем специфичность */
+.sushi-section.scroll-section {
+    margin: 2rem 0 3rem !important;
+}
+
+.sushi-scroll-container {
+    position: relative !important;
+    padding: 0 40px !important;
+}
+
+/* Кнопки скролла - !important для перекрытия Bootstrap */
+.sushi-scroll-btn {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 40px !important;
+    height: 40px !important;
+    background: white !important;
+    border: none !important;
+    border-radius: 50% !important;
+    box-shadow: var(--sushi-shadow) !important;
+    font-size: 1.5rem !important;
+    color: var(--sushi-primary) !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important; /* Сбрасываем Bootstrap padding */
+}
+
+.sushi-scroll-btn:hover {
+    background-color: var(--sushi-primary) !important;
+    color: white !important;
+    transform: translateY(-50%) scale(1.1) !important;
+}
+
+.sushi-scroll-btn.prev {
+    left: 0 !important;
+}
+
+.sushi-scroll-btn.next {
+    right: 0 !important;
+}
+
+/* Контейнер карточек */
+.sushi-cards {
+    display: flex !important;
+    gap: 20px !important;
+    overflow-x: auto !important;
+    padding: 10px 0 20px !important;
+    scroll-behavior: smooth !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--sushi-primary) #f1f1f1 !important;
+}
+
+/* Стилизация полосы прокрутки */
+.sushi-cards::-webkit-scrollbar {
+    height: 6px !important;
+}
+
+.sushi-cards::-webkit-scrollbar-track {
+    background: #f1f1f1 !important;
+    border-radius: 10px !important;
+}
+
+.sushi-cards::-webkit-scrollbar-thumb {
+    background: var(--sushi-primary) !important;
+    border-radius: 10px !important;
+}
+
+/* Карточки акций */
+.sushi-promo-card {
+    flex: 0 0 auto !important;
+    width: 280px !important;
+    background: white !important;
+    border-radius: var(--sushi-border-radius) !important;
+    overflow: hidden !important;
+    box-shadow: var(--sushi-shadow) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    border: none !important; /* Сбрасываем Bootstrap border */
+}
+
+.sushi-promo-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.sushi-card-img {
+    height: 160px !important;
+    background: linear-gradient(135deg, var(--sushi-primary), var(--sushi-secondary)) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
+    font-weight: bold !important;
+    font-size: 1.2rem !important;
+    padding: 20px !important;
+    text-align: center !important;
+}
+
+.sushi-card-content {
+    padding: 20px !important;
+}
+
+.sushi-card-content h3 {
+    margin: 0 0 10px 0 !important;
+    color: var(--sushi-dark) !important;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+}
+
+.sushi-card-content p {
+    margin: 0 0 15px 0 !important;
+    color: var(--sushi-gray) !important;
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+}
+
+.sushi-card-btn {
+    display: inline-block !important;
+    background: var(--sushi-primary) !important;
+    color: white !important;
+    padding: 8px 20px !important;
+    border-radius: 25px !important;
+    text-decoration: none !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    transition: background-color 0.3s ease !important;
+    border: none !important; /* Сбрасываем Bootstrap border */
+}
+
+.sushi-card-btn:hover {
+    background-color: var(--sushi-primary-dark) !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+/* Заголовок страницы */
+.sushi-page h1 {
+    color: var(--sushi-dark) !important;
+    text-align: center !important;
+    margin-bottom: 2rem !important;
+    font-weight: 700 !important;
+    position: relative !important;
+    padding-bottom: 15px !important;
+}
+
+.sushi-page h1:after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100px !important;
+    height: 4px !important;
+    background: linear-gradient(to right, var(--sushi-primary), var(--sushi-secondary)) !important;
+    border-radius: 2px !important;
+}
+
+/* Категории - переопределяем Bootstrap карточки */
+.sushi-page .category-card {
+    border: none !important;
+    border-radius: var(--sushi-border-radius) !important;
+    box-shadow: var(--sushi-shadow) !important;
+    transition: transform 0.3s ease !important;
+    height: 100% !important;
+}
+
+.sushi-page .category-card:hover {
+    transform: translateY(-5px) !important;
+}
+
+.sushi-page .category-card .card-body {
+    padding: 1.5rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+}
+
+.sushi-page .category-card .card-title {
+    color: var(--sushi-dark) !important;
+    font-weight: 600 !important;
+    margin-bottom: 1rem !important;
+    font-size: 1.1rem !important;
+}
+
+/* Популярные блюда */
+.sushi-page .dish-card {
+    border: none !important;
+    border-radius: var(--sushi-border-radius) !important;
+    box-shadow: var(--sushi-shadow) !important;
+    transition: transform 0.3s ease !important;
+    height: 100% !important;
+}
+
+.sushi-page .dish-card:hover {
+    transform: translateY(-5px) !important;
+}
+
+.sushi-page .dish-card .card-body {
+    padding: 1.5rem !important;
+}
+
+.sushi-page .dish-card .card-title {
+    color: var(--sushi-dark) !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.sushi-page .dish-card .card-text {
+    color: var(--sushi-primary) !important;
+    font-weight: 700 !important;
+    font-size: 1.2rem !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Кнопки - переопределяем Bootstrap */
+.sushi-page .btn-primary {
+    background-color: var(--sushi-primary) !important;
+    border-color: var(--sushi-primary) !important;
+    color: white !important;
+}
+
+.sushi-page .btn-primary:hover {
+    background-color: var(--sushi-primary-dark) !important;
+    border-color: var(--sushi-primary-dark) !important;
+}
+
+.sushi-page .btn-outline-primary {
+    color: var(--sushi-primary) !important;
+    border-color: var(--sushi-primary) !important;
+}
+
+.sushi-page .btn-outline-primary:hover {
+    background-color: var(--sushi-primary) !important;
+    border-color: var(--sushi-primary) !important;
+    color: white !important;
+}
+
+.sushi-page .btn-success {
+    background-color: var(--sushi-secondary) !important;
+    border-color: var(--sushi-secondary) !important;
+    color: white !important;
+}
+
+.sushi-page .btn-success:hover {
+    background-color: #3db8af !important;
+    border-color: #3db8af !important;
+    color: white !important;
+}
+
+/* Преимущества */
+.sushi-page .advantages-section {
+    padding: 3rem 0 !important;
+    background-color: white !important;
+    border-radius: var(--sushi-border-radius) !important;
+    box-shadow: var(--sushi-shadow) !important;
+    margin-top: 3rem !important;
+}
+
+.sushi-page .advantages-section h2 {
+    color: var(--sushi-dark) !important;
+    margin-bottom: 2rem !important;
+    font-weight: 700 !important;
+}
+
+.sushi-page .advantage-item {
+    padding: 1.5rem !important;
+    height: 100% !important;
+    transition: transform 0.3s ease !important;
+}
+
+.sushi-page .advantage-item:hover {
+    transform: translateY(-10px) !important;
+}
+
+.sushi-page .advantage-item i {
+    color: var(--sushi-primary) !important;
+    margin-bottom: 1rem !important;
+}
+
+.sushi-page .advantage-item h5 {
+    color: var(--sushi-dark) !important;
+    margin-bottom: 0.5rem !important;
+    font-weight: 600 !important;
+}
+
+.sushi-page .advantage-item p.text-muted {
+    color: var(--sushi-gray) !important;
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    .sushi-scroll-container {
+        padding: 0 30px !important;
+    }
+
+    .sushi-promo-card {
+        width: 260px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .sushi-scroll-container {
+        padding: 0 20px !important;
+    }
+
+    .sushi-scroll-btn {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 1.2rem !important;
+    }
+
+    .sushi-promo-card {
+        width: 240px !important;
+    }
+
+    .sushi-page h1 {
+        font-size: 1.8rem !important;
+    }
+}

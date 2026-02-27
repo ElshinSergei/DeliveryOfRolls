@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Управление меню</title>
+</head>
+<body>
+<main>
+    <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+
+        <!-- Заголовок -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h2>🍣 Управление меню</h2>
+            <a href="/admin/dishes/new"
+               style="background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                ➕ Добавить блюдо
+            </a>
+        </div>
+
+        <!-- Сообщения -->
+        <div th:if="${success}" style="background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px;"
+             th:text="${success}"></div>
+        <div th:if="${error}" style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px;"
+             th:text="${error}"></div>
+
+        <!-- Проверка наличия блюд -->
+        <div th:if="${dishes == null or dishes.isEmpty()}">
+            <p style="text-align: center; padding: 50px; background: #f8f9fa; border-radius: 10px;">
+                В меню пока нет блюд
+            </p>
+        </div>
+
+        <!-- Таблица блюд -->
+        <div th:if="${dishes != null and not dishes.isEmpty()}">
+            <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <thead>
+                <tr style="background: #f8f9fa;">
+                    <th style="padding: 15px; text-align: left;">ID</th>
+                    <th style="padding: 15px; text-align: left;">Фото</th>
+                    <th style="padding: 15px; text-align: left;">Название</th>
+                    <th style="padding: 15px; text-align: left;">Категория</th>
+                    <th style="padding: 15px; text-align: center;">Цена</th>
+                    <th style="padding: 15px; text-align: center;">Вес</th>
+                    <th style="padding: 15px; text-align: center;">Статус</th>
+                    <th style="padding: 15px; text-align: left;">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="dish : ${dishes}" style="border-bottom: 1px solid #e9ecef;">
+                    <td style="padding: 15px;" th:text="${dish.id}">1</td>
+                    <td style="padding: 15px;">
+                        <img th:if="${dish.imageUrl != null}"
+                             th:src="@{${dish.imageUrl}}"
+                             class="dish-image"
+                             onerror="this.style.display='none'; this.parentNode.innerHTML='<span class=\'no-image\'>ошибка</span>';">
+                        <span th:if="${dish.imageUrl == null}" class="no-image">нет фото</span>
+                    </td>
+                    <td style="padding: 15px;">
+                        <strong th:text="${dish.name}">Филадельфия</strong>
+                        <span th:if="${dish.description}" class="dish-description" th:text="${dish.description}">описание</span>
+                    </td>
+                    <td style="padding: 15px;">
+                        <span class="category-badge" th:text="${dish.category != null ? dish.category.name : 'Без категории'}">
+                            Роллы
+                        </span>
+                    </td>
+                    <td style="padding: 15px; text-align: center;">
+                        <span class="price" th:text="${#numbers.formatDecimal(dish.price, 0, 0)} + ' ₽'">350 ₽</span>
+                    </td>
+                    <td style="padding: 15px; text-align: center;">
+                        <span class="count-badge" th:text="${dish.weight} + ' г'">250 г</span>
+                    </td>
+                    <td style="padding: 15px; text-align: center;">
+                        <span th:if="${dish.available}" class="status-badge status-available">Доступно</span>
+                        <span th:if="${!dish.available}" class="status-badge status-unavailable">Недоступно</span>
+                    </td>
+                    <td style="padding: 15px;">
+                        <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                            <a th:href="@{/admin/dishes/{id}/edit(id=${dish.id})}"
+                               class="action-btn btn-edit" title="Редактировать">✏️</a>
+                            <form th:action="@{/admin/dishes/{id}/toggle-availability(id=${dish.id})}"
+                                  method="post" style="display: inline;">
+                                <button type="submit" class="action-btn btn-toggle"
+                                        th:title="${dish.available} ? 'Сделать недоступным' : 'Сделать доступным'">
+                                    <span th:text="${dish.available} ? '🚫' : '✅'"></span>
+                                </button>
+                            </form>
+                            <form th:action="@{/admin/dishes/{id}/delete(id=${dish.id})}"
+                                  method="post" style="display: inline;">
+                                <button type="submit" class="action-btn btn-delete"
+                                        onclick="return confirm('Удалить блюдо ' + '[[${dish.name}]]' + '?');"
+                                        title="Удалить">🗑️</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+</body>
+</html>

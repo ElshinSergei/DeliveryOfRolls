@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Панель управления</title>
+</head>
+<body>
+<main>
+    <div class="dashboard">
+        <h2>📊 Панель управления</h2>
+
+        <!-- Статистика -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">Заказы сегодня</div>
+                <div class="stat-value" th:text="${stats.todayOrders}">12</div>
+                <div class="stat-sub" th:text="'Выручка: ' + ${#numbers.formatDecimal(stats.todayRevenue, 0, 0)} + ' ₽'">
+                    5 000 ₽
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Заказы в обработке</div>
+                <div class="stat-value" th:text="${stats.pendingOrders}">5</div>
+                <div class="stat-sub">Ожидают подтверждения</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Выручка за неделю</div>
+                <div class="stat-value" th:text="${#numbers.formatDecimal(stats.weekRevenue, 0, 0)} + ' ₽'">
+                    100 000 ₽
+                </div>
+                <div class="stat-sub" th:text="'За месяц: ' + ${#numbers.formatDecimal(stats.monthRevenue, 0, 0)} + ' ₽'">
+                    350 000 ₽
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-title">Всего заказов</div>
+                <div class="stat-value" th:text="${stats.totalOrders}">156</div>
+                <div class="stat-sub" th:text="'Выручка: ' + ${#numbers.formatDecimal(stats.totalRevenue, 0, 0)} + ' ₽'">
+                    450 000 ₽
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Популярные блюда -->
+            <div class="chart-card">
+                <h3>🔥 Популярные блюда</h3>
+                <ul class="popular-list">
+                    <li th:each="dish : ${stats.popularDishes}" class="popular-item">
+                        <span class="popular-name" th:text="${dish.name}">Филадельфия</span>
+                        <span class="popular-count" th:text="${dish.count} + ' заказов'">10</span>
+                    </li>
+                </ul>
+                <div th:if="${stats.popularDishes == null or stats.popularDishes.isEmpty()}"
+                     style="text-align: center; color: #666; padding: 20px;">
+                    Нет данных о заказах
+                </div>
+            </div>
+
+            <!-- Другая статистика -->
+            <div class="chart-card">
+                <h3>📦 Общая статистика</h3>
+                <table style="width: 100%;">
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px 0;">Всего блюд:</td>
+                        <td style="padding: 10px 0; text-align: right; font-weight: bold;"
+                            th:text="${stats.totalDishes}">25</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px 0;">Доступно блюд:</td>
+                        <td style="padding: 10px 0; text-align: right; font-weight: bold;"
+                            th:text="${stats.availableDishes}">20</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px 0;">Категорий:</td>
+                        <td style="padding: 10px 0; text-align: right; font-weight: bold;"
+                            th:text="${stats.totalCategories}">5</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px 0;">Пользователей:</td>
+                        <td style="padding: 10px 0; text-align: right; font-weight: bold;"
+                            th:text="${stats.totalUsers}">45</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px 0;">Новых сегодня:</td>
+                        <td style="padding: 10px 0; text-align: right; font-weight: bold;"
+                            th:text="${stats.newTodayUsers}">3</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</main>
+</body>
+</html>

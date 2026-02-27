@@ -1,0 +1,81 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Редактирование категории</title>
+</head>
+<body>
+<main>
+    <div class="form-container">
+        <!-- Заголовок -->
+        <div class="form-header">
+            <h2 th:text="${category.id == null} ? '➕ Добавление категории' : '✏️ Редактирование категории'">
+                Добавление категории
+            </h2>
+            <a href="/admin/categories" class="btn btn-secondary">← Назад</a>
+        </div>
+
+        <!-- Форма -->
+        <form th:action="@{/admin/categories/save}" method="post" th:object="${category}">
+            <!-- ID (только для редактирования) -->
+            <input type="hidden" name="id" th:value="${category.id}">
+
+            <!-- Название категории -->
+            <div class="form-group">
+                <label for="name">Название категории *</label>
+                <input type="text" id="name" class="form-control" th:field="*{name}"
+                       th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+                       placeholder="Например: Роллы, Суши, Сеты" required>
+                <div th:if="${#fields.hasErrors('name')}"
+                     th:errors="*{name}" class="invalid-feedback"></div>
+                <small class="form-text">Отображается в меню и на карточках блюд</small>
+            </div>
+
+            <!-- Описание категории -->
+            <div class="form-group">
+                <label for="description">Описание</label>
+                <textarea id="description" class="form-control" th:field="*{description}"
+                          rows="3" placeholder="Краткое описание категории..."></textarea>
+                <small class="form-text">Необязательное поле. Будет отображаться в меню</small>
+            </div>
+
+            <!-- Изображение категории -->
+            <div class="form-group">
+                <label for="imageUrl">URL изображения</label>
+                <input type="text" id="imageUrl" class="form-control" th:field="*{imageUrl}"
+                       placeholder="/images/categories/sushi.jpg">
+                <small class="form-text">Ссылка на картинку для категории</small>
+
+                <!-- Предпросмотр изображения -->
+                <div th:if="${category.imageUrl != null and !category.imageUrl.isEmpty()}"
+                     class="current-image">
+                    <p style="margin-bottom: 10px; font-weight: bold;">Текущее изображение:</p>
+                    <img th:src="@{${category.imageUrl}}" alt="Preview" class="preview-image"
+                         onerror="this.style.display='none'">
+                </div>
+            </div>
+
+            <!-- Порядок сортировки -->
+            <div class="form-group">
+                <label for="sortOrder">Порядок сортировки</label>
+                <input type="number" id="sortOrder" class="form-control" th:field="*{sortOrder}"
+                       min="0" value="0">
+                <small class="form-text">Чем меньше число, тем выше в списке</small>
+            </div>
+
+            <!-- Кнопки -->
+            <div class="form-actions" style="display: flex; gap: 10px; margin-top: 30px;">
+                <button type="submit" class="btn btn-primary">
+                    💾 Сохранить
+                </button>
+                <a href="/admin/categories" class="btn btn-secondary">
+                    Отмена
+                </a>
+            </div>
+                </form>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>

@@ -31,35 +31,23 @@ public class CartItem {
     @Min(value = 1, message = "Количество должно быть не менее 1")
     private int quantity;
 
-    @ElementCollection   // Автоматически создает таблицу для хранения коллекции
-    @CollectionTable(name = "cart_item_selected_options",
-            joinColumns = @JoinColumn(name = "cart_item_id"))
-    private List<SelectedOption> selectedOptions = new ArrayList<>();  // выбранные доп опции
-
     private String specialInstructions; // особые пожелания
 
-    @Data
-    @Embeddable  // встраивается в основную таблицу
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SelectedOption {
-        private Long optionId;
-        private String optionName;
-        private BigDecimal additionalPrice;
-        private boolean selected;  // выбрана ли опция
-    }
+    private BigDecimal priceAtTime; // Цена на момент добавления
 
     // Цена 1 позиции в корзине
     public BigDecimal getTotalPrice() {
-        // 1. Базовая цена блюда × количество
-        BigDecimal basePrice = dish.getPrice().multiply(BigDecimal.valueOf(quantity));
-        // 2. Цена выбранных опций × количество
-        BigDecimal optionsPrice = selectedOptions.stream()
-                .filter(SelectedOption::isSelected)   // только выбранные опции
-                .map(SelectedOption::getAdditionalPrice)// берем цену каждой опции
-                .reduce(BigDecimal.ZERO, BigDecimal::add) // суммируем
-                .multiply(BigDecimal.valueOf(quantity)); // умножаем на количество блюд
-        // 3. Итог = базовая цена + цена опций
-        return basePrice.add(optionsPrice);
+
+        // Проверка на null
+        if (dish == null || dish.getPrice() == null) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal currentPrice = (priceAtTime != null) ? priceAtTime : dish.getPrice();
+
+        // Базовая цена блюда × количество
+        BigDecimal basePrice = currentPrice.multiply(BigDecimal.valueOf(quantity));
+
+        return basePrice;
     }
 }

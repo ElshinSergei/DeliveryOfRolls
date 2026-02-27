@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Детали заказа</title>
+</head>
+<body>
+<main>
+    <div class="order-detail-container">
+
+        <!-- Заголовок -->
+        <div class="order-header-minimal">
+            <div>
+                <h1>Заказ #[[${order.id}]]</h1>
+                <div class="order-date" th:text="${#temporals.format(order.createdAt, 'dd MMMM yyyy, HH:mm')}">
+                    27 февраля 2026, 15:30
+                </div>
+            </div>
+            <div class="order-status-minimal">
+                <span th:text="${order.status.name() == 'PENDING' ? '⏳ Ожидает' :
+                              order.status.name() == 'CONFIRMED' ? '✅ Подтвержден' :
+                              order.status.name() == 'PREPARING' ? '👨‍🍳 Готовится' :
+                              order.status.name() == 'READY_FOR_DELIVERY' ? '📦 Готов к выдаче' :
+                              order.status.name() == 'ON_THE_WAY' ? '🚚 В пути' :
+                              order.status.name() == 'DELIVERED' ? '✅ Доставлен' :
+                              order.status.name() == 'COMPLETED' ? '✨ Завершен' :
+                              order.status.name() == 'CANCELLED' ? '❌ Отменен' : ''}">
+                </span>
+            </div>
+        </div>
+
+        <!-- Информационные карточки -->
+        <div class="info-grid-minimal">
+            <!-- Клиент -->
+            <div class="info-card-minimal">
+                <h3>👤 Клиент</h3>
+                <div class="info-row-minimal">
+                    <span class="label">Имя:</span>
+                    <span class="value" th:text="${order.customerName}">Иван Иванов</span>
+                </div>
+                <div class="info-row-minimal">
+                    <span class="label">Телефон:</span>
+                    <span class="value" th:text="${order.customerPhone}">+7 (999) 123-45-67</span>
+                </div>
+                <div th:if="${order.user != null}" class="info-row-minimal">
+                    <span class="label">Email:</span>
+                    <span class="value" th:text="${order.user.email}">ivan@mail.com</span>
+                </div>
+                <div class="info-row-minimal">
+                    <span class="label">Тип:</span>
+                    <span class="value">
+                        <span th:if="${order.user != null}" class="badge-minimal badge-registered">Зарегистрирован</span>
+                        <span th:if="${order.user == null}" class="badge-minimal badge-guest">Гость</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Доставка -->
+            <div class="info-card-minimal">
+                <h3>🚚 Доставка</h3>
+                <div class="info-row-minimal">
+                    <span class="label">Тип:</span>
+                    <span class="value" th:text="${order.deliveryType.name() == 'DELIVERY' ? 'Доставка' : 'Самовывоз'}"></span>
+                </div>
+                <div th:if="${order.deliveryAddress != null}" class="info-row-minimal">
+                    <span class="label">Адрес:</span>
+                    <span class="value" th:text="${order.deliveryAddress}">ул. Пушкина, 10</span>
+                </div>
+                <div th:if="${order.deliveryTime != null}" class="info-row-minimal">
+                    <span class="label">Время:</span>
+                    <span class="value" th:text="${#temporals.format(order.deliveryTime, 'dd.MM HH:mm')}">27.02 18:30</span>
+                </div>
+            </div>
+
+            <!-- Оплата -->
+            <div class="info-card-minimal">
+                <h3>💳 Оплата</h3>
+                <div class="info-row-minimal">
+                    <span class="label">Способ:</span>
+                    <span class="value" th:text="${order.paymentMethod.name() == 'CASH' ? 'Наличные' :
+                          order.paymentMethod.name() == 'CARD_ON_DELIVERY' ? 'Картой при получении' :
+                          order.paymentMethod.name() == 'CARD_ONLINE' ? 'Картой онлайн' : 'Не указано'}">
+                    </span>
+                </div>
+                <div class="info-row-minimal">
+                    <span class="label">Сумма:</span>
+                    <span class="value" style="font-weight: 600; color: #38a169;"
+                          th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">1 250 ₽</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Состав заказа -->
+        <div class="items-section-minimal">
+            <div class="section-title-minimal">
+                📋 Состав заказа
+            </div>
+
+            <table class="items-table-minimal">
+                <thead>
+                <tr>
+                    <th>Название</th>
+                    <th class="text-center">Кол-во</th>
+                    <th class="text-right">Цена</th>
+                    <th class="text-right">Сумма</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${order.items}">
+                    <td>
+                        <span th:text="${item.dishName}">Филадельфия</span>
+                        <span th:if="${item.specialInstructions != null}"
+                              style="display: block; font-size: 12px; color: #718096;"
+                              th:text="'✏️ ' + ${item.specialInstructions}"></span>
+                    </td>
+                    <td class="text-center" th:text="${item.quantity}">2</td>
+                    <td class="text-right" th:text="${#numbers.formatDecimal(item.priceAtOrder, 0, 0)} + ' ₽'">350 ₽</td>
+                    <td class="text-right" style="font-weight: 500;"
+                        th:text="${#numbers.formatDecimal(item.totalPrice, 0, 0)} + ' ₽'">700 ₽</td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="3" class="text-right" style="font-weight: 600;">Итого:</td>
+                    <td class="text-right" style="font-weight: 600; color: #38a169;"
+                        th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">1 250 ₽</td>
+                </tr>
+                </tfoot>
+            </table>
+
+            <!-- Комментарий -->
+            <div th:if="${order.notes != null and !order.notes.isEmpty()}" class="comment-minimal">
+                <strong>📝 Комментарий:</strong> <span th:text="${order.notes}">Позвонить за 10 минут</span>
+            </div>
+        </div>
+
+        <!-- Кнопки действий -->
+        <div class="action-bar-minimal">
+            <a href="/admin/orders" class="btn-minimal btn-minimal-outline">
+                ← Назад
+            </a>
+            <button type="button" class="btn-minimal btn-minimal-primary"
+                    data-bs-toggle="modal" data-bs-target="#statusModal"
+                    th:data-order-id="${order.id}" th:data-current-status="${order.status.name()}">
+                ✏️ Изменить статус
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Модальное окно -->
+    <div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Изменить статус заказа #<span id="modalOrderId"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="statusForm">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <div class="modal-body">
+                        <select name="status" class="form-select" id="modalStatusSelect">
+                            <option value="PENDING">Ожидает</option>
+                            <option value="CONFIRMED">Подтвержден</option>
+                            <option value="PREPARING">Готовится</option>
+                            <option value="READY_FOR_DELIVERY">Готов к выдаче</option>
+                            <option value="ON_THE_WAY">В пути</option>
+                            <option value="DELIVERED">Доставлен</option>
+                            <option value="COMPLETED">Завершен</option>
+                            <option value="CANCELLED">Отменен</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

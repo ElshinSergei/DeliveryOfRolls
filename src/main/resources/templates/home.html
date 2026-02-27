@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/main-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Доставка суши</title>
+</head>
+<body>
+<main class="container mt-4">
+
+    <!-- Секция с горизонтальным скроллом -->
+    <div class="sushi-section scroll-section">
+        <div class="sushi-scroll-container">
+            <button class="sushi-scroll-btn prev">‹</button>
+
+            <div class="sushi-cards" id="cards">
+                <div class="sushi-promo-card">
+                    <div class="sushi-card-img">2 пиццы по цене 1</div>
+                    <div class="sushi-card-content">
+                        <h3>2 пиццы по цене 1</h3>
+                        <p>Закажите две пиццы среднего размера и получите вторую бесплатно!</p>
+                        <a href="#" class="sushi-card-btn">Заказать</a>
+                    </div>
+                </div>
+
+                <div class="sushi-promo-card">
+                    <div class="sushi-card-img">Комбо для семьи</div>
+                    <div class="sushi-card-content">
+                        <h3>Комбо для семьи</h3>
+                        <p>Большая пицца, картофель фри и напиток по специальной цене</p>
+                        <a href="#" class="sushi-card-btn">Выбрать</a>
+                    </div>
+                </div>
+
+                <div class="sushi-promo-card">
+                    <div class="sushi-card-img">Комбо для семьи</div>
+                    <div class="sushi-card-content">
+                        <h3>Комбо для семьи</h3>
+                        <p>Большая пицца, картофель фри и напиток по специальной цене</p>
+                        <a href="#" class="sushi-card-btn">Выбрать</a>
+                    </div>
+                </div>
+
+                <div class="sushi-promo-card">
+                    <div class="sushi-card-img">Комбо для семьи</div>
+                    <div class="sushi-card-content">
+                        <h3>Комбо для семьи</h3>
+                        <p>Большая пицца, картофель фри и напиток по специальной цене</p>
+                        <a href="#" class="sushi-card-btn">Выбрать</a>
+                    </div>
+                </div>
+
+                <div class="sushi-promo-card">
+                    <div class="sushi-card-img">Комбо для семьи</div>
+                    <div class="sushi-card-content">
+                        <h3>Комбо для семьи</h3>
+                        <p>Большая пицца, картофель фри и напиток по специальной цене</p>
+                        <a href="#" class="sushi-card-btn">Выбрать</a>
+                    </div>
+                </div>
+
+                <div class="sushi-promo-card">
+                    <div class="sushi-card-img">Комбо для семьи</div>
+                    <div class="sushi-card-content">
+                        <h3>Комбо для семьи</h3>
+                        <p>Большая пицца, картофель фри и напиток по специальной цене</p>
+                        <a href="#" class="sushi-card-btn">Выбрать</a>
+                    </div>
+                </div>
+
+            </div>
+            <button class="sushi-scroll-btn next">›</button>
+        </div>
+    </div>
+
+    <!-- Категории -->
+    <div class="row mt-4">
+        <h3>Категории</h3>
+        <div th:each="category : ${categories}" class="col-md-3 mb-3">
+            <div class="card category-card"> <!-- Добавлен класс category-card -->
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${category.name}">Категория</h5>
+                    <a th:href="@{/menu/category/{id}(id=${category.id})}"
+                       class="btn btn-primary">Смотреть</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</main>
+</body>
+</html>

@@ -26,7 +26,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     // Количество элементов в корзине
     Long countByCart(Cart cart);
 
-    // Сумма корзины (через запрос)
+    // Сумма корзины
     @Query("SELECT SUM(ci.quantity * d.price) " +
             "FROM CartItem ci JOIN ci.dish d " +
             "WHERE ci.cart = ?1")

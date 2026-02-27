@@ -1,0 +1,42 @@
+.success-animation {
+    animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+    padding: 1.5rem;
+}
+
+.table th {
+    border-top: none;
+}
+
+.badge {
+    font-size: 1rem;
+    padding: 0.75rem;
+}
+
+@media print {
+    .btn, footer, header {
+        display: none !important;
+    }
+    .card {
+        box-shadow: none !important;
+    }
+}

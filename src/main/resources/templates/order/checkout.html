@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Оформление заказа</title>
+</head>
+<body>
+<main>
+
+    <div class="container">
+        <h1>Оформление заказа</h1>
+
+        <!-- Сводка заказа -->
+        <div class="order-summary">
+            <h3>Ваш заказ:</h3>
+            <div th:each="item : ${cart.getItems()}">
+                <span th:text="${item.getDish().getName()}"></span>
+                <span th:text="${item.getQuantity()} + ' × ' + ${#numbers.formatDecimal(item.dish.price, 0, 0)} + ' ₽'"></span>
+            </div>
+            <hr>
+            <div class="total">
+                <strong>Итого: <span th:text="${#numbers.formatDecimal(cart.getTotalPrice(), 0, 0)} + ' ₽'"></span></strong>
+            </div>
+        </div>
+
+        <!-- Форма данных -->
+        <form th:action="@{/order/create}" method="post" th:object="${orderDTO}">
+
+            <div class="form-group">
+                <label>Имя</label>
+                <input type="text" th:field="*{customerName}">
+                <div th:if="${#fields.hasErrors('customerName')}" th:errors="*{customerName}"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Телефон *</label>
+                <input type="tel" th:field="*{customerPhone}">
+                <div th:if="${#fields.hasErrors('customerPhone')}" th:errors="*{customerPhone}"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Адрес доставки *</label>
+                <textarea th:field="*{deliveryAddress}"></textarea>
+                <div th:if="${#fields.hasErrors('deliveryAddress')}" th:errors="*{deliveryAddress}"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Способ получения </label>
+                <select th:field="*{deliveryType}">
+                    <option value="">-- Выберите способ получения --</option>
+                    <option value="DELIVERY">Доставка</option>
+                    <option value="PICKUP">Самовывоз</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Время доставки</label>
+                <input type="datetime-local" th:field="*{deliveryTime}">
+            </div>
+
+            <div class="form-group">
+                <label>Способ оплаты</label>
+                <select th:field="*{paymentMethod}">
+                    <option value="">-- Выберите способ оплаты --</option>
+                    <option value="CASH">Наличными курьеру</option>
+                    <option value="CARD_ONLINE">Картой онлайн</option>
+                    <option value="CARD_ON_DELIVERY">Картой при получении</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Комментарий к заказу</label>
+                <textarea th:field="*{notes}" rows="3"></textarea>
+                <div th:if="${#fields.hasErrors('notes')}" th:errors="*{notes}"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg">
+                Подтвердить заказ
+            </button>
+        </form>
+    </div>
+
+</main>
+</body>
+</html>

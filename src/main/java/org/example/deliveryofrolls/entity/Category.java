@@ -26,5 +26,4 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private List<Dish> dishes;
-
 }

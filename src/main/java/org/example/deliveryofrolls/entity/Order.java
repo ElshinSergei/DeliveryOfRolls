@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,50 +26,43 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 
     @Column(nullable = false)
     private BigDecimal totalPrice;   //Итоговая стоимость
 
-    @Embedded  // объект встраивается в таблицу orders, а не создает отдельную таблицу.
-    private DeliveryInfo deliveryInfo;
+    private String deliveryAddress;
 
+    // Контактная информация
+    @Column(nullable = false)
+    private String customerName;
+    @Column(nullable = false)
+    private String customerPhone;
+
+    // Тип получения
     @Enumerated(EnumType.STRING)
-    private OrderStatus status = OrderStatus.PENDING;   //статус заказа
+    @Column(nullable = false)
+    private DeliveryType deliveryType; // DELIVERY, PICKUP
 
+    //статус заказа
     @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;   //способ оплаты
+    private OrderStatus status = OrderStatus.PENDING;
 
-    private String paymentStatus;   // "pending", "completed", "failed"
-    private String transactionId;   // ID транзакции в платежной системе
+    //способ оплаты
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentMethod paymentMethod;
 
-    private LocalDateTime createdAt;    // когда создан заказ
-    private LocalDateTime updatedAt;    // когда последний раз обновлялся
+    @CreationTimestamp
+    private LocalDateTime createdAt; // когда создан заказ
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt; // когда последний раз обновлялся
+
     private LocalDateTime deliveryTime; // желаемое время доставки
 
     private String notes; // комментарий к заказу
-
-    @Embeddable
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class DeliveryInfo {   // Информация о доставке
-        // Адрес
-        private String address;
-        private String apartment;        // квартира
-        private String entrance;         // подъезд
-        private String floor;            // этаж
-        private String intercom;         // домофон
-
-        // Контактная информация
-        private String customerName;
-        private String customerPhone;
-
-        // Тип получения
-        @Enumerated(EnumType.STRING)
-        private DeliveryType deliveryType; // DELIVERY, PICKUP
-    }
 
     public enum OrderStatus {
         PENDING,           // ожидает подтверждения
@@ -91,14 +86,4 @@ public class Order {
         PICKUP             // самовывоз
     }
 
-    @PrePersist  // вызывается перед сохранением новой сущности
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate   // вызывается перед обновлением существующей
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }

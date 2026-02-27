@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,10 +39,11 @@ public class User {
     private Cart cart;
 
     private boolean enabled;
+
+    @CreationTimestamp
     private LocalDateTime registeredAt;
 
     public enum Role {
-        ROLE_USER, ROLE_ADMIN, ROLE_MANAGER, ROLE_COURIER
+        ROLE_USER, ROLE_ADMIN
     }
-
 }
