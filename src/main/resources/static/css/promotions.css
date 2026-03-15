@@ -1,0 +1,404 @@
+/* Герой-секция */
+.promo-hero {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    padding: 40px 0 40px;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: center;
+}
+
+.promo-title {
+    font-size: 42px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    position: relative;
+    display: inline-block;
+}
+
+.promo-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border-radius: 2px;
+}
+
+.promo-subtitle {
+    font-size: 18px;
+    color: #7f8c8d;
+    max-width: 600px;
+    margin: 20px auto 0;
+}
+
+/* Секция с акциями */
+.promo-list-section {
+    padding: 60px 0;
+}
+
+.promo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.promo-list-item {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.promo-list-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(231, 76, 60, 0.15);
+}
+
+.promo-list-image-wrapper {
+    width: 250px;
+    height: 300px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.promo-list-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.promo-list-item:hover .promo-list-image {
+    transform: scale(1.05);
+}
+
+.promo-list-content {
+    padding: 25px 30px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.promo-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.promo-list-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.promo-list-badge {
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+}
+
+.promo-list-badge.active {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.promo-list-description {
+    font-size: 16px;
+    color: #7f8c8d;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex: 1;
+    white-space: pre-line;
+}
+
+.promo-list-footer {
+    margin-top: auto;
+}
+
+.promo-list-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+    border: none;
+    cursor: pointer;
+}
+
+.promo-list-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(231, 76, 60, 0.4);
+}
+
+.promo-list-btn i {
+    transition: transform 0.3s ease;
+}
+
+.promo-list-btn:hover i {
+    transform: translateX(5px);
+}
+
+/* Пустое состояние */
+.empty-promo {
+    text-align: center;
+    padding: 80px 20px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.empty-promo i {
+    font-size: 80px;
+    color: #e74c3c;
+    opacity: 0.5;
+    margin-bottom: 20px;
+}
+
+.empty-promo h3 {
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.empty-promo p {
+    font-size: 16px;
+    color: #7f8c8d;
+    margin-bottom: 30px;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 30px;
+    background: white;
+    color: #e74c3c;
+    border: 2px solid #e74c3c;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+    background: #e74c3c;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Блок преимуществ */
+.promo-benefits {
+    background: #f8f9fa;
+    padding: 60px 0;
+}
+
+.benefits-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 40px;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.benefits-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: #e74c3c;
+    border-radius: 4px;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.benefit-item {
+    text-align: center;
+    padding: 30px 20px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.benefit-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(231, 76, 60, 0.1);
+}
+
+.benefit-item i {
+    font-size: 48px;
+    color: #e74c3c;
+    margin-bottom: 15px;
+}
+
+.benefit-item h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.benefit-item p {
+    font-size: 14px;
+    color: #7f8c8d;
+    line-height: 1.6;
+}
+
+/* Блок подписки */
+.promo-newsletter {
+    padding: 60px 0;
+}
+
+.newsletter-content {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.newsletter-content h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.newsletter-content p {
+    font-size: 16px;
+    color: #7f8c8d;
+    margin-bottom: 30px;
+}
+
+.newsletter-form .form-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.newsletter-form .form-control {
+    flex: 1;
+    padding: 15px 20px;
+    border: 2px solid #f0f0f0;
+    border-radius: 50px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.newsletter-form .form-control:focus {
+    outline: none;
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.1);
+}
+
+.btn-subscribe {
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.btn-subscribe:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(231, 76, 60, 0.3);
+}
+
+.form-text {
+    font-size: 12px;
+    color: #95a5a6;
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    .benefits-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .promo-list-item {
+        flex-direction: column;
+    }
+
+    .promo-list-image-wrapper {
+        width: 100%;
+        height: 250px;
+    }
+
+    .promo-list-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .promo-title {
+        font-size: 32px;
+    }
+
+    .promo-list-content {
+        padding: 20px;
+    }
+
+    .promo-list-title {
+        font-size: 22px;
+    }
+
+    .newsletter-form .form-group {
+        flex-direction: column;
+    }
+
+    .btn-subscribe {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .promo-list-image-wrapper {
+        height: 200px;
+    }
+
+    .promo-list-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

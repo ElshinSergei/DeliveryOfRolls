@@ -24,6 +24,7 @@ public class Dish {
     @Column(nullable = false)
     private String name;
 
+    @Column(length = 500)
     private String description;
 
     @Column(nullable = false)
@@ -51,4 +52,8 @@ public class Dish {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
+
 }

@@ -16,21 +16,24 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
+    private final CustomAuthenticationSuccessHandler successHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(10);
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-//                .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
+                        // Разрешаем доступ к загруженным файлам для всех
+                        .requestMatchers("/uploads/**").permitAll()
                         // Публичные страницы
-                        .requestMatchers("/", "/menu/**", "/cart/**", "/delivery", "/contacts",
-                                "/register").permitAll()
+                        .requestMatchers("/", "/cart/**", "/delivery", "/contacts",
+                                "/register", "/cart/**", "/home", "/error", "/order/**",
+                                "/promotions", "/password/**").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
 
                         // Админка только для ADMIN
@@ -44,11 +47,11 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/")
+                        .successHandler(successHandler)
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/")
+                        .logoutSuccessUrl("/home")
                         .invalidateHttpSession(true)           // Убить сессию на сервере
                         .clearAuthentication(true)             // Очистить аутентификацию
                         .deleteCookies("JSESSIONID", "remember-me") // Удалить ВСЕ cookies аутентификации
@@ -59,17 +62,14 @@ public class SecurityConfig {
                         .key("uniqueAndSecret")
                         .tokenValiditySeconds(2592000) // 30 дней
                         .userDetailsService(userDetailsService)
+                        .alwaysRemember(false)   // Не запоминать принудительно
                 )
                 .sessionManagement(session -> session
-                        // Редирект при истекшей сессии (вместо 401 ошибки)
+                        // Редирект при истекшей сессии
                         .invalidSessionUrl("/login?timeout")
-
                         // Явное разрешение мультисессий
                         .maximumSessions(-1)
 
-                )
-                .exceptionHandling(ex -> ex
-                        .accessDeniedPage("/403")  // Показывать эту страницу при отказе в доступе
                 );
 
         return http.build();

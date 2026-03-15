@@ -12,7 +12,7 @@
             <h2 th:text="${category.id == null} ? '➕ Добавление категории' : '✏️ Редактирование категории'">
                 Добавление категории
             </h2>
-            <a href="/admin/categories" class="btn btn-secondary">← Назад</a>
+            <a th:href="@{/admin/categories}" class="btn btn-secondary">← Назад</a>
         </div>
 
         <!-- Форма -->
@@ -39,22 +39,6 @@
                 <small class="form-text">Необязательное поле. Будет отображаться в меню</small>
             </div>
 
-            <!-- Изображение категории -->
-            <div class="form-group">
-                <label for="imageUrl">URL изображения</label>
-                <input type="text" id="imageUrl" class="form-control" th:field="*{imageUrl}"
-                       placeholder="/images/categories/sushi.jpg">
-                <small class="form-text">Ссылка на картинку для категории</small>
-
-                <!-- Предпросмотр изображения -->
-                <div th:if="${category.imageUrl != null and !category.imageUrl.isEmpty()}"
-                     class="current-image">
-                    <p style="margin-bottom: 10px; font-weight: bold;">Текущее изображение:</p>
-                    <img th:src="@{${category.imageUrl}}" alt="Preview" class="preview-image"
-                         onerror="this.style.display='none'">
-                </div>
-            </div>
-
             <!-- Порядок сортировки -->
             <div class="form-group">
                 <label for="sortOrder">Порядок сортировки</label>
@@ -63,19 +47,33 @@
                 <small class="form-text">Чем меньше число, тем выше в списке</small>
             </div>
 
+            <div class="form-group">
+                <label class="d-block">Доступность</label>
+                <div class="form-check form-switch">
+                    <input type="checkbox"
+                           class="form-check-input"
+                           id="available"
+                           name="available"
+                           th:checked="${category.available}"
+                           value="true">
+                    <label class="form-check-label" for="available">
+                        Категория доступна в меню
+                    </label>
+                </div>
+                <small class="form-text">Если выключить, категория не будет показываться на сайте</small>
+            </div>
+
             <!-- Кнопки -->
             <div class="form-actions" style="display: flex; gap: 10px; margin-top: 30px;">
                 <button type="submit" class="btn btn-primary">
                     💾 Сохранить
                 </button>
-                <a href="/admin/categories" class="btn btn-secondary">
+                <a th:href="@{/admin/categories}" class="btn btn-secondary">
                     Отмена
                 </a>
             </div>
                 </form>
             </div>
-        </form>
-    </div>
 </main>
 </body>
 </html>

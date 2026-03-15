@@ -2,6 +2,7 @@ package org.example.deliveryofrolls.controller.admin;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.deliveryofrolls.dto.OrderListDTO;
 import org.example.deliveryofrolls.entity.Order;
 import org.example.deliveryofrolls.service.OrderService;
@@ -21,6 +22,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/admin/orders")
 @RequiredArgsConstructor
+@Slf4j
 public class AdminOrderController {
 
     private final OrderService orderService;
@@ -67,7 +69,7 @@ public class AdminOrderController {
         model.addAttribute("orders", orders);
         model.addAttribute("statuses", Order.OrderStatus.values());
         model.addAttribute("pageTitle", "Управление заказами");
-        model.addAttribute("baseUrl", request.getRequestURI()); // Текущий URL
+        model.addAttribute("baseUrl", "/admin/orders"); // Текущий URL
         return "admin/orders/list";
     }
 
@@ -92,13 +94,12 @@ public class AdminOrderController {
     public Map<String, Object> updateStatus(@PathVariable Long orderId,
                                             @RequestParam Order.OrderStatus status) {
 
-        System.out.println("=== ВЫЗОВ МЕТОДА updateStatus ===");
-        System.out.println("orderId: " + orderId);
-        System.out.println("status: " + status);
+        log.info("=== ВЫЗОВ МЕТОДА updateStatus ===");
+        log.info("orderId: {}, status: {}", orderId, status);
 
         Map<String, Object> response = new HashMap<>();
         try {
-            Order updatedOrder = orderService.updateOrderStatus(orderId, status);
+            orderService.updateOrderStatus(orderId, status);
             response.put("success", true);
             response.put("message", "Статус заказа #" + orderId + " изменен на " + status);
             response.put("newStatus", status.name());

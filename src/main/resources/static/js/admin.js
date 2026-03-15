@@ -1,3 +1,5 @@
+const contextPath = document.querySelector('meta[name="context-path"]')?.content || '';
+
 <!-- Изменение статуса заказа через модальное окно -->
 document.addEventListener('DOMContentLoaded', function() {
     const statusModal = document.getElementById('statusModal');
@@ -42,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             const csrfToken = document.querySelector('input[name="_csrf"]')?.value;
-            const response = await fetch(`/admin/orders/${orderId}/status?status=${status}`, {
+            const response = await fetch(contextPath + `/admin/orders/${orderId}/status?status=${status}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',

@@ -1,88 +1,142 @@
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-layout :: html(content=~{::main})}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${pageTitle}">Редактирование пользователя</title>
+    <title th:text="${pageTitle}">Просмотр пользователя</title>
 </head>
 <body>
 <main>
-    <div class="container">
-        <div class="header">
-            <h1>👤 Просмотр пользователя</h1>
-            <a href="/admin/users" class="btn btn-back">← Назад</a>
+    <div class="user-detail-container">
+
+        <!-- Заголовок -->
+        <div class="user-header-minimal">
+            <div>
+                <h1 th:text="${user.firstName + ' ' + user.lastName}">Иван Иванов</h1>
+                <div class="user-email" th:text="${user.email}">ivan@mail.com</div>
+            </div>
+            <div class="user-status-minimal">
+                <span th:if="${user.enabled}" class="badge-minimal badge-active">Активен</span>
+                <span th:if="${!user.enabled}" class="badge-minimal badge-blocked">Заблокирован</span>
+            </div>
         </div>
 
-        <div class="user-card">
-            <div class="info-row">
-                <span class="info-label">ID:</span>
-                <span class="info-value" th:text="${user.id}">1</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Имя:</span>
-                <span class="info-value" th:text="${user.firstName + ' ' + user.lastName}">Иван Иванов</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Email:</span>
-                <span class="info-value" th:text="${user.email}">ivan@mail.com</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Телефон:</span>
-                <span class="info-value" th:text="${user.phone != null ? user.phone : '—'}">+7 (999) 123-45-67</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Роль:</span>
-                <span class="info-value" th:text="${user.role.name().replace('ROLE_', '')}">USER</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Статус:</span>
-                <span class="info-value">
-                    <span th:if="${user.enabled}" class="badge badge-active">Активен</span>
-                    <span th:if="${!user.enabled}" class="badge badge-blocked">Заблокирован</span>
-                </span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Дата регистрации:</span>
-                <span class="info-value" th:text="${#temporals.format(user.registeredAt, 'dd.MM.yyyy HH:mm')}">
-                    01.01.2024 15:30
-                </span>
+        <!-- Информационные карточки -->
+        <div class="info-grid-minimal">
+            <!-- Основная информация -->
+            <div class="info-card-minimal">
+                <h3>👤 Основные данные</h3>
+                <div class="info-row-minimal">
+                    <span class="label">ID:</span>
+                    <span class="value">#[[${user.id}]]</span>
+                </div>
+                <div class="info-row-minimal">
+                    <span class="label">Имя:</span>
+                    <span class="value" th:text="${user.firstName}">Иван</span>
+                </div>
+                <div class="info-row-minimal">
+                    <span class="label">Фамилия:</span>
+                    <span class="value" th:text="${user.lastName}">Иванов</span>
+                </div>
+                <div class="info-row-minimal">
+                    <span class="label">Телефон:</span>
+                    <span class="value" th:text="${user.phone != null ? user.phone : '—'}">+7 (999) 123-45-67</span>
+                </div>
             </div>
 
-            <div style="text-align: right; margin-top: 30px;">
-                <a th:href="@{/admin/users/{id}/edit(id=${user.id})}" class="btn btn-edit">
-                    ✏️ Редактировать
-                </a>
+            <!-- Роль и статус -->
+            <div class="info-card-minimal">
+                <h3>⚙️ Роль и доступ</h3>
+                <div class="info-row-minimal">
+                    <span class="label">Роль:</span>
+                    <span class="value">
+                        <span th:if="${user.role.name() == 'ROLE_ADMIN'}" class="badge-minimal badge-registered">Администратор</span>
+                        <span th:if="${user.role.name() == 'ROLE_USER'}" class="badge-minimal badge-guest">Пользователь</span>
+                    </span>
+                </div>
+                <div class="info-row-minimal">
+                    <span class="label">Статус:</span>
+                    <span class="value">
+                        <span th:if="${user.enabled}" class="badge-minimal badge-active">Активен</span>
+                        <span th:if="${!user.enabled}" class="badge-minimal badge-blocked">Заблокирован</span>
+                    </span>
+                </div>
+                <div class="info-row-minimal">
+                    <span class="label">Дата регистрации:</span>
+                    <span class="value" th:text="${#temporals.format(user.registeredAt, 'dd.MM.yyyy HH:mm')}">
+                        01.01.2024 15:30
+                    </span>
+                </div>
+            </div>
+
+            <!-- Статистика -->
+            <div class="info-card-minimal">
+                <h3>📊 Статистика</h3>
+                <div class="info-row-minimal">
+                    <span class="label">Всего заказов:</span>
+                    <span class="value price" th:text="${user.orders != null ? #lists.size(user.orders) : 0}">15</span>
+                </div>
+                <div class="info-row-minimal">
+                    <span class="label">На сайте с:</span>
+                    <span class="value" th:text="${#temporals.format(user.registeredAt, 'dd.MM.yyyy')}">01.01.2024</span>
+                </div>
             </div>
         </div>
 
         <!-- Заказы пользователя -->
-        <h2 style="margin-top: 40px;">📦 Заказы пользователя</h2>
-        <table class="orders-table">
-            <thead>
-            <tr>
-                <th>ID заказа</th>
-                <th>Дата</th>
-                <th>Сумма</th>
-                <th>Статус</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="order : ${user.orders}" th:if="${user.orders != null}">
-                <td>#[[${order.id}]]</td>
-                <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}">16.02.2026 15:30</td>
-                <td th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">1250 ₽</td>
-                <td th:text="${order.status}">DELIVERED</td>
-                <td>
-                    <a th:href="@{/admin/orders/{id}(id=${order.id})}" style="color: #007bff;">Просмотр</a>
-                </td>
-            </tr>
-            <tr th:if="${user.orders == null or user.orders.isEmpty()}">
-                <td colspan="5" style="text-align: center; padding: 30px; color: #666;">
-                    У пользователя пока нет заказов
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="items-section-minimal">
+            <div class="section-title-minimal">
+                📦 Заказы пользователя
+            </div>
+
+            <table class="items-table-minimal">
+                <thead>
+                <tr>
+                    <th>ID заказа</th>
+                    <th>Дата</th>
+                    <th>Сумма</th>
+                    <th>Статус</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${user.orders}" th:if="${user.orders != null}">
+                    <td><span class="order-id">#[[${order.id}]]</span></td>
+                    <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}">16.02.2026 15:30</td>
+                    <td class="text-right price" th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">1 250 ₽</td>
+                    <td>
+                        <span th:if="${order.status.name() == 'PENDING'}" class="badge-minimal badge-guest">⏳ Ожидает</span>
+                        <span th:if="${order.status.name() == 'CONFIRMED'}" class="badge-minimal badge-guest">✅ Подтвержден</span>
+                        <span th:if="${order.status.name() == 'PREPARING'}" class="badge-minimal badge-guest">👨‍🍳 Готовится</span>
+                        <span th:if="${order.status.name() == 'READY_FOR_DELIVERY'}" class="badge-minimal badge-guest">📦 Готов</span>
+                        <span th:if="${order.status.name() == 'ON_THE_WAY'}" class="badge-minimal badge-guest">🚚 В пути</span>
+                        <span th:if="${order.status.name() == 'DELIVERED'}" class="badge-minimal badge-registered">✅ Доставлен</span>
+                        <span th:if="${order.status.name() == 'COMPLETED'}" class="badge-minimal badge-registered">✨ Завершен</span>
+                        <span th:if="${order.status.name() == 'CANCELLED'}" class="badge-minimal badge-blocked">❌ Отменен</span>
+                    </td>
+                    <td class="text-right">
+                        <a th:href="@{/admin/orders/{id}(id=${order.id})}" style="color: #4299e1; text-decoration: none;">Подробнее →</a>
+                    </td>
+                </tr>
+                <tr th:if="${user.orders == null or user.orders.isEmpty()}">
+                    <td colspan="5" style="text-align: center; padding: 40px; color: #a0aec0;">
+                        <div style="font-size: 40px; margin-bottom: 10px;">📭</div>
+                        <div>У пользователя пока нет заказов</div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Кнопки действий -->
+        <div class="action-bar-minimal">
+            <a th:href="@{/admin/users}" class="btn-minimal btn-minimal-outline">
+                ← Назад к списку
+            </a>
+            <a th:href="@{/admin/users/{id}/edit(id=${user.id})}" class="btn-minimal btn-minimal-primary">
+                ✏️ Редактировать
+            </a>
+        </div>
     </div>
 </main>
 </body>

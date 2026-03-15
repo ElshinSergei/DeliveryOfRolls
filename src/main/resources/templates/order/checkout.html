@@ -8,77 +8,195 @@
 <body>
 <main>
 
-    <div class="container">
-        <h1>Оформление заказа</h1>
 
-        <!-- Сводка заказа -->
-        <div class="order-summary">
-            <h3>Ваш заказ:</h3>
-            <div th:each="item : ${cart.getItems()}">
-                <span th:text="${item.getDish().getName()}"></span>
-                <span th:text="${item.getQuantity()} + ' × ' + ${#numbers.formatDecimal(item.dish.price, 0, 0)} + ' ₽'"></span>
-            </div>
-            <hr>
-            <div class="total">
-                <strong>Итого: <span th:text="${#numbers.formatDecimal(cart.getTotalPrice(), 0, 0)} + ' ₽'"></span></strong>
+    <!-- Герой-секция оформления -->
+    <section class="checkout-hero">
+        <div class="container">
+            <div class="checkout-hero-content">
+                <h1 class="checkout-title">Оформление заказа</h1>
+                <p class="checkout-subtitle">
+                    <i class="bi bi-bag-check me-2"></i>
+                    Последний шаг перед вкусным ужином
+                </p>
             </div>
         </div>
+    </section>
 
-        <!-- Форма данных -->
-        <form th:action="@{/order/create}" method="post" th:object="${orderDTO}">
+    <!-- Основной контент -->
+    <div class="container checkout-container">
+        <div class="checkout-layout">
 
-            <div class="form-group">
-                <label>Имя</label>
-                <input type="text" th:field="*{customerName}">
-                <div th:if="${#fields.hasErrors('customerName')}" th:errors="*{customerName}"></div>
+            <!-- Левая колонка - форма -->
+            <div class="checkout-form-section">
+                <div class="checkout-form-card">
+
+                    <form th:action="@{/order/create}" method="post" th:object="${orderDTO}" class="checkout-form">
+
+                        <div class="form-group">
+                            <label for="customerName" class="form-label">
+                                <i class="bi bi-person me-1"></i> Имя *
+                            </label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="customerName"
+                                   th:field="*{customerName}"
+                                   placeholder="Введите ваше имя">
+                            <div th:if="${#fields.hasErrors('customerName')}"
+                                 class="form-error"
+                                 th:errors="*{customerName}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customerPhone" class="form-label">
+                                <i class="bi bi-telephone me-1"></i> Телефон *
+                            </label>
+                            <input type="tel"
+                                   class="form-control"
+                                   id="customerPhone"
+                                   th:field="*{customerPhone}"
+                                   placeholder="+7 (999) 123-45-67">
+                            <div th:if="${#fields.hasErrors('customerPhone')}"
+                                 class="form-error"
+                                 th:errors="*{customerPhone}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="deliveryAddress" class="form-label">
+                                <i class="bi bi-geo-alt me-1"></i> Адрес доставки *
+                            </label>
+                            <textarea class="form-control"
+                                      id="deliveryAddress"
+                                      th:field="*{deliveryAddress}"
+                                      rows="3"
+                                      placeholder="Улица, дом, квартира"></textarea>
+                            <div th:if="${#fields.hasErrors('deliveryAddress')}"
+                                 class="form-error"
+                                 th:errors="*{deliveryAddress}"></div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="deliveryType" class="form-label">
+                                    <i class="bi bi-truck me-1"></i> Способ получения
+                                </label>
+                                <select class="form-control"
+                                        id="deliveryType"
+                                        th:field="*{deliveryType}">
+                                    <option value="">-- Выберите способ --</option>
+                                    <option value="DELIVERY">🚚 Доставка</option>
+                                    <option value="PICKUP">🏪 Самовывоз</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group half">
+                                <label for="deliveryTime" class="form-label">
+                                    <i class="bi bi-clock me-1"></i> Время доставки
+                                </label>
+                                <input type="datetime-local"
+                                       class="form-control"
+                                       id="deliveryTime"
+                                       th:field="*{deliveryTime}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="paymentMethod" class="form-label">
+                                <i class="bi bi-credit-card me-1"></i> Способ оплаты
+                            </label>
+                            <select class="form-control"
+                                    id="paymentMethod"
+                                    th:field="*{paymentMethod}">
+                                <option value="">-- Выберите способ оплаты --</option>
+                                <option value="CASH">💵 Наличными курьеру</option>
+                                <option value="CARD_ONLINE">💳 Картой онлайн</option>
+                                <option value="CARD_ON_DELIVERY">💳 Картой при получении</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notes" class="form-label">
+                                <i class="bi bi-chat-dots me-1"></i> Комментарий к заказу
+                            </label>
+                            <textarea class="form-control"
+                                      id="notes"
+                                      th:field="*{notes}"
+                                      rows="3"
+                                      placeholder="Дополнительные пожелания, звонок в домофон и т.д."></textarea>
+                            <div th:if="${#fields.hasErrors('notes')}"
+                                 class="form-error"
+                                 th:errors="*{notes}"></div>
+                        </div>
+
+                        <button type="submit" class="btn-checkout">
+                            <i class="bi bi-check-circle"></i>
+                            Подтвердить заказ
+                        </button>
+                    </form>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>Телефон *</label>
-                <input type="tel" th:field="*{customerPhone}">
-                <div th:if="${#fields.hasErrors('customerPhone')}" th:errors="*{customerPhone}"></div>
-            </div>
+            <!-- Правая колонка - сводка заказа -->
+            <div class="checkout-summary-section">
+                <div class="checkout-summary-card">
+                    <h2 class="summary-title">
+                        <i class="bi bi-basket me-2"></i>
+                        Ваш заказ
+                    </h2>
 
-            <div class="form-group">
-                <label>Адрес доставки *</label>
-                <textarea th:field="*{deliveryAddress}"></textarea>
-                <div th:if="${#fields.hasErrors('deliveryAddress')}" th:errors="*{deliveryAddress}"></div>
-            </div>
+                    <!-- Список товаров -->
+                    <div class="summary-items">
+                        <div th:each="item : ${cart.getItems()}" class="summary-item">
+                            <div class="summary-item-info">
+                                <span class="summary-item-name" th:text="${item.dish.name}">Филадельфия</span>
+                                <span class="summary-item-quantity" th:text="${item.quantity} + ' шт'">2 шт</span>
+                            </div>
+                            <span class="summary-item-price"
+                                  th:text="${#numbers.formatDecimal(item.quantity * item.dish.price, 0, 0)} + ' ₽'">
+                                700 ₽
+                            </span>
+                        </div>
+                    </div>
 
-            <div class="form-group">
-                <label>Способ получения </label>
-                <select th:field="*{deliveryType}">
-                    <option value="">-- Выберите способ получения --</option>
-                    <option value="DELIVERY">Доставка</option>
-                    <option value="PICKUP">Самовывоз</option>
-                </select>
-            </div>
+                    <div class="summary-divider"></div>
 
-            <div class="form-group">
-                <label>Время доставки</label>
-                <input type="datetime-local" th:field="*{deliveryTime}">
-            </div>
+                    <!-- Детали заказа -->
+                    <div class="summary-details">
+                        <div class="summary-row">
+                            <span class="summary-label">Товары:</span>
+                            <span class="summary-value"
+                                  th:text="${#numbers.formatDecimal(cart.getTotalPrice(), 0, 0)} + ' ₽'">
+                                1 650 ₽
+                            </span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Доставка:</span>
+                            <span class="summary-value" th:if="${orderDTO.deliveryType == 'DELIVERY'}">
+                                Бесплатно
+                            </span>
+                            <span class="summary-value" th:if="${orderDTO.deliveryType == 'PICKUP'}">
+                                Самовывоз
+                            </span>
+                        </div>
+                    </div>
 
-            <div class="form-group">
-                <label>Способ оплаты</label>
-                <select th:field="*{paymentMethod}">
-                    <option value="">-- Выберите способ оплаты --</option>
-                    <option value="CASH">Наличными курьеру</option>
-                    <option value="CARD_ONLINE">Картой онлайн</option>
-                    <option value="CARD_ON_DELIVERY">Картой при получении</option>
-                </select>
-            </div>
+                    <div class="summary-divider"></div>
 
-            <div class="form-group">
-                <label>Комментарий к заказу</label>
-                <textarea th:field="*{notes}" rows="3"></textarea>
-                <div th:if="${#fields.hasErrors('notes')}" th:errors="*{notes}"></div>
-            </div>
+                    <!-- Итоговая сумма -->
+                    <div class="summary-row total">
+                        <span class="summary-label">Итого:</span>
+                        <span class="summary-value"
+                              th:text="${#numbers.formatDecimal(cart.getTotalPrice(), 0, 0)} + ' ₽'">
+                            1 650 ₽
+                        </span>
+                    </div>
 
-            <button type="submit" class="btn btn-primary btn-lg">
-                Подтвердить заказ
-            </button>
-        </form>
+                    <div class="summary-note">
+                        <i class="bi bi-shield-check me-1"></i>
+                        Нажимая "Подтвердить заказ", вы соглашаетесь с условиями доставки
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </main>

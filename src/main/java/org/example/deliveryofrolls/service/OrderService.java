@@ -10,6 +10,8 @@ import org.example.deliveryofrolls.entity.*;
 import org.example.deliveryofrolls.repository.OrderItemRepository;
 import org.example.deliveryofrolls.repository.OrderRepository;
 import org.example.deliveryofrolls.repository.UserRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,8 +31,23 @@ public class OrderService {
     private final OrderItemRepository orderItemRepository;
     private final CartService cartService;
     private final UserRepository userRepository;
+    private final DashboardService dashboardService;
+
+    // Получить заказ по ID (с кэшем)
+    @Cacheable(value = "orders", key = "'user-' + #userId")
+    public List<Order> getUserOrders(Long userId) {
+        return orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
+    }
+
+    // Получить данные по заказу
+    @Cacheable(value = "orders", key = "#orderId")
+    public Order getOrder(Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Заказ не найден"));
+    }
 
     // Создание заказа
+    @CacheEvict(value = "orders", allEntries = true)
     public Order createOrder(OrderDTO orderDTO, HttpSession session, UserDetails userDetails) {
         Cart cart = cartService.getOrCreateCart(session, userDetails);
         if (cart.getItems().isEmpty()) {
@@ -52,7 +69,6 @@ public class OrderService {
         // Создаем OrderItem из CartItem
         for (CartItem cartItem : cart.getItems()) {
             Dish dish = cartItem.getDish();
-
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(savedOrder);
             orderItem.setDish(dish);
@@ -61,42 +77,29 @@ public class OrderService {
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setSpecialInstructions(cartItem.getSpecialInstructions());
             orderItem.calculateTotal();
-
             orderItemRepository.save(orderItem);
         }
 
         // Очищаем корзину
         if (userDetails != null) {
             // Авторизованный - очищаем по ID корзины
-            cartService.clearCart(cart.getId());
+            cartService.clearCart(cart.getId(), session);
         } else {
             // Гость - очищаем по sessionId
             cartService.clearCart(session.getId());
         }
 
+
         log.info("✅ Заказ #{} создан. Клиент: {}, Сумма: {} ₽",
                 savedOrder.getId(), savedOrder.getCustomerName(), savedOrder.getTotalPrice());
 
+        dashboardService.evictCache();
         return savedOrder;
     }
 
-    // Получить данные по заказу
-    public Order getOrder(Long orderId) {
-        return orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("Заказ не найден"));
-    }
-
-    // Получить все заказы пользователя
-    public List<Order> getUserOrders(User user) {
-        return orderRepository.findByUserOrderByCreatedAtDesc(user);
-    }
-
-    // Получить все заказы
-    public Page<Order> getAllOrders(Pageable pageable) {
-        return orderRepository.findAll(pageable);
-    }
 
     // Обновление статуса заказа
+    @CacheEvict(value = "orders", allEntries = true)
     public Order updateOrderStatus(Long orderId, Order.OrderStatus newStatus) {
         Order order = getOrder(orderId);
         Order.OrderStatus oldStatus = order.getStatus();
@@ -109,6 +112,7 @@ public class OrderService {
     }
 
     // Получить заказ с товарами для детального просмотра
+    @Cacheable(value = "orders", key = "'items-' + #orderId")
     public Order getOrderWithItems(Long orderId) {
         return orderRepository.findByIdWithItems(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Заказ не найден"));
@@ -132,16 +136,12 @@ public class OrderService {
                 throw new IllegalArgumentException("Это не ваш заказ");
             }
         }
-
         Cart cart = cartService.getOrCreateCart(session, userDetails);
-
         int added = 0;
         int skipped = 0;
-
         // Добавляем товары
         for (OrderItem item : oldOrder.getItems()) {
             Dish dish = item.getDish();
-
             if (dish != null && dish.isAvailable()) {
                 // Проверяем, есть ли уже такое блюдо в корзине
                 cartService.addToCart(session, userDetails, dish.getId(), item.getQuantity());
@@ -150,10 +150,11 @@ public class OrderService {
                 skipped++;
             }
         }
-
         if (added == 0) {
             throw new IllegalStateException("Ни одно блюдо из заказа сейчас не доступно");
         }
+
+        log.info("🔄 Повтор заказа #{}. Добавлено: {}, пропущено: {}", orderId, added, skipped);
     }
 
 
@@ -191,4 +192,5 @@ public class OrderService {
         return orderRepository.findAll(spec, pageable)
                 .map(OrderListDTO::fromEntity);
     }
+
 }

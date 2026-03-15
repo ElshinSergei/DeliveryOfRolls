@@ -65,14 +65,28 @@ public class Order {
     private String notes; // комментарий к заказу
 
     public enum OrderStatus {
-        PENDING,           // ожидает подтверждения
-        CONFIRMED,         // подтвержден
-        PREPARING,         // готовится
-        READY_FOR_DELIVERY,// готов к выдаче
-        ON_THE_WAY,        // в пути
-        DELIVERED,         // доставлен
-        COMPLETED,         // завершен
-        CANCELLED          // отменен
+        PENDING,
+        CONFIRMED,
+        PREPARING,
+        READY_FOR_DELIVERY,
+        ON_THE_WAY,
+        DELIVERED,
+        COMPLETED,
+        CANCELLED;
+
+        public String getDisplayName() {
+            switch(this) {
+                case PENDING: return "Ожидает";
+                case CONFIRMED: return "Подтвержден";
+                case PREPARING: return "Готовится";
+                case READY_FOR_DELIVERY: return "Готов к выдаче";
+                case ON_THE_WAY: return "В пути";
+                case DELIVERED: return "Доставлен";
+                case COMPLETED: return "Завершен";
+                case CANCELLED: return "Отменен";
+                default: return this.name();
+            }
+        }
     }
 
     public enum PaymentMethod {

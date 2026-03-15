@@ -10,9 +10,7 @@
 
     <!-- Герой-секция корзины -->
     <section class="cart-hero">
-
         <div class="container">
-
             <!-- Сообщения об успехе/ошибке -->
             <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="bi bi-check-circle-fill me-2"></i>
@@ -32,8 +30,9 @@
                     Ваша корзина пуста
                 </p>
                 <p class="cart-subtitle" th:unless="${cart.getItems().isEmpty()}">
+                    <i class="bi bi-basket me-2"></i>
                     <span th:text="${cart.getItems().size()}">3</span> товара на сумму
-                    <span class="cart-total-amount" th:text="${#numbers.formatDecimal(deliveryCost, 0, 0) + ' ₽'}">1 850 ₽</span>
+                    <span class="cart-total-amount" th:text="${#numbers.formatDecimal(cart.getTotalPrice(), 0, 0) + ' ₽'}">1 850 ₽</span>
                 </p>
             </div>
         </div>
@@ -53,7 +52,6 @@
                             <i class="bi bi-trash"></i> Очистить корзину
                         </button>
                     </form>
-
                 </div>
 
                 <!-- Список товаров -->
@@ -61,8 +59,7 @@
                     <div th:each="item : ${cart.getItems()}" class="cart-item">
                         <!-- Изображение -->
                         <div class="cart-item-image">
-                            <img th:src="${item.dish.imageUrl != null ? item.dish.imageUrl : '/images/no-image.jpg'}"
-                                 alt="Блюдо"
+                            <img th:src="${item.dish.imageUrl != null} ? @{${item.dish.imageUrl}} : '/images/no-image.jpg'"
                                  th:alt="${item.dish.name}">
                         </div>
 
@@ -70,13 +67,11 @@
                         <div class="cart-item-info">
                             <div class="cart-item-header">
                                 <h3 class="cart-item-title" th:text="${item.dish.name}">Филадельфия</h3>
-                                <!-- ФОРМА для удаления позиции в корзине -->
                                 <form th:action="@{/cart/remove/{id}(id=${item.getId()})}" method="post">
-                                    <button type="submit" class="btn-remove-item">
+                                    <button type="submit" class="btn-remove-item" title="Удалить">
                                         <i class="bi bi-x-lg"></i>
                                     </button>
                                 </form>
-
                             </div>
 
                             <p class="cart-item-description"
@@ -88,9 +83,9 @@
                                     <i class="bi bi-scale"></i>
                                     <span th:text="${item.dish.weight} + ' г'">250 г</span>
                                 </span>
-                                <span class="cart-item-price"
-                                      th:text="${#numbers.formatDecimal(item.dish.price, 0, 0) + ' ₽'}">
-                                    Цена
+                                <span class="cart-item-price">
+                                    <i class="bi bi-tag"></i>
+                                    <span th:text="${#numbers.formatDecimal(item.dish.price, 0, 0) + ' ₽'}">Цена</span>
                                 </span>
                             </div>
                         </div>
@@ -100,7 +95,7 @@
                             <!-- Счетчик количества -->
                             <div class="quantity-control">
                                 <form method="post" th:action="@{/cart/decrease/{id}(id=${item.getId()})}">
-                                    <button type="submit" class="quantity-btn minus" >
+                                    <button type="submit" class="quantity-btn minus">
                                         <i class="bi bi-dash"></i>
                                     </button>
                                 </form>
@@ -112,7 +107,6 @@
                                         <i class="bi bi-plus"></i>
                                     </button>
                                 </form>
-
                             </div>
 
                             <!-- Итог по товару -->
@@ -141,12 +135,23 @@
                         </span>
                     </div>
 
-                    <form method="get" th:action="@{/order/checkout}">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            К оформлению
-                        </button>
-                    </form>
+                    <!-- Итого -->
+                    <div class="summary-row total">
+                        <span class="summary-label">Итого</span>
+                        <span class="summary-value"
+                              th:text="${#numbers.formatDecimal(cart.getTotalPrice(), 0, 0) + ' ₽'}">
+                            1 650 ₽
+                        </span>
+                    </div>
 
+                    <a th:href="@{/order/checkout}" class="btn-checkout">
+                        <i class="bi bi-bag-check"></i> К оформлению
+                    </a>
+
+                    <p class="text-muted text-center small mt-3">
+                        <i class="bi bi-shield-check me-1"></i>
+                        Безопасная оплата
+                    </p>
                 </div>
             </div>
         </div>
@@ -163,7 +168,7 @@
                 Добавьте что-нибудь из меню, чтобы сделать заказ
             </p>
             <div class="empty-cart-actions">
-                <a href="/menu" class="btn-primary">
+                <a th:href="@{/home}">
                     <i class="bi bi-arrow-left"></i> Вернуться в меню
                 </a>
             </div>

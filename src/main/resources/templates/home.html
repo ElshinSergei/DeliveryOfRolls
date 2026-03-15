@@ -1,89 +1,235 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/main-layout :: html(content=~{::main})}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main-layout :: html(content=~{::main})}">
 <head>
     <meta charset="UTF-8">
     <title th:text="${pageTitle}">Доставка суши</title>
 </head>
 <body>
-<main class="container mt-4">
+<main>
 
-    <!-- Секция с горизонтальным скроллом -->
-    <div class="sushi-section scroll-section">
-        <div class="sushi-scroll-container">
-            <button class="sushi-scroll-btn prev">‹</button>
+    <!-- ========== БЛОК АКЦИЙ ========== -->
+    <section th:if="${not #lists.isEmpty(promotions)}" class="promo-slider-section">
+        <div class="container">
+            <div class="promo-slider-container">
+                <button class="slider-nav prev"><i class="bi bi-chevron-left"></i></button>
 
-            <div class="sushi-cards" id="cards">
-                <div class="sushi-promo-card">
-                    <div class="sushi-card-img">2 пиццы по цене 1</div>
-                    <div class="sushi-card-content">
-                        <h3>2 пиццы по цене 1</h3>
-                        <p>Закажите две пиццы среднего размера и получите вторую бесплатно!</p>
-                        <a href="#" class="sushi-card-btn">Заказать</a>
+                <div class="promo-slider-track" id="promoSlider">
+                    <div th:each="promo : ${promotions}" class="promo-slide">
+                            <div class="promo-card">
+                                <img th:src="@{${promo.imageUrl}}"
+                                     th:alt="${promo.title}"
+                                     class="promo-image">
+                            </div>
                     </div>
                 </div>
 
-                <div class="sushi-promo-card">
-                    <div class="sushi-card-img">Комбо для семьи</div>
-                    <div class="sushi-card-content">
-                        <h3>Комбо для семьи</h3>
-                        <p>Большая пицца, картофель фри и напиток по специальной цене</p>
-                        <a href="#" class="sushi-card-btn">Выбрать</a>
-                    </div>
-                </div>
-
-                <div class="sushi-promo-card">
-                    <div class="sushi-card-img">Комбо для семьи</div>
-                    <div class="sushi-card-content">
-                        <h3>Комбо для семьи</h3>
-                        <p>Большая пицца, картофель фри и напиток по специальной цене</p>
-                        <a href="#" class="sushi-card-btn">Выбрать</a>
-                    </div>
-                </div>
-
-                <div class="sushi-promo-card">
-                    <div class="sushi-card-img">Комбо для семьи</div>
-                    <div class="sushi-card-content">
-                        <h3>Комбо для семьи</h3>
-                        <p>Большая пицца, картофель фри и напиток по специальной цене</p>
-                        <a href="#" class="sushi-card-btn">Выбрать</a>
-                    </div>
-                </div>
-
-                <div class="sushi-promo-card">
-                    <div class="sushi-card-img">Комбо для семьи</div>
-                    <div class="sushi-card-content">
-                        <h3>Комбо для семьи</h3>
-                        <p>Большая пицца, картофель фри и напиток по специальной цене</p>
-                        <a href="#" class="sushi-card-btn">Выбрать</a>
-                    </div>
-                </div>
-
-                <div class="sushi-promo-card">
-                    <div class="sushi-card-img">Комбо для семьи</div>
-                    <div class="sushi-card-content">
-                        <h3>Комбо для семьи</h3>
-                        <p>Большая пицца, картофель фри и напиток по специальной цене</p>
-                        <a href="#" class="sushi-card-btn">Выбрать</a>
-                    </div>
-                </div>
-
+                <button class="slider-nav next"><i class="bi bi-chevron-right"></i></button>
             </div>
-            <button class="sushi-scroll-btn next">›</button>
+        </div>
+    </section>
+
+    <!-- Навигация по категориям -->
+    <nav class="categories-sticky-nav" id="categoriesNav">
+        <div class="container">
+            <div class="categories-wrapper">
+                <a th:each="category : ${categories}"
+                   th:href="'#' + ${#strings.toLowerCase(category.name)}"
+                   th:data-category="${#strings.toLowerCase(category.name)}"
+                   class="category-link"
+                   th:text="${category.name}">
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Меню по категориям -->
+    <section class="menu-section" id="menu">
+        <div class="container">
+
+            <!-- Динамические блоки категорий -->
+            <div th:each="category : ${categories}"
+                 th:id="${#strings.toLowerCase(category.name)}"
+                 class="category-block">
+
+                <h2 class="category-title" th:text="${category.name}"></h2>
+
+                <div class="dishes-grid">
+                    <th:block th:each="dish: ${dishes}">
+                        <div th:if="${dish.category.id == category.id}" class="dish-card">
+                            <div class="card dish-card-inner shadow-sm">
+
+                                <input type="hidden" class="full-description" th:value="${dish.description}">
+                                <input type="hidden" class="full-ingredients" th:value="${dish.ingredients != null ?
+                                #strings.listJoin(dish.ingredients, ', ') : ''}">
+
+                                <img th:src="${dish.imageUrl != null} ? @{${dish.imageUrl}} : '/images/no-image.jpg'"
+                                     class="card-img-top dish-img" th:alt="${dish.name}">
+                                <div class="card-body">
+                                    <h5 class="card-title" th:text="${dish.name}">Филадельфия</h5>
+                                    <p class="small text-muted mb-2">
+                                        <i class="bi bi-tag"></i>
+                                        <span th:text="${dish.category.name}">Роллы</span>
+                                    </p>
+                                    <p class="card-text small text-muted mb-3"
+                                       th:text="${#strings.abbreviate(dish.description, 80)}">
+                                        Описание блюда
+                                    </p>
+                                    <div class="ingredients mb-3" th:if="${not #lists.isEmpty(dish.ingredients)}">
+                                        <small class="text-muted">
+                                            <i class="bi bi-droplet"></i>
+                                            <span th:each="ingredient, stat : ${dish.ingredients}"
+                                                  th:if="${stat.index < 3}">
+                                                <span th:text="${ingredient}"></span>
+                                                <span th:if="${not stat.last and stat.index < 2}">, </span>
+                                            </span>
+                                            <span th:if="${#lists.size(dish.ingredients) > 3}">...</span>
+                                        </small>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <span class="text-muted"><i class="bi bi-scale"></i> <span th:text="${dish.weight} + ' г'">250 г</span></span>
+                                        <span th:if="${dish.calories != null}" class="text-muted">
+                                            <i class="bi bi-fire"></i> <span th:text="${dish.calories} + ' ккал'">300 ккал</span>
+                                        </span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="dish-price" th:text="${#numbers.formatDecimal(dish.price, 0, 0)} + ' ₽'">350 ₽</span>
+
+                                        <!-- Блок с количеством (изначально скрыт) -->
+                                        <div class="quantity-simple" style="display: none;" th:id="|quantity-${dish.id}|">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-secondary quantity-minus"
+                                                    th:data-dish-id="${dish.id}"
+                                                    th:data-dish-name="${dish.name}"
+                                                    title="Убрать один">
+                                                <i class="bi bi-dash"></i>
+                                            </button>
+                                            <span class="quantity-badge">
+                                                <i class="bi bi-cart-check"></i>
+                                                <span class="quantity-value" th:id="|qty-${dish.id}|">1</span>
+                                            </span>
+                                            <button type="button"
+                                                    class="btn btn-sm btn-success quantity-plus"
+                                                    th:data-dish-id="${dish.id}"
+                                                    th:data-dish-name="${dish.name}"
+                                                    title="Добавить еще один">
+                                                <i class="bi bi-plus"></i>
+                                            </button>
+                                        </div>
+                                        <!-- Кнопка "В корзину" (видна изначально) -->
+                                        <button type="button"
+                                                class="btn btn-sm btn-success add-to-cart-btn"
+                                                th:data-dish-id="${dish.id}"
+                                                th:data-dish-name="${dish.name}"
+                                                data-quantity="1">
+                                            <i class="bi bi-cart-plus"></i> В корзину
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+
+            <!-- Если нет блюд -->
+            <div th:if="${dishes.isEmpty()}" class="text-center py-5">
+                <i class="bi bi-emoji-frown display-1 text-muted"></i>
+                <h3 class="mt-3">Блюд не найдено</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- Преимущества -->
+    <section class="features-section">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature"><i class="bi bi-clock"></i><h3>Быстрая доставка</h3><p>От 35 минут</p></div>
+                <div class="feature"><i class="bi bi-snow"></i><h3>Всегда свежие</h3><p>Готовим после заказа</p></div>
+                <div class="feature"><i class="bi bi-gift"></i><h3>Подарки</h3><p>К каждому заказу</p></div>
+                <div class="feature"><i class="bi bi-truck"></i><h3>Бесплатная доставка</h3><p>От 1000 ₽</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== МОДАЛЬНОЕ ОКНО ========== -->
+    <div id="myCustomModal">
+        <!-- Затемнение -->
+        <div id="modalOverlay"></div>
+
+        <!-- Контент модалки -->
+        <div class="modal-content">
+            <!-- Тело модалки -->
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Левая колонка - фото -->
+                    <div class="col">
+                        <img src="" id="customModalImage" alt="Фото блюда">
+                    </div>
+
+                    <!-- Правая колонка - информация -->
+                    <div class="col">
+                        <h3 id="customModalName"></h3>
+                        <p>
+                            <i class="bi bi-tag"></i>
+                            <span id="customModalCategory"></span>
+                        </p>
+                        <div>
+                            <span id="customModalPrice"></span>
+                        </div>
+
+                        <h6>Описание:</h6>
+                        <p id="customModalDescription"></p>
+
+                        <h6>Состав:</h6>
+                        <p id="customModalIngredients"></p>
+
+                        <div class="meta-row">
+                            <small>
+                                <i class="bi bi-scale"></i>
+                                Вес: <span id="customModalWeight"></span>
+                            </small>
+                            <small>
+                                <i class="bi bi-fire"></i>
+                                Калории: <span id="customModalCalories"></span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Подвал модалки -->
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCustomModal()">Закрыть</button>
+                <button class="btn btn-success" id="customModalAddToCart">
+                    <i class="bi bi-cart-plus"></i> В корзину
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Категории -->
-    <div class="row mt-4">
-        <h3>Категории</h3>
-        <div th:each="category : ${categories}" class="col-md-3 mb-3">
-            <div class="card category-card"> <!-- Добавлен класс category-card -->
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${category.name}">Категория</h5>
-                    <a th:href="@{/menu/category/{id}(id=${category.id})}"
-                       class="btn btn-primary">Смотреть</a>
-                </div>
-            </div>
-        </div>
+    <div class="falling-sushi">
+        <div class="sushi-item">🍣</div>
+        <div class="sushi-item">🍱</div>
+        <div class="sushi-item">🍘</div>
+        <div class="sushi-item">🍥</div>
+        <div class="sushi-item">🍙</div>
+        <div class="sushi-item">🍣</div>
+        <div class="sushi-item">🍱</div>
+        <div class="sushi-item">🍘</div>
+        <div class="sushi-item">🍥</div>
+        <div class="sushi-item">🍙</div>
+        <div class="sushi-item">🍣</div>
+        <div class="sushi-item">🍱</div>
+        <div class="sushi-item">🍘</div>
+        <div class="sushi-item">🍥</div>
+        <div class="sushi-item">🍙</div>
+        <div class="sushi-item">🍣</div>
+        <div class="sushi-item">🍱</div>
+        <div class="sushi-item">🍘</div>
+        <div class="sushi-item">🍥</div>
+        <div class="sushi-item">🍙</div>
     </div>
 
 

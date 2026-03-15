@@ -20,7 +20,7 @@
 
         <!-- Блок фильтрации -->
         <div class="filters-bar">
-            <form method="get" action="/admin/orders" style="display: flex; flex-wrap: wrap; gap: 10px; flex: 1; align-items: center;">
+            <form method="get" th:action="@{/admin/orders}" style="display: flex; flex-wrap: wrap; gap: 10px; flex: 1; align-items: center;">
                 <!-- Поиск -->
                 <div class="filter-item">
                     <i class="bi bi-search"></i>
@@ -35,7 +35,7 @@
                         <option value="">Все статусы</option>
                         <option th:each="s : ${statuses}"
                                 th:value="${s.name()}"
-                                th:text="${s.name()}"
+                                th:text="${s.getDisplayName()}"
                                 th:selected="${s.name() == selectedStatus}">
                         </option>
                     </select>
@@ -60,7 +60,7 @@
                     <button type="submit" class="filter-submit">
                         <i class="bi bi-check-lg"></i> Применить
                     </button>
-                    <a href="/admin/orders" class="filter-reset">
+                    <a th:href="@{/admin/orders}" class="filter-reset">
                         <i class="bi bi-x-lg"></i> Сброс
                     </a>
                 </div>
@@ -93,9 +93,8 @@
                         </a>
                     </th>
                     <th>
-                        <a th:href="@{${baseUrl}(page=${orders.number},
-                        size=${orders.size},
-                        sort='createdAt,' + ${currentSortField == 'createdAt' ? reverseSortDir : 'desc'},
+                        <a th:href="@{${baseUrl}(page=${orders.number}, size=${orders.size},
+                        sort='createdAt,' + ${currentSortField == 'createdAt' ? reverseSortDir : 'asc'},
                         status=${selectedStatus},
                         search=${searchQuery},
                         dateFrom=${dateFrom},
@@ -111,9 +110,8 @@
                     <th>Клиент</th>
                     <th>Телефон</th>
                     <th class="text-center">
-                        <a th:href="@{${baseUrl}(page=${orders.number},
-                        size=${orders.size},
-                        sort='totalPrice,' + ${currentSortField == 'totalPrice' ? reverseSortDir : 'desc'},
+                        <a th:href="@{${baseUrl}(page=${orders.number}, size=${orders.size},
+                        sort='totalPrice,' + ${currentSortField == 'totalPrice' ? reverseSortDir : 'asc'},
                         status=${selectedStatus},
                         search=${searchQuery},
                         dateFrom=${dateFrom},
@@ -201,8 +199,8 @@
             </table>
 
             <!-- Пагинация -->
-            <div th:insert="~{fragments/pagination :: pagination(${orders}, ${baseUrl},
-            ${selectedStatus}, ${searchQuery}, ${dateFrom}, ${dateTo})}">
+            <div th:insert="~{admin/orders/pagination :: pagination(${orders}, ${baseUrl}, ${selectedStatus},
+            ${searchQuery}, ${dateFrom}, ${dateTo})}">
             </div>
 
             <!-- Модальное окно -->
@@ -214,7 +212,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form id="statusForm">
-                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <input type="hidden"/>
                             <div class="modal-body">
                                 <select name="status" class="form-select" id="modalStatusSelect">
                                     <option value="PENDING">Ожидает</option>

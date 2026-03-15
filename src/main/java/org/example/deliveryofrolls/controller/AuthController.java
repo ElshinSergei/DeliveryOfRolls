@@ -1,5 +1,6 @@
 package org.example.deliveryofrolls.controller;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.deliveryofrolls.dto.RegisterDTO;
@@ -19,8 +20,8 @@ public class AuthController {
     private final UserService userService;
 
     @GetMapping("/login")
-    public String login(Model model) {
-        model.addAttribute("pageCss", "login.css");
+    public String login(Model model, HttpSession session) {
+        System.out.println("Login page loaded, session: " + session.getId());
         return "auth/login";
     }
 

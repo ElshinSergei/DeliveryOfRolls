@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Доставка суши</title>
+</head>
+<body>
+<main>
+
+    <!-- Герой-секция -->
+    <section class="contacts-hero">
+        <div class="container">
+            <h1 class="contacts-title">Контакты</h1>
+            <p class="contacts-subtitle">Мы всегда на связи! Свяжитесь с нами любым удобным способом</p>
+        </div>
+    </section>
+
+    <!-- Основная информация -->
+    <section class="contacts-info">
+        <div class="container">
+            <div class="contacts-grid">
+                <!-- Телефон -->
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="bi bi-telephone-fill"></i>
+                    </div>
+                    <h3>Телефон</h3>
+                    <a href="tel:+79991234567" class="contact-link">+7 (999) 123-45-67</a>
+                    <p class="contact-note">Ежедневно с 10:00 до 22:00</p>
+                </div>
+
+                <!-- Email -->
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="bi bi-envelope-fill"></i>
+                    </div>
+                    <h3>Email</h3>
+                    <a href="mailto:info@redrolls.ru" class="contact-link">redrolls@yandex.ru.ru</a>
+                    <p class="contact-note">Для заказов и вопросов</p>
+                </div>
+
+                <!-- Адрес -->
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="bi bi-geo-alt-fill"></i>
+                    </div>
+                    <h3>Адрес</h3>
+                    <p class="contact-address">ул. Ленина, 55</p>
+                    <p class="contact-address">г. Пермь</p>
+                </div>
+
+                <!-- Режим работы -->
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="bi bi-clock-fill"></i>
+                    </div>
+                    <h3>Режим работы</h3>
+                    <p class="contact-hours">Пн-Вс: 10:00 - 22:00</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Карта и форма обратной связи -->
+    <section class="contact-map-section">
+        <div class="container">
+            <div class="map-form-grid">
+                <!-- Карта -->
+                <div class="map-container">
+                    <h2 class="map-title">Как нас найти</h2>
+                    <div class="map-container">
+                        <!-- Вставка Яндекс Карты -->
+                        <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef&amp;width=100%25&amp;height=400&amp;lang=ru_RU&amp;scroll=true"></script>
+                    </div>
+                </div>
+
+                <!-- Форма обратной связи -->
+                <div class="contact-form-container">
+                    <h2 class="form-title">Напишите нам</h2>
+                    <form class="contact-form" th:action="@{/contacts/send}" method="post">
+                        <div class="form-group">
+                            <label for="name">Ваше имя</label>
+                            <input type="text"
+                                   id="name"
+                                   name="name"
+                                   placeholder="Иван Иванов"
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email"
+                                   id="email"
+                                   name="email"
+                                   placeholder="ivan@example.com"
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Телефон</label>
+                            <input type="tel"
+                                   id="phone"
+                                   name="phone"
+                                   placeholder="+7 (999) 123-45-67">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Сообщение</label>
+                            <textarea id="message"
+                                      name="message"
+                                      rows="5"
+                                      placeholder="Ваш вопрос или пожелание..."
+                                      required></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            <i class="bi bi-send"></i>
+                            Отправить сообщение
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Дополнительная информация -->
+    <section class="additional-info">
+        <div class="container">
+            <div class="info-grid">
+                <div class="info-item">
+                    <i class="bi bi-truck"></i>
+                    <div>
+                        <h4>Бесплатная доставка</h4>
+                        <p>При заказе от 1000 ₽ в радиусе 5 км</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <i class="bi bi-clock-history"></i>
+                    <div>
+                        <h4>Время доставки</h4>
+                        <p>От 35 до 60 минут в зависимости от удаленности</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <i class="bi bi-credit-card"></i>
+                    <div>
+                        <h4>Способы оплаты</h4>
+                        <p>Наличные, карта курьеру или онлайн</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <i class="bi bi-whatsapp"></i>
+                    <div>
+                        <h4>Мессенджеры</h4>
+                        <p>Telegram: +7 (999) 123-45-67</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Социальные сети -->
+    <section class="social-section">
+        <div class="container">
+            <h2 class="social-title">Мы в социальных сетях</h2>
+            <div class="social-links">
+                <a href="#" class="social-link" target="_blank">
+                    <i class="bi bi-telegram"></i>
+                    <span>Telegram</span>
+                </a>
+                <a href="#" class="social-link" target="_blank">
+                    <i class="bi bi-vk"></i>
+                    <span>VKontakte</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+</main>
+</body>
+</html>

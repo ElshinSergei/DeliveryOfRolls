@@ -22,6 +22,7 @@ public class AdminDashboardController {
 
         model.addAttribute("stats", stats);
         model.addAttribute("pageTitle", "Панель управления");
+        model.addAttribute("pageCss", "dashboard.css");
 
         return "admin/dashboard";
     }

@@ -22,7 +22,9 @@ public class Category {
 
     private String description;
     private String imageUrl;
-    private Integer sortOrder;  // Определяет порядок отображения категорий в меню
+    private Integer sortOrder = 0;  // Определяет порядок отображения категорий в меню
+
+    private boolean available = true;
 
     @OneToMany(mappedBy = "category")
     private List<Dish> dishes;

@@ -1,9 +1,9 @@
 package org.example.deliveryofrolls.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
+import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -13,7 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "carts")
@@ -49,9 +50,15 @@ public class Cart {
 
     // Общее количество товаров
     public int getTotalItems() {
-        if (items == null || items.isEmpty()) {
+        if (items == null) {
             return 0;
         }
+
+        // Проверяем, инициализирована ли коллекция
+        if (!Hibernate.isInitialized(items)) {
+            return 0;
+        }
+
         return items.stream()
                 .mapToInt(CartItem::getQuantity)
                 .sum();

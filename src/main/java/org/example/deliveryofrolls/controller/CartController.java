@@ -1,8 +1,12 @@
 package org.example.deliveryofrolls.controller;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.deliveryofrolls.entity.Cart;
+import org.example.deliveryofrolls.entity.CartItem;
 import org.example.deliveryofrolls.entity.User;
 import org.example.deliveryofrolls.service.CartService;
 import org.example.deliveryofrolls.service.UserService;
@@ -14,9 +18,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Controller
 @RequestMapping("/cart")
 @RequiredArgsConstructor
@@ -31,26 +36,69 @@ public class CartController {
                            @AuthenticationPrincipal UserDetails userDetails) {
 
         Cart cart = cartService.getOrCreateCart(session, userDetails);
+
         model.addAttribute("cart", cart);
         model.addAttribute("pageTitle", "Корзина");
         model.addAttribute("pageCss", "cart.css");
-
-        BigDecimal deliveryCost = cart.getTotalPrice();
-        model.addAttribute("deliveryCost", deliveryCost);
 
         return "cart/cart";
     }
 
     @PostMapping("/add/{dishId}")
-    public String addToCart(
+    @ResponseBody
+    public ResponseEntity<?> addToCart(
             @PathVariable Long dishId,
-            @RequestParam(defaultValue = "1") int quantity,
+            @RequestParam(defaultValue = "1") @Min(1) @Max(99) int quantity,
             HttpSession session,
             @AuthenticationPrincipal UserDetails userDetails) {
 
+            log.info("Добавление товара {} в корзину, количество: {}", dishId, quantity);
+        try {
             cartService.addToCart(session, userDetails, dishId, quantity);
+            Cart cart = cartService.getOrCreateCart(session, userDetails);
+            log.info("Товар добавлен. Всего товаров в корзине: {}", cart.getTotalItems());
 
-            return "redirect:/menu";
+            // Формируем JSON ответ
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("message", "Товар добавлен в корзину");
+            response.put("cartCount", cart.getTotalItems());
+            response.put("cartTotal", cart.getTotalPrice());
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            log.error("Ошибка при добавлении товара {}: {}", dishId, e.getMessage());
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PostMapping("/decrease-dish/{dishId}")
+    @ResponseBody
+    public ResponseEntity<?> decreaseFromCart(
+            @PathVariable Long dishId,  // ← получаем ID блюда
+            HttpSession session,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        try {
+            cartService.decreaseFromCart(session, userDetails, dishId);
+            Cart cart = cartService.getOrCreateCart(session, userDetails);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("cartCount", cart.getTotalItems());  // ← обновленный счетчик
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 
     @PostMapping("/clear")
@@ -59,10 +107,12 @@ public class CartController {
                             RedirectAttributes redirectAttributes) {
         if (userDetails != null) {
             User user = userService.getCurrentUser(userDetails);
-            cartService.clearCart(user.getCart().getId());
+            log.info("Очистка корзины для пользователя: {}, cartId: {}",
+                    userDetails.getUsername(), user.getCart().getId());
+            cartService.clearCart(user.getCart().getId(), session);
         } else {
-            // Для неавторизованного (через сессию)
             String sessionId = session.getId();
+            log.info("Очистка корзины для сессии: {}", sessionId);
             cartService.clearCart(sessionId);
         }
         redirectAttributes.addFlashAttribute("successMessage", "Корзина успешно очищена");
@@ -74,7 +124,7 @@ public class CartController {
                              HttpSession session,
                              @AuthenticationPrincipal User user,
                              Model model) {
-        cartService.removeItemFromCart(itemId);
+        cartService.removeItemFromCart(itemId, session);
         return "redirect:/cart";
     }
 
@@ -83,7 +133,7 @@ public class CartController {
     public String increaseQuantity(@PathVariable Long itemId,
                                    HttpSession session,
                                    @AuthenticationPrincipal User user) {
-        cartService.increaseQuantity(itemId, 1);
+        cartService.increaseQuantity(itemId, 1, session);
         return "redirect:/cart";
     }
 
@@ -92,9 +142,36 @@ public class CartController {
     public String decreaseQuantity(@PathVariable Long itemId,
                                    HttpSession session,
                                    @AuthenticationPrincipal User user) {
-        cartService.decreaseQuantity(itemId, 1);
+        cartService.decreaseQuantity(itemId, 1, session);
         return "redirect:/cart";
     }
 
+    // МЕТОД ДЛЯ ПОЛУЧЕНИЯ СОСТОЯНИЯ
+    @GetMapping("/state")
+    @ResponseBody
+    public ResponseEntity<?> getCartState(HttpSession session,
+                                          @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            Cart cart = cartService.getOrCreateCart(session, userDetails);
+
+            Map<Long, Integer> itemCounts = new HashMap<>();
+            for (CartItem item : cart.getItems()) {
+                itemCounts.put(item.getDish().getId(), item.getQuantity());
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "success");
+            response.put("totalCount", cart.getTotalItems());
+            response.put("items", itemCounts);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
 
 }

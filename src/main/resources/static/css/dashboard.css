@@ -1,0 +1,207 @@
+.dashboard {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.dashboard h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.dashboard h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: #e74c3c;
+    border-radius: 3px;
+}
+
+/* Сетка статистики */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(231, 76, 60, 0.15);
+}
+
+.stat-title {
+    color: #7f8c8d;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 5px;
+    line-height: 1.2;
+}
+
+.stat-sub {
+    color: #28a745;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Строки с двумя колонками */
+.row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+/* Карточки для графиков и списков */
+.chart-card {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+.chart-card:hover {
+    box-shadow: 0 8px 24px rgba(231, 76, 60, 0.1);
+}
+
+.chart-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+/* Список популярных блюд */
+.popular-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.popular-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.popular-item:last-child {
+    border-bottom: none;
+}
+
+.popular-name {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.popular-count {
+    background: #e74c3c;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Таблица статистики */
+.chart-card table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.chart-card td {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.chart-card tr:last-child td {
+    border-bottom: none;
+}
+
+.chart-card td:first-child {
+    color: #7f8c8d;
+    font-weight: 400;
+}
+
+.chart-card td:last-child {
+    text-align: right;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .dashboard {
+        padding: 15px;
+    }
+
+    .dashboard h2 {
+        font-size: 24px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .row {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+    }
+
+    .chart-card {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stat-card {
+        padding: 20px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+    }
+
+    .popular-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .popular-count {
+        align-self: flex-start;
+    }
+}

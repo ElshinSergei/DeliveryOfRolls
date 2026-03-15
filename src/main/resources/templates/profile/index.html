@@ -8,85 +8,87 @@
 </head>
 <body>
 <main>
-
-    <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
-
-        <div style="display: grid; grid-template-columns: 300px 1fr; gap: 30px;">
-            <!-- Боковое меню -->
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <div style="font-size: 80px; color: #dc3545;">👤</div>
-                    <h3 th:text="${user.firstName + ' ' + user.lastName}">Иван Иванов</h3>
-                    <p style="color: #666;" th:text="${user.email}">ivan@mail.com</p>
+    <div class="profile-wrapper">
+        <div class="profile-card">
+            <!-- Шапка профиля -->
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <span>👤</span>
                 </div>
-
-                <hr>
-
-                <ul style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 10px;">
-                        <a href="/profile" style="display: block; padding: 10px; background: #dc3545; color: white; text-decoration: none; border-radius: 5px;">
-                            📋 Мой профиль
-                        </a>
-                    </li>
-                    <li style="margin-bottom: 10px;">
-                        <a href="/profile/orders" style="display: block; padding: 10px; background: #6c757d; color: white; text-decoration: none; border-radius: 5px;">
-                            📦 Мои заказы
-                        </a>
-                    </li>
-                    <li style="margin-bottom: 10px;">
-                        <a href="/profile/edit" style="display: block; padding: 10px; background: #28a745; color: white; text-decoration: none; border-radius: 5px;">
-                            ✏️ Редактировать профиль
-                        </a>
-                    </li>
-                </ul>
+                <div class="profile-title">
+                    <h1 th:text="${user.firstName + ' ' + user.lastName}">Иван Иванов</h1>
+                    <p th:text="${user.email}">ivan@mail.com</p>
+                </div>
             </div>
 
-            <!-- Основная информация -->
-            <div>
-                <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                    <h2 style="margin-bottom: 30px;">Мои данные</h2>
+            <!-- Основной контент -->
+            <div class="profile-layout">
+                <!-- Боковое меню -->
+                <div class="profile-menu">
+                    <a th:href="@{/profile}" class="profile-menu-item active">
+                        <i class="bi bi-person"></i>
+                        <span>Мой профиль</span>
+                    </a>
+                    <a th:href="@{/profile/orders}" class="profile-menu-item">
+                        <i class="bi bi-box"></i>
+                        <span>Мои заказы</span>
+                    </a>
+                    <a th:href="@{/profile/change-password}" class="profile-menu-item">
+                        <i class="bi bi-key"></i>
+                        <span>Сменить пароль</span>
+                    </a>
+                </div>
 
-                    <div th:if="${success}" style="background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                        <span th:text="${success}"></span>
+                <!-- Основная информация -->
+                <div class="profile-content">
+                    <div class="content-header">
+                        <h2>📋 Личные данные</h2>
+                        <a href="/profile/edit" class="edit-link">
+                            <i class="bi bi-pencil"></i> Редактировать
+                        </a>
                     </div>
 
-                    <div th:if="${error}" style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <!-- Сообщения -->
+                    <div th:if="${success}" class="alert alert-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span th:text="${success}"></span>
+                    </div>
+                    <div th:if="${error}" class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
                         <span th:text="${error}"></span>
                     </div>
 
-                    <table style="width: 100%;">
-                        <tr style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 15px 0; width: 150px; font-weight: bold;">Имя:</td>
-                            <td style="padding: 15px 0;" th:text="${user.firstName}">Иван</td>
+                    <!-- Таблица данных -->
+                    <table class="info-table">
+                        <tr>
+                            <td>Имя</td>
+                            <td th:text="${user.firstName}">Иван</td>
                         </tr>
-                        <tr style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 15px 0; font-weight: bold;">Фамилия:</td>
-                            <td style="padding: 15px 0;" th:text="${user.lastName}">Иванов</td>
+                        <tr>
+                            <td>Фамилия</td>
+                            <td th:text="${user.lastName}">Иванов</td>
                         </tr>
-                        <tr style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 15px 0; font-weight: bold;">Email:</td>
-                            <td style="padding: 15px 0;" th:text="${user.email}">ivan@mail.com</td>
+                        <tr>
+                            <td>Email</td>
+                            <td th:text="${user.email}">ivan@mail.com</td>
                         </tr>
-                        <tr style="border-bottom: 1px solid #eee;">
-                            <td style="padding: 15px 0; font-weight: bold;">Телефон:</td>
-                            <td style="padding: 15px 0;" th:text="${user.phone != null ? user.phone : 'не указан'}">
+                        <tr>
+                            <td>Телефон</td>
+                            <td th:text="${user.phone != null ? user.phone : 'не указан'}">
                                 +7 (999) 123-45-67
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding: 15px 0; font-weight: bold;">Зарегистрирован:</td>
-                            <td style="padding: 15px 0;"
-                                th:text="${#temporals.format(user.registeredAt, 'dd.MM.yyyy')}">
+                            <td>Зарегистрирован</td>
+                            <td th:text="${#temporals.format(user.registeredAt, 'dd.MM.yyyy')}">
                                 01.01.2024
                             </td>
                         </tr>
                     </table>
-
                 </div>
             </div>
         </div>
     </div>
-
 </main>
 </body>
 </html>

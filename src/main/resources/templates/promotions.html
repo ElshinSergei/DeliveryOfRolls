@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Акции</title>
+</head>
+<body>
+<main>
+    <!-- Герой-секция -->
+    <section class="promo-hero">
+        <div class="container">
+            <h1 class="promo-title">Акции</h1>
+            <p class="promo-subtitle">Специальные предложения и выгодные комбо</p>
+        </div>
+    </section>
+
+    <!-- Блок с активными акциями -->
+    <section class="promo-list-section">
+        <div class="container">
+            <!-- Проверка наличия активных акций -->
+            <div th:if="${activePromotions.isEmpty()}" class="empty-promo">
+                <i class="bi bi-megaphone"></i>
+                <h3>Сейчас нет активных акций</h3>
+                <p>Следите за обновлениями! Новые предложения появятся скоро.</p>
+                <a th:href="@{/}" class="btn-back">
+                    <i class="bi bi-arrow-left"></i> Вернуться в меню
+                </a>
+            </div>
+
+            <!-- Список активных акций -->
+            <div th:unless="${activePromotions.isEmpty()}" class="promo-list">
+                <div th:each="promo : ${activePromotions}" class="promo-list-item">
+                    <!-- Изображение -->
+                    <div class="promo-list-image-wrapper">
+                        <img th:src="@{${promo.imageUrl}}"
+                             th:alt="${promo.title}"
+                             class="promo-list-image">
+                    </div>
+
+                    <!-- Контент -->
+                    <div class="promo-list-content">
+                        <div class="promo-list-header">
+                            <h2 class="promo-list-title" th:text="${promo.title}">Название акции</h2>
+                            <span class="promo-list-badge active">🔥 Акция</span>
+                        </div>
+
+                        <div class="promo-list-description" th:text="${promo.description}">
+                            Подробное описание акции с условиями, сроками действия и специальными предложениями. Здесь может быть много текста, который будет переноситься на несколько строк.
+                        </div>
+
+                        <div class="promo-list-footer">
+                            <a th:href="@{/}" class="promo-list-btn">
+                                <i class="bi bi-arrow-right"></i>
+                                Заказать со скидкой
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Блок преимуществ акций -->
+    <section class="promo-benefits">
+        <div class="container">
+            <h2 class="benefits-title">Почему наши акции выгодны?</h2>
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <i class="bi bi-gift"></i>
+                    <h3>Подарки к заказу</h3>
+                    <p>При заказе от 1500 ₽ получайте приятные бонусы</p>
+                </div>
+                <div class="benefit-item">
+                    <i class="bi bi-percent"></i>
+                    <h3>Скидки до 30%</h3>
+                    <p>Регулярные скидки на популярные позиции</p>
+                </div>
+                <div class="benefit-item">
+                    <i class="bi bi-clock-history"></i>
+                    <h3>Действуют круглосуточно</h3>
+                    <p>Заказывайте в любое удобное время</p>
+                </div>
+                <div class="benefit-item">
+                    <i class="bi bi-truck"></i>
+                    <h3>Бесплатная доставка</h3>
+                    <p>При заказе от 1000 ₽ по акции</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Блок подписки на новости -->
+    <section class="promo-newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Не пропустите новые акции!</h2>
+                <p>Подпишитесь на рассылку и получайте уведомления о скидках первыми</p>
+                <form class="newsletter-form" th:action="@{/subscribe}" method="post">
+                    <div class="form-group">
+                        <input type="email"
+                               class="form-control"
+                               placeholder="Ваш email"
+                               required>
+                        <button type="submit" class="btn-subscribe">
+                            <i class="bi bi-bell"></i> Подписаться
+                        </button>
+                    </div>
+                    <small class="form-text">
+                        Нажимая "Подписаться", вы соглашаетесь с политикой конфиденциальности
+                    </small>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

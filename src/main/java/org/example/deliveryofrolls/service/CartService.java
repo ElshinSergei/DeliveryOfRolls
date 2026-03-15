@@ -3,6 +3,7 @@ package org.example.deliveryofrolls.service;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.deliveryofrolls.entity.Cart;
 import org.example.deliveryofrolls.entity.CartItem;
 import org.example.deliveryofrolls.entity.Dish;
@@ -11,14 +12,19 @@ import org.example.deliveryofrolls.repository.CartItemRepository;
 import org.example.deliveryofrolls.repository.CartRepository;
 import org.example.deliveryofrolls.repository.DishRepository;
 import org.example.deliveryofrolls.repository.UserRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@RequiredArgsConstructor  // Lombok генерирует конструктор
+@RequiredArgsConstructor
+@Slf4j
 public class CartService {
 
     private final CartRepository cartRepository;
@@ -28,18 +34,15 @@ public class CartService {
 
     // Получить или создать корзину для пользователя
     public Cart getOrCreateCart(HttpSession session, UserDetails userDetails) {
-
         if (userDetails != null) {
-            // Пользователь авторизован - работаем с БД
             return getOrCreateCartForUser(userDetails.getUsername());
         } else {
-            // Пользователь анонимный - работаем с сессией
             return getOrCreateCartForSession(session);
         }
     }
 
-    // Для авторизованных пользователей (БД)
-    private Cart getOrCreateCartForUser(String username) {
+    // Для авторизованных пользователей
+    public Cart getOrCreateCartForUser(String username) {
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
 
@@ -47,31 +50,25 @@ public class CartService {
                 .orElseGet(() -> {
                     Cart cart = new Cart();
                     cart.setUser(user);
-                    cart.setSessionId(null); // У авторизованных нет sessionId
+                    cart.setSessionId(null);
                     return cartRepository.save(cart);
                 });
     }
 
-    // Для анонимных пользователей (сессия)
-    private Cart getOrCreateCartForSession(HttpSession session) {
+    public Cart getOrCreateCartForSession(HttpSession session) {
         String sessionId = session.getId();
 
-        // Пытаемся найти корзину в БД по sessionId
         Optional<Cart> cartFromDb = cartRepository.findBySessionId(sessionId);
 
         if (cartFromDb.isPresent()) {
             return cartFromDb.get();
         }
-        // Если нет в БД, создаем новую
+
         Cart cart = new Cart();
         cart.setSessionId(sessionId);
-        cart.setUser(null); // Анонимный пользователь
-
+        cart.setUser(null);
         Cart savedCart = cartRepository.save(cart);
-
-        // Сохраняем также в сессии для быстрого доступа
         session.setAttribute("cart", savedCart);
-
         return savedCart;
     }
 
@@ -81,151 +78,262 @@ public class CartService {
         Dish dish = dishRepository.findById(dishId)
                 .orElseThrow(() -> new IllegalArgumentException("Блюдо не найдено"));
 
-        // Проверяем, есть ли уже это блюдо в корзине
         Optional<CartItem> existingItem = cart.getItems().stream()
                 .filter(item -> item.getDish().getId().equals(dishId))
                 .findFirst();
 
         if (existingItem.isPresent()) {
-            // Увеличиваем количество
             CartItem item = existingItem.get();
             item.setQuantity(item.getQuantity() + quantity);
         } else {
-            // Создаем новый элемент корзины
             CartItem cartItem = new CartItem();
             cartItem.setCart(cart);
             cartItem.setDish(dish);
             cartItem.setQuantity(quantity);
-            cartItem.setPriceAtTime(dish.getPrice()); // Сохраняем цену на момент добавления
-
+            cartItem.setPriceAtTime(dish.getPrice());
             cart.getItems().add(cartItem);
         }
 
         cartRepository.save(cart);
 
-        // Обновляем в сессии (если анонимный)
-        if (userDetails == null) {
-            session.setAttribute("cart", cart);
-        }
+        session.setAttribute("cart", cart);
     }
 
     // Объединение корзин при авторизации
+    @Transactional
     public void mergeCarts(HttpSession session, UserDetails userDetails) {
-        if (userDetails == null) {
-            return;
-        }
-        // 1. Получаем анонимную корзину из сессии
-        Cart anonymousCart = (Cart) session.getAttribute("cart");
+        if (userDetails == null) return;
 
-        if (anonymousCart == null || anonymousCart.getItems().isEmpty()) {
-            return; // Нет товаров в анонимной корзине
-        }
+        String sessionId = session.getId();
+        log.info("========== ДИАГНОСТИКА MERGE ==========");
+        log.info("1. Session ID: {}", sessionId);
 
-        // 2. Получаем корзину пользователя
-        User user = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+        // 1. Ищем в БД
+        Optional<Cart> sessionCartFromDb = cartRepository.findBySessionIdWithItems(sessionId);
+        Cart anonymousCart = null;
 
-        Cart userCart = cartRepository.findByUser(user)
-                .orElseGet(() -> {
-                    Cart newCart = new Cart();
-                    newCart.setUser(user);
-                    return cartRepository.save(newCart);
-                });
+        if (sessionCartFromDb.isPresent()) {
+            // Есть в БД - используем её
+            anonymousCart = sessionCartFromDb.get();
+            log.info("2. Корзина в БД: ID={}, товаров={}",
+                    anonymousCart.getId(), anonymousCart.getItems().size());
+        } else {
+            // Нет в БД - проверяем сессию
+            Cart sessionCart = (Cart) session.getAttribute("cart");
+            log.info("2. Корзина в БД не найдена, в сессии: {}",
+                    sessionCart != null ? "ID=" + sessionCart.getId() : "null");
 
-        // 3. Переносим товары из анонимной в пользовательскую корзину
-        for (CartItem anonymousItem : anonymousCart.getItems()) {
-            boolean exists = userCart.getItems().stream()
-                    .anyMatch(item -> item.getDish().getId().equals(anonymousItem.getDish().getId()));
+            if (sessionCart != null) {
+                // Сохраняем сессионную корзину в БД
+                log.info("3. Сохраняем сессионную корзину в БД");
+                anonymousCart = cartRepository.save(sessionCart);
 
-            if (exists) {
-                // Увеличиваем количество
-                userCart.getItems().stream()
-                        .filter(item -> item.getDish().getId().equals(anonymousItem.getDish().getId()))
-                        .findFirst()
-                        .ifPresent(item ->
-                                item.setQuantity(item.getQuantity() + anonymousItem.getQuantity())
-                        );
-            } else {
-                // Копируем элемент
-                CartItem newItem = new CartItem();
-                newItem.setCart(userCart);
-                newItem.setDish(anonymousItem.getDish());
-                newItem.setQuantity(anonymousItem.getQuantity());
-                newItem.setPriceAtTime(anonymousItem.getPriceAtTime());
-                newItem.setSpecialInstructions(anonymousItem.getSpecialInstructions());
-
-                userCart.getItems().add(newItem);
+                // Перезагружаем с товарами
+                anonymousCart = cartRepository.findBySessionIdWithItems(sessionId)
+                        .orElse(anonymousCart);
             }
         }
 
-        // 4. Сохраняем и очищаем сессию
+        if (anonymousCart == null) {
+            log.info("4. Анонимная корзина не найдена");
+            return;
+        }
+
+        int itemsCount = anonymousCart.getItems().size();
+        log.info("4. Анонимная корзина: ID={}, товаров={}",
+                anonymousCart.getId(), itemsCount);
+
+        if (itemsCount == 0) {
+            log.info("5. Корзина пуста, выход");
+            return;
+        }
+
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+        log.info("6. Пользователь: ID={}, email={}", user.getId(), user.getEmail());
+
+        // Получаем корзину пользователя
+        Cart userCart = getOrCreateCartForUser(userDetails.getUsername());
+        log.info("7. Корзина пользователя: ID={}, товаров ДО={}",
+                userCart.getId(), userCart.getItems().size());
+
+        // Переносим товары
+        int moved = 0;
+        for (CartItem anonymousItem : new ArrayList<>(anonymousCart.getItems())) {
+            log.info("   Переносим товар: dishId={}, quantity={}",
+                    anonymousItem.getDish().getId(), anonymousItem.getQuantity());
+
+            // Ищем такой же товар в корзине пользователя
+            Optional<CartItem> existingItem = userCart.getItems().stream()
+                    .filter(item -> item.getDish().getId().equals(anonymousItem.getDish().getId()))
+                    .findFirst();
+
+            if (existingItem.isPresent()) {
+                existingItem.get().setQuantity(
+                        existingItem.get().getQuantity() + anonymousItem.getQuantity()
+                );
+                log.info("   → Товар уже был, увеличили количество до {}",
+                        existingItem.get().getQuantity());
+
+                // Удаляем старый товар из анонимной корзины
+                cartItemRepository.delete(anonymousItem);
+            } else {
+                // Перепривязываем к корзине пользователя
+                anonymousItem.setCart(userCart);
+                userCart.getItems().add(anonymousItem);
+                log.info("   → Добавлен новый товар в корзину пользователя");
+            }
+            moved++;
+        }
+
+        // Сохраняем корзину пользователя
         cartRepository.save(userCart);
+        cartRepository.flush();
+        log.info("8. Корзина пользователя сохранена. Товаров ПОСЛЕ={}",
+                userCart.getItems().size());
+
+        // Удаляем анонимную корзину
+        if (anonymousCart.getId() != null && !anonymousCart.getId().equals(userCart.getId())) {
+            log.info("9. Удаляем анонимную корзину ID={}", anonymousCart.getId());
+            cartRepository.delete(anonymousCart);
+        }
+
+        // Обновляем сессию
         session.removeAttribute("cart");
+        session.setAttribute("cart", userCart);
+        log.info("10. Сессия обновлена, установлена корзина ID={}", userCart.getId());
 
-        // 5. Удаляем анонимную корзину из БД
-        cartRepository.delete(anonymousCart);
+        log.info("========== MERGE ЗАВЕРШЕН, перенесено товаров: {} ==========", moved);
     }
 
-    public void clearCart(Long cartId) {
-        Optional<Cart> cart = cartRepository.findById(cartId);
-        if(cart.isPresent()) {
-            cart.get().getItems().clear();
-            cartRepository.save(cart.get());
+    // Очистка корзины по ID
+    public void clearCart(Long cartId, HttpSession session) {
+        log.info("===== НАЧАЛО ОЧИСТКИ КОРЗИНЫ =====");
+        log.info("ID корзины для очистки: {}", cartId);
+
+        Optional<Cart> cartOpt = cartRepository.findById(cartId);
+        if (cartOpt.isPresent()) {
+            Cart cart = cartOpt.get();
+            log.info("Корзина найдена. Товаров ДО очистки: {}", cart.getItems().size());
+
+            int itemsCount = cart.getItems().size();
+
+            if (itemsCount > 0) {
+                List<Long> itemIds = cart.getItems().stream()
+                        .map(CartItem::getId)
+                        .collect(Collectors.toList());
+                log.info("ID товаров для удаления: {}", itemIds);
+
+                // Удаляем
+                cart.getItems().clear();
+                cartRepository.save(cart);
+                cartRepository.flush();
+
+                log.info("Удалено товаров: {}", itemsCount);
+            } else {
+                log.info("Корзина уже пуста");
+            }
+
+            // Проверяем после очистки
+            Cart afterClear = cartRepository.findById(cartId).orElse(null);
+            if (afterClear != null) {
+                log.info("Товаров ПОСЛЕ очистки: {}", afterClear.getItems().size());
+            }
+
+            session.removeAttribute("cart");
+
+            log.info("===== КОНЕЦ ОЧИСТКИ КОРЗИНЫ ===== удалено товаров: {}", itemsCount);
+        } else {
+            log.error("Корзина с ID {} не найдена!", cartId);
         }
-
     }
 
+    // Очистка корзины по sessionId
     public void clearCart(String sessionId) {
-        Optional<Cart> cart = cartRepository.findBySessionId(sessionId);
-        if(cart.isPresent()) {
-            cart.get().getItems().clear();
-            cartRepository.save(cart.get());
+        Optional<Cart> cartOpt = cartRepository.findBySessionId(sessionId);
+        if (cartOpt.isPresent()) {
+            Cart cart = cartOpt.get();
+
+            // Получаем список ID товаров ДО очистки
+            List<Long> itemIds = cart.getItems().stream()
+                    .map(CartItem::getId)
+                    .collect(Collectors.toList());
+            // Удаляем все товары по ID
+            if (!itemIds.isEmpty()) {
+                cartItemRepository.deleteAllById(itemIds);
+                log.info("Удалено товаров из БД: {}", itemIds.size());
+            }
+            // Очищаем список в корзине
+            cart.getItems().clear();
+            // Сохраняем корзину
+            cartRepository.save(cart);
+
+            log.info("Корзина {} полностью очищена. Удалено товаров: {}", sessionId, itemIds.size());
         }
     }
 
-    public void removeItemFromCart(Long itemId) {
+    public void removeItemFromCart(Long itemId, HttpSession session) {
         CartItem cartItem = cartItemRepository.findById(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("Элемент корзины не найден"));
 
-        // Получаем корзину и удаляем элемент из коллекции
         Cart cart = cartItem.getCart();
         cart.getItems().remove(cartItem);
-
-        // Сохраняем изменения в корзине
         cartRepository.save(cart);
+        session.setAttribute("cart", cart);
     }
 
     // Увеличить элемент корзины на 1
-    public void increaseQuantity(Long itemId, Integer increment) {
+    public void increaseQuantity(Long itemId, Integer increment, HttpSession session) {
         CartItem cartItem = cartItemRepository.findById(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("Товар не найден в корзине"));
 
         int newQuantity = cartItem.getQuantity() + increment;
 
-        // Проверка максимума
         if (newQuantity > 99) {
             throw new IllegalArgumentException("Максимальное количество - 99");
         }
 
         cartItem.setQuantity(newQuantity);
         cartItemRepository.save(cartItem);
+
+        Cart cart = cartItem.getCart();
+        session.setAttribute("cart", cartItem.getCart());
     }
 
     // Уменьшить элемент корзины на 1
-    public void decreaseQuantity(Long itemId, Integer decrement) {
+    public void decreaseQuantity(Long itemId, Integer decrement, HttpSession session) {
         CartItem cartItem = cartItemRepository.findById(itemId)
                 .orElseThrow(() -> new IllegalArgumentException("Товар не найден в корзине"));
 
         int newQuantity = cartItem.getQuantity() - decrement;
 
         if (newQuantity <= 0) {
-            // Удаляем товар из корзины если количество стало 0
-            removeItemFromCart(itemId);
+            removeItemFromCart(itemId, session);
         } else {
             cartItem.setQuantity(newQuantity);
             cartItemRepository.save(cartItem);
+            session.setAttribute("cart", cartItem.getCart());
         }
     }
 
+    // УМЕНЬШАЕМ КОЛ-ВО ПО dishId
+    public void decreaseFromCart(HttpSession session, UserDetails userDetails, Long dishId) {
+        Cart cart = getOrCreateCart(session, userDetails);
 
+        CartItem item = cart.getItems().stream()
+                .filter(i -> i.getDish().getId().equals(dishId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Товар не найден в корзине"));
+
+        if (item.getQuantity() <= 1) {
+            cart.getItems().remove(item);
+        } else {
+            item.setQuantity(item.getQuantity() - 1);
+            cartItemRepository.save(item);
+            session.setAttribute("cart", cart);
+        }
+        cartRepository.save(cart);
+        session.setAttribute("cart", cart);
+
+    }
 }

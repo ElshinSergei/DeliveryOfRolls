@@ -24,9 +24,6 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
             "WHERE o.id = :orderId")
     Optional<Order> findByIdWithItems(@Param("orderId") Long orderId);
 
-    // Найти все заказы пользователя по дате
-    List<Order> findByUserOrderByCreatedAtDesc(User user);
-
     // Найти кол-во заказов после указанной даты
     Long countByCreatedAtAfter(LocalDateTime date);
 
@@ -50,13 +47,6 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
             "LIMIT 5")
     List<Map<String, Object>> findTopPopularDishes();
 
-    // Заказы между датами
-    List<Order> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
-
-    // Заказы после даты
-    List<Order> findByCreatedAtGreaterThanEqual(LocalDateTime start);
-
-    // Заказы до даты
-    List<Order> findByCreatedAtLessThan(LocalDateTime end);
-
+    // Все заказы конкретного пользователя
+    List<Order> findByUserIdOrderByCreatedAtDesc(Long userId);
 }

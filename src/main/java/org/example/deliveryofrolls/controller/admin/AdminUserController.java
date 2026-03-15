@@ -1,16 +1,20 @@
 package org.example.deliveryofrolls.controller.admin;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.deliveryofrolls.entity.User;
 import org.example.deliveryofrolls.repository.UserRepository;
 import org.example.deliveryofrolls.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.List;
 
 @Controller
 @RequestMapping("/admin/users")
@@ -22,12 +26,39 @@ public class AdminUserController {
 
     // СПИСОК ПОЛЬЗОВАТЕЛЕЙ
     @GetMapping()
-    public String listUsers(Model model) {
+    public String listUsers(@PageableDefault(size = 20, sort = "registeredAt", direction = Sort.Direction.DESC)
+                            Pageable pageable,
+                            @RequestParam(required = false) String search,
+                            @RequestParam(required = false) String role,
+                            @RequestParam(required = false) Boolean enabled,
+                            HttpServletRequest request,
+                            Model model) {
 
-        List<User> users = userRepository.findAllByOrderByRegisteredAtDesc();
+        Page<User> users = userService.findUsersByFilters(search, role, enabled, pageable);
 
+        // Получаем параметры сортировки из Pageable
+        String currentSortField = "";
+        String currentSortDir = "desc";
+        String reverseSortDir = "asc";
+
+        if (pageable.getSort().isSorted()) {
+            Sort.Order order = pageable.getSort().iterator().next();
+            currentSortField = order.getProperty();
+            currentSortDir = order.getDirection().name().toLowerCase();
+            reverseSortDir = currentSortDir.equals("asc") ? "desc" : "asc";
+        } else {
+            currentSortField = "registeredAt";
+        }
+
+        model.addAttribute("currentSortField", currentSortField);
+        model.addAttribute("currentSortDir", currentSortDir);
+        model.addAttribute("reverseSortDir", reverseSortDir);
+        model.addAttribute("selectedRole", role);
+        model.addAttribute("selectedStatus", enabled);
+        model.addAttribute("searchQuery", search);
         model.addAttribute("pageTitle", "Управление пользователями");
         model.addAttribute("users", users);
+        model.addAttribute("baseUrl", "/admin/users");
 
         return "admin/users/list";
     }
@@ -89,28 +120,26 @@ public class AdminUserController {
         if (principal == null) {
             return "redirect:/login";
         }
-        // Получить пользователя по email из Principal
-        String email = principal.getName();
-        User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Пользователь не найден"));
-
-        if (currentUser.getId().equals(id)) {
-            redirectAttributes.addFlashAttribute("error",
-                    "❌ Нельзя заблокировать самого себя!");
-            return "redirect:/admin/users";
-        }
-
         try {
+            // Получаем текущего админа
+            String email = principal.getName();
+            User currentUser = userService.getCurrentUserByEmail(email);
+            // Выполняем блокировку/разблокировку
+            userService.toggleUserStatus(id, currentUser);
+            // Получаем обновленного пользователя для сообщения
             User user = userService.getUserById(id);
-            user.setEnabled(!user.isEnabled());
-            String status = user.isEnabled() ? "разблокирован" : "заблокирован";
+            String status = userService.getUserStatusMessage(user);
+
             redirectAttributes.addFlashAttribute("success",
                     "✅ Пользователь " + user.getEmail() + " " + status);
-            userRepository.save(user);
+
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", "❌ " + e.getMessage());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error",
                     "❌ Ошибка: " + e.getMessage());
         }
+
         return "redirect:/admin/users";
-        }
+    }
 }

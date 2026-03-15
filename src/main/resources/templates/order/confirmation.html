@@ -7,186 +7,101 @@
 </head>
 <body>
 <main>
-    <div class="container py-5">
-        <!-- Успешная анимация и заголовок -->
-        <div class="text-center mb-5">
-            <div class="success-animation">
-                <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
-            </div>
-            <h1 class="display-4 mt-4">Спасибо за заказ!</h1>
-            <p class="lead text-muted">Ваш заказ успешно оформлен и передан в обработку</p>
+    <div class="success-wrapper">
+
+        <!-- Иконка успеха -->
+        <div class="success-icon">
+            <i class="bi bi-check-lg"></i>
         </div>
 
+        <h1>Спасибо за заказ!</h1>
+        <p class="subtitle">Ваш заказ успешно оформлен</p>
+
         <!-- Информация о заказе -->
-        <div class="row justify-content-center" th:if="${order}">
-            <div class="col-md-8">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-success text-white">
-                        <h4 class="mb-0">
-                            <i class="bi bi-receipt"></i>
-                            Заказ #[[${order.id}]]
-                        </h4>
+        <div class="order-card" th:if="${order}">
+            <div class="card-header">
+                <i class="bi bi-receipt"></i> Заказ #[[${order.id}]]
+            </div>
+
+            <div class="card-body">
+                <!-- Статус -->
+                <div class="status">
+                    <i class="bi bi-clock-history"></i>
+                    <span th:text="${order.status == 'PENDING' ? 'Ожидает подтверждения' : 'Подтвержден'}"></span>
+                </div>
+
+                <!-- Контактные данные -->
+                <div class="info-grid">
+                    <div class="info-item">
+                        <small>Имя</small>
+                        <span th:text="${order.customerName}">Иван</span>
                     </div>
-
-                    <div class="card-body">
-                        <!-- Статус заказа -->
-                        <div class="row mb-4">
-                            <div class="col">
-                                <span class="badge bg-warning text-dark p-3 w-100"
-                                      th:if="${order.status == 'PENDING'}">
-                                    <i class="bi bi-clock-history"></i>
-                                    Статус: Ожидает подтверждения
-                                </span>
-                                <span class="badge bg-success p-3 w-100"
-                                      th:if="${order.status == 'CONFIRMED'}">
-                                    <i class="bi bi-check-circle"></i>
-                                    Статус: Подтвержден
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Контактная информация -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <h5><i class="bi bi-person"></i> Контактные данные</h5>
-                                <hr class="mt-1">
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-1"><strong>Имя:</strong>
-                                    <span th:text="${order.customerName}">Иван Иванов</span>
-                                </p>
-                                <p class="mb-1"><strong>Телефон:</strong>
-                                    <span th:text="${order.customerPhone}">+7 (999) 123-45-67</span>
-                                </p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-1"><strong>Способ получения:</strong>
-                                    <span th:text="${order.deliveryType == 'DELIVERY' ? 'Доставка' : 'Самовывоз'}"></span>
-                                </p>
-                                <p th:if="${order.deliveryAddress}" class="mb-1">
-                                    <strong>Адрес:</strong>
-                                    <span th:text="${order.deliveryAddress}">ул. Пушкина, д. 10, кв. 5</span>
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Время доставки -->
-                        <div class="row mb-4" th:if="${order.deliveryTime}">
-                            <div class="col-12">
-                                <h5><i class="bi bi-clock"></i> Время доставки</h5>
-                                <hr class="mt-1">
-                                <p th:text="${#temporals.format(order.deliveryTime, 'dd MMMM yyyy, HH:mm')}">
-                                    12 февраля 2026, 18:30
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Состав заказа -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <h5><i class="bi bi-basket"></i> Состав заказа</h5>
-                                <hr class="mt-1">
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead class="table-light">
-                                        <tr>
-                                            <th>Название</th>
-                                            <th class="text-center">Кол-во</th>
-                                            <th class="text-end">Цена</th>
-                                            <th class="text-end">Сумма</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr th:each="item : ${order.items}">
-                                            <td>
-                                                <span th:text="${item.dishName}">Филадельфия</span>
-                                                <small th:if="${item.specialInstructions}"
-                                                       class="d-block text-muted"
-                                                       th:text="${'📝 ' + item.specialInstructions}">
-                                                    Без соуса
-                                                </small>
-                                            </td>
-                                            <td class="text-center" th:text="${item.quantity}">2</td>
-                                            <td class="text-end"
-                                                th:text="${#numbers.formatDecimal(item.priceAtOrder, 0, 0)} + ' ₽'">
-                                                350 ₽
-                                            </td>
-                                            <td class="text-end fw-bold"
-                                                th:text="${#numbers.formatDecimal(item.totalPrice, 0, 0)} + ' ₽'">
-                                                700 ₽
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                        <tfoot class="table-light">
-                                        <tr>
-                                            <td colspan="3" class="text-end fw-bold">Итого:</td>
-                                            <td class="text-end fw-bold text-success fs-5"
-                                                th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">
-                                                700 ₽
-                                            </td>
-                                        </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Способ оплаты -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <h5><i class="bi bi-credit-card"></i> Способ оплаты</h5>
-                                <hr class="mt-1">
-                                <p>
-                                    <span th:if="${order.paymentMethod == 'CASH'}">
-                                        <i class="bi bi-cash"></i> Наличными курьеру
-                                    </span>
-                                    <span th:if="${order.paymentMethod == 'CARD_ON_DELIVERY'}">
-                                        <i class="bi bi-credit-card"></i> Картой при получении
-                                    </span>
-                                    <span th:if="${order.paymentMethod == 'CARD_ONLINE'}">
-                                        <i class="bi bi-wifi"></i> Картой онлайн
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Комментарий к заказу -->
-                        <div class="row mb-4" th:if="${order.notes}">
-                            <div class="col-12">
-                                <h5><i class="bi bi-chat"></i> Комментарий</h5>
-                                <hr class="mt-1">
-                                <p class="fst-italic text-muted"
-                                   th:text="${order.notes}">
-                                    Позвонить за 10 минут, домофон 123
-                                </p>
-                            </div>
-                        </div>
+                    <div class="info-item">
+                        <small>Телефон</small>
+                        <span th:text="${order.customerPhone}">+7 (999) 123-45-67</span>
                     </div>
-
-                    <div class="card-footer bg-white">
-                        <div class="row">
-                            <div class="col-12 text-center">
-                                <p class="text-muted mb-3">
-                                    Мы свяжемся с вами для подтверждения заказа в ближайшее время.
-                                </p>
-                                <div class="d-flex justify-content-center gap-3">
-                                    <a th:href="@{/menu}" class="btn btn-outline-primary btn-lg">
-                                        <i class="bi bi-menu-button-wide"></i> Вернуться в меню
-                                    </a>
-                                    <a th:href="@{/order/history}"
-                                       class="btn btn-outline-secondary btn-lg"
-                                       th:if="${order.user != null}">
-                                        <i class="bi bi-clock-history"></i> История заказов
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="info-item">
+                        <small>Тип</small>
+                        <span th:text="${order.deliveryType == 'DELIVERY' ? 'Доставка' : 'Самовывоз'}">Доставка</span>
                     </div>
+                    <div class="info-item" th:if="${order.deliveryAddress}">
+                        <small>Адрес</small>
+                        <span th:text="${order.deliveryAddress}">ул. Пушкина</span>
+                    </div>
+                </div>
+
+                <!-- Состав заказа -->
+                <table class="items-table">
+                    <thead>
+                    <tr>
+                        <th>Товар</th>
+                        <th>Кол-во</th>
+                        <th>Сумма</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${order.items}">
+                        <td th:text="${item.dishName}">Филадельфия</td>
+                        <td th:text="${item.quantity}">2</td>
+                        <td th:text="${#numbers.formatDecimal(item.totalPrice, 0, 0)} + ' ₽'">700 ₽</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- Итого -->
+                <div class="total-row">
+                    <span>Итого:</span>
+                    <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">1 250 ₽</span>
+                </div>
+
+                <!-- Способ оплаты -->
+                <div class="info-item" style="margin: 10px 0;">
+                    <small>Оплата</small>
+                    <span th:text="${order.paymentMethod == 'CASH' ? 'Наличными' :
+                                    order.paymentMethod == 'CARD_ON_DELIVERY' ? 'Картой при получении' :
+                                    'Картой онлайн'}">
+                        Наличными
+                    </span>
+                </div>
+
+                <!-- Комментарий (если есть) -->
+                <div class="info-item" th:if="${order.notes}" style="margin-top: 10px;">
+                    <small>Комментарий</small>
+                    <span th:text="${order.notes}">Позвонить за 10 минут</span>
+                </div>
+
+                <!-- Кнопки -->
+                <div class="btn-group">
+                    <a th:href="@{/}" class="btn btn-primary">
+                        <i class="bi bi-arrow-left"></i> В меню
+                    </a>
+                    <a th:href="@{/profile/orders}" class="btn btn-secondary" th:if="${order.user != null}">
+                        <i class="bi bi-clock-history"></i> История
+                    </a>
                 </div>
             </div>
         </div>
     </div>
-
 </main>
 </body>
 </html>

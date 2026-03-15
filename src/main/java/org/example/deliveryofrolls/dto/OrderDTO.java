@@ -23,6 +23,7 @@ public class OrderDTO {
     private String customerPhone;
 
     @Size(min = 5, max = 200, message = "Адрес должен быть от 5 до 200 символов")
+    @NotBlank(message = "Адрес обязателен")
     private String deliveryAddress;
 
     private LocalDateTime deliveryTime;

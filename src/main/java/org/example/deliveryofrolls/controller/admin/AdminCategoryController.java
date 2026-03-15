@@ -2,10 +2,10 @@ package org.example.deliveryofrolls.controller.admin;
 
 import lombok.RequiredArgsConstructor;
 import org.example.deliveryofrolls.entity.Category;
-import org.example.deliveryofrolls.entity.Dish;
 import org.example.deliveryofrolls.repository.CategoryRepository;
 import org.example.deliveryofrolls.service.CategoryService;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -18,7 +18,6 @@ import java.util.List;
 public class AdminCategoryController {
 
     private final CategoryService categoryService;
-    private final CategoryRepository categoryRepository;
 
     // СПИСОК КАТЕГОРИЙ
     @GetMapping
@@ -53,7 +52,7 @@ public class AdminCategoryController {
     public String saveCategory(@ModelAttribute Category category,
                               Model model,
                               RedirectAttributes redirectAttributes) {
-        categoryRepository.save(category);
+        categoryService.saveCategory(category);
         redirectAttributes.addFlashAttribute("success",
                 "✅ Категория \"" + category.getName() + "\" успешно сохранена");
 
@@ -64,18 +63,29 @@ public class AdminCategoryController {
     @PostMapping("/{id}/delete")
     public String deleteCategory(@PathVariable Long id,
                              RedirectAttributes redirectAttributes) {
-        Category category = categoryService.getCategoryById(id);
 
-        // Проверяем, есть ли блюда в этой категории
+        Category category = categoryService.getCategoryById(id);
         if (!category.getDishes().isEmpty()) {
             redirectAttributes.addFlashAttribute("error",
                     "❌ Нельзя удалить категорию, в ней есть блюда");
             return "redirect:/admin/categories";
         }
-        categoryRepository.delete(category);
+        categoryService.deleteCategory(id);
         redirectAttributes.addFlashAttribute("success",
                 "✅ Категория \"" + category.getName() + "\" удалена");
 
+        return "redirect:/admin/categories";
+    }
+
+    // ПЕРЕКЛЮЧЕНИЕ ДОСТУПНОСТИ
+    @PostMapping("/{id}/toggle")
+    public String toggleCategory(@PathVariable Long id,
+                                 RedirectAttributes redirectAttributes) {
+        Category category = categoryService.getCategoryById(id);
+        categoryService.toggleAvailability(id);
+        String status = category.isAvailable() ? "доступна" : "скрыта";
+        redirectAttributes.addFlashAttribute("success",
+                "✅ Категория \"" + category.getName() + "\" теперь " + status);
         return "redirect:/admin/categories";
     }
 }

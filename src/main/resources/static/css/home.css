@@ -1,344 +1,1079 @@
-:root {
-    --sushi-primary: #ff6b6b;
-    --sushi-primary-dark: #ff5252;
-    --sushi-secondary: #4ecdc4;
-    --sushi-dark: #292f36;
-    --sushi-light: #f7fff7;
-    --sushi-gray: #6c757d;
-    --sushi-light-gray: #f8f9fa;
-    --sushi-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --sushi-border-radius: 12px;
+/* Навигация по категориям (стики) */
+.categories-sticky-nav {
+    position: sticky;
+    top: 65px;
+    background: transparent;
+    z-index: 1020;
+    padding: 2px 0;
 }
 
-body.sushi-page {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-    color: var(--sushi-dark) !important;
-    background-color: var(--sushi-light) !important;
-    line-height: 1.6 !important;
+body {
+    padding-top: 65px !important;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe9e9 100%);
 }
 
-/* Секция с горизонтальным скроллом - увеличиваем специфичность */
-.sushi-section.scroll-section {
-    margin: 2rem 0 3rem !important;
+html {
+    scroll-behavior: smooth;
 }
 
-.sushi-scroll-container {
-    position: relative !important;
-    padding: 0 40px !important;
+.categories-wrapper {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 5px 0;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
 }
 
-/* Кнопки скролла - !important для перекрытия Bootstrap */
-.sushi-scroll-btn {
-    position: absolute !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    width: 40px !important;
-    height: 40px !important;
-    background: white !important;
-    border: none !important;
-    border-radius: 50% !important;
-    box-shadow: var(--sushi-shadow) !important;
-    font-size: 1.5rem !important;
-    color: var(--sushi-primary) !important;
-    cursor: pointer !important;
-    z-index: 10 !important;
-    transition: all 0.3s ease !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important; /* Сбрасываем Bootstrap padding */
+.categories-wrapper::-webkit-scrollbar {
+    height: 4px;
 }
 
-.sushi-scroll-btn:hover {
-    background-color: var(--sushi-primary) !important;
-    color: white !important;
-    transform: translateY(-50%) scale(1.1) !important;
+.categories-wrapper::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 4px;
 }
 
-.sushi-scroll-btn.prev {
-    left: 0 !important;
+.category-link {
+    padding: 8px 24px;
+    border-radius: 30px;
+    background: #f8f9fa;
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 15px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
 }
 
-.sushi-scroll-btn.next {
-    right: 0 !important;
+.category-link:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
 }
 
-/* Контейнер карточек */
-.sushi-cards {
-    display: flex !important;
-    gap: 20px !important;
-    overflow-x: auto !important;
-    padding: 10px 0 20px !important;
-    scroll-behavior: smooth !important;
-    scrollbar-width: thin !important;
-    scrollbar-color: var(--sushi-primary) #f1f1f1 !important;
+.category-link.active {
+    background: #e74c3c;
+    color: white;
+    box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
 }
 
-/* Стилизация полосы прокрутки */
-.sushi-cards::-webkit-scrollbar {
-    height: 6px !important;
+/* Блоки категорий */
+.category-block {
+    scroll-margin-top: 140px;
+    padding: 40px 0;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-.sushi-cards::-webkit-scrollbar-track {
-    background: #f1f1f1 !important;
-    border-radius: 10px !important;
+.category-block:last-child {
+    border-bottom: none;
 }
 
-.sushi-cards::-webkit-scrollbar-thumb {
-    background: var(--sushi-primary) !important;
-    border-radius: 10px !important;
+.category-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #2c3e50;
+    position: relative;
+    padding-bottom: 10px;
 }
 
-/* Карточки акций */
-.sushi-promo-card {
-    flex: 0 0 auto !important;
-    width: 280px !important;
-    background: white !important;
-    border-radius: var(--sushi-border-radius) !important;
-    overflow: hidden !important;
-    box-shadow: var(--sushi-shadow) !important;
-    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-    border: none !important; /* Сбрасываем Bootstrap border */
+.category-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: #e74c3c;
+    border-radius: 3px;
 }
 
-.sushi-promo-card:hover {
-    transform: translateY(-5px) !important;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+/* Сетка блюд */
+.dishes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
 }
 
-.sushi-card-img {
-    height: 160px !important;
-    background: linear-gradient(135deg, var(--sushi-primary), var(--sushi-secondary)) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: white !important;
-    font-weight: bold !important;
-    font-size: 1.2rem !important;
-    padding: 20px !important;
-    text-align: center !important;
+/* Карточка блюда */
+.dish-card {
+    height: 100%;
+    display: flex;
+    cursor: pointer;
 }
 
-.sushi-card-content {
-    padding: 20px !important;
+.dish-card-inner {
+    height: 100%;
+    width: 100%;
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
 }
 
-.sushi-card-content h3 {
-    margin: 0 0 10px 0 !important;
-    color: var(--sushi-dark) !important;
-    font-size: 1.2rem !important;
-    font-weight: 600 !important;
+.dish-card-inner:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 25px rgba(231, 76, 60, 0.15);
 }
 
-.sushi-card-content p {
-    margin: 0 0 15px 0 !important;
-    color: var(--sushi-gray) !important;
-    font-size: 0.95rem !important;
-    line-height: 1.5 !important;
+.dish-img {
+    height: 240px;
+    width: 100%;
+    object-fit: cover;
+    border-bottom: 1px solid #f0f0f0;
+    transition: transform 0.3s ease;
+}
+.dish-card-inner:hover .dish-img {
+    transform: scale(1.03);
 }
 
-.sushi-card-btn {
-    display: inline-block !important;
-    background: var(--sushi-primary) !important;
-    color: white !important;
-    padding: 8px 20px !important;
-    border-radius: 25px !important;
-    text-decoration: none !important;
-    font-size: 0.9rem !important;
-    font-weight: 600 !important;
-    transition: background-color 0.3s ease !important;
-    border: none !important; /* Сбрасываем Bootstrap border */
+.card-body {
+    padding: 16px 16px 18px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
-.sushi-card-btn:hover {
-    background-color: var(--sushi-primary-dark) !important;
-    color: white !important;
-    text-decoration: none !important;
+.card-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #2c3e50;
+    transition: color 0.2s ease;
 }
 
-/* Заголовок страницы */
-.sushi-page h1 {
-    color: var(--sushi-dark) !important;
-    text-align: center !important;
-    margin-bottom: 2rem !important;
-    font-weight: 700 !important;
-    position: relative !important;
-    padding-bottom: 15px !important;
+.dish-card-inner:hover .card-title {
+    color: #e74c3c;
 }
 
-.sushi-page h1:after {
-    content: '' !important;
-    position: absolute !important;
-    bottom: 0 !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 100px !important;
-    height: 4px !important;
-    background: linear-gradient(to right, var(--sushi-primary), var(--sushi-secondary)) !important;
-    border-radius: 2px !important;
+/* Категория под названием */
+.small.text-muted {
+    font-size: 13px;
+    color: #7f8c8d !important;
+    margin-bottom: 10px;
+    flex-shrink: 0;
 }
 
-/* Категории - переопределяем Bootstrap карточки */
-.sushi-page .category-card {
-    border: none !important;
-    border-radius: var(--sushi-border-radius) !important;
-    box-shadow: var(--sushi-shadow) !important;
-    transition: transform 0.3s ease !important;
-    height: 100% !important;
+.small.text-muted i {
+    margin-right: 4px;
+    color: #e74c3c;
 }
 
-.sushi-page .category-card:hover {
-    transform: translateY(-5px) !important;
+/* Описание */
+.card-text {
+    font-size: 13px;
+    color: #7f8c8d;
+    line-height: 1.5;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 40px;
 }
 
-.sushi-page .category-card .card-body {
-    padding: 1.5rem !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
+/* Ингредиенты */
+.ingredients {
+    background: #f8f9fa;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #7f8c8d;
+    margin-bottom: 15px;
+    border-left: 3px solid #e74c3c;
+    flex-shrink: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.sushi-page .category-card .card-title {
-    color: var(--sushi-dark) !important;
-    font-weight: 600 !important;
-    margin-bottom: 1rem !important;
-    font-size: 1.1rem !important;
+.ingredients i {
+    color: #e74c3c;
+    margin-right: 6px;
 }
 
-/* Популярные блюда */
-.sushi-page .dish-card {
-    border: none !important;
-    border-radius: var(--sushi-border-radius) !important;
-    box-shadow: var(--sushi-shadow) !important;
-    transition: transform 0.3s ease !important;
-    height: 100% !important;
+/* Характеристики */
+.d-flex.justify-content-between.mb-3 {
+    font-size: 13px;
+    color: #7f8c8d;
+    padding: 10px 0;
+    border-top: 1px dashed #ecf0f1;
+    border-bottom: 1px dashed #ecf0f1;
+    margin: 0 0 15px 0;
+    flex-shrink: 0;
 }
 
-.sushi-page .dish-card:hover {
-    transform: translateY(-5px) !important;
+.d-flex.justify-content-between.mb-3 i {
+    color: #e74c3c;
+    margin-right: 4px;
 }
 
-.sushi-page .dish-card .card-body {
-    padding: 1.5rem !important;
+/* Нижняя часть с ценой и кнопкой */
+.d-flex.justify-content-between.align-items-center {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 10px;
+    flex-shrink: 0;
 }
 
-.sushi-page .dish-card .card-title {
-    color: var(--sushi-dark) !important;
-    font-weight: 600 !important;
-    margin-bottom: 0.5rem !important;
+/* Цена */
+.dish-price {
+    font-size: 22px;
+    font-weight: 800;
+    color: #e74c3c;
+    line-height: 1;
 }
 
-.sushi-page .dish-card .card-text {
-    color: var(--sushi-primary) !important;
-    font-weight: 700 !important;
-    font-size: 1.2rem !important;
-    margin-bottom: 1rem !important;
+/* Кнопка в корзину */
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 8px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
-/* Кнопки - переопределяем Bootstrap */
-.sushi-page .btn-primary {
-    background-color: var(--sushi-primary) !important;
-    border-color: var(--sushi-primary) !important;
-    color: white !important;
+.btn-sm:hover {
+    background: #c0392b;
+    transform: scale(1.05);
 }
 
-.sushi-page .btn-primary:hover {
-    background-color: var(--sushi-primary-dark) !important;
-    border-color: var(--sushi-primary-dark) !important;
+.btn-sm i {
+    font-size: 16px;
 }
 
-.sushi-page .btn-outline-primary {
-    color: var(--sushi-primary) !important;
-    border-color: var(--sushi-primary) !important;
-}
+/* Для очень маленьких экранов */
+@media (max-width: 480px) {
+    .card-text {
+        -webkit-line-clamp: 2;
+        min-height: 39px;
+    }
 
-.sushi-page .btn-outline-primary:hover {
-    background-color: var(--sushi-primary) !important;
-    border-color: var(--sushi-primary) !important;
-    color: white !important;
-}
+    .dish-price {
+        font-size: 18px;
+    }
 
-.sushi-page .btn-success {
-    background-color: var(--sushi-secondary) !important;
-    border-color: var(--sushi-secondary) !important;
-    color: white !important;
-}
-
-.sushi-page .btn-success:hover {
-    background-color: #3db8af !important;
-    border-color: #3db8af !important;
-    color: white !important;
+    .btn-sm {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
 }
 
 /* Преимущества */
-.sushi-page .advantages-section {
-    padding: 3rem 0 !important;
-    background-color: white !important;
-    border-radius: var(--sushi-border-radius) !important;
-    box-shadow: var(--sushi-shadow) !important;
-    margin-top: 3rem !important;
+.features-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    padding: 60px 0;
+    margin-top: 40px;
+    border-top: 1px solid #f0f0f0;
 }
 
-.sushi-page .advantages-section h2 {
-    color: var(--sushi-dark) !important;
-    margin-bottom: 2rem !important;
-    font-weight: 700 !important;
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    text-align: center;
 }
 
-.sushi-page .advantage-item {
-    padding: 1.5rem !important;
-    height: 100% !important;
-    transition: transform 0.3s ease !important;
+.feature {
+    padding: 20px;
+    transition: all 0.3s ease;
 }
 
-.sushi-page .advantage-item:hover {
-    transform: translateY(-10px) !important;
+.feature:hover {
+    transform: translateY(-5px);
 }
 
-.sushi-page .advantage-item i {
-    color: var(--sushi-primary) !important;
-    margin-bottom: 1rem !important;
+.feature i {
+    font-size: 48px;
+    color: #e74c3c;
+    margin-bottom: 15px;
 }
 
-.sushi-page .advantage-item h5 {
-    color: var(--sushi-dark) !important;
-    margin-bottom: 0.5rem !important;
-    font-weight: 600 !important;
+.feature h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
 }
 
-.sushi-page .advantage-item p.text-muted {
-    color: var(--sushi-gray) !important;
-    font-size: 0.95rem !important;
-    line-height: 1.5 !important;
+.feature p {
+    font-size: 14px;
+    color: #7f8c8d;
+    line-height: 1.4;
+}
+
+/* Пустое состояние */
+.text-center.py-5 {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.text-center.py-5 i {
+    font-size: 64px;
+    color: #bdc3c7;
+    margin-bottom: 20px;
+}
+
+.text-center.py-5 h3 {
+    font-size: 24px;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.text-center.py-5 p {
+    font-size: 16px;
+    color: #7f8c8d;
 }
 
 /* Адаптивность */
-@media (max-width: 992px) {
-    .sushi-scroll-container {
-        padding: 0 30px !important;
-    }
-
-    .sushi-promo-card {
-        width: 260px !important;
+@media (max-width: 1024px) {
+    .dishes-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
 @media (max-width: 768px) {
-    .sushi-scroll-container {
-        padding: 0 20px !important;
+    .category-block {
+        scroll-margin-top: 120px;
+    }
+    .categories-sticky-nav {
+        padding: 10px 0;
     }
 
-    .sushi-scroll-btn {
-        width: 36px !important;
-        height: 36px !important;
-        font-size: 1.2rem !important;
+    .category-link {
+        padding: 6px 18px;
+        font-size: 13px;
     }
 
-    .sushi-promo-card {
-        width: 240px !important;
+    .category-title {
+        font-size: 24px;
     }
 
-    .sushi-page h1 {
-        font-size: 1.8rem !important;
+    .dishes-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
     }
+
+    .dish-img {
+        height: 160px;
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .feature i {
+        font-size: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dishes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .category-title {
+        font-size: 22px;
+    }
+
+    .dish-price {
+        font-size: 20px;
+    }
+
+    .btn-sm {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.category-block {
+    animation: fadeIn 0.5s ease-out;
+    scroll-margin-top: 100px;
+}
+
+/* Счетчик блюд в категории (опционально) */
+.category-title span {
+    font-size: 14px;
+    font-weight: 400;
+    color: #95a5a6;
+    margin-left: 8px;
+}
+
+/* Стили для временного выделения (для отладки) */
+.debug-info {
+    background: #f1c40f;
+    color: #2c3e50;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
+    font-size: 14px;
+    display: none;
+}
+
+/* ========== БЛОК АКЦИЙ С ФИКСИРОВАННЫМИ РАЗМЕРАМИ ========== */
+.promo-slider-section {
+    padding: 40px 0;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.view-all-link {
+    color: #e74c3c;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.view-all-link:hover {
+    gap: 10px;
+    color: #c0392b;
+}
+
+/* Контейнер слайдера */
+.promo-slider-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 0 -10px;
+}
+
+/* Кнопки навигации */
+.slider-nav {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.slider-nav:hover {
+    background: #e74c3c;
+    border-color: #e74c3c;
+    color: white;
+    transform: scale(1.1);
+}
+
+.slider-nav.prev {
+    left: -20px;
+}
+
+.slider-nav.next {
+    right: -20px;
+}
+
+/* Трек с карточками */
+.promo-slider-track {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 20px 10px;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+.promo-slider-track::-webkit-scrollbar {
+    height: 6px;
+}
+
+.promo-slider-track::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+
+.promo-slider-track::-webkit-scrollbar-thumb {
+    background: #e74c3c;
+    border-radius: 10px;
+}
+
+/* Карточка акции - фиксированные размеры */
+.promo-slide {
+    flex: 0 0 250px;
+    transition: transform 0.3s ease;
+}
+
+.promo-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.promo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(231, 76, 60, 0.15);
+}
+
+.promo-image-wrapper {
+    height: 180px;
+    width: 100%;
+    overflow: hidden;
+    background: #f8f9fa;
+}
+
+.promo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.promo-card:hover .promo-image {
+    transform: scale(1.05);
+}
+
+.promo-card-content {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+}
+
+.promo-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+    text-align: center;
+    line-height: 1.3;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .promo-slide {
+        flex: 0 0 260px;
+    }
+
+    .promo-card {
+        height: 220px;
+    }
+
+    .promo-image-wrapper {
+        height: 150px;
+    }
+
+    .slider-nav {
+        display: none;
+    }
+
+    .section-title {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .promo-slide {
+        flex: 0 0 220px;
+    }
+
+    .promo-card {
+        height: 200px;
+    }
+
+    .promo-image-wrapper {
+        height: 130px;
+    }
+
+    .promo-card-title {
+        font-size: 14px;
+    }
+}
+
+/* ========== СЧЕТЧИК ТОВАРОВ ========== */
+.quantity-simple {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8f9fa;
+    padding: 4px 4px 4px 12px;
+    border-radius: 30px;
+    border: 1px solid #e74c3c;
+}
+
+.quantity-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+.quantity-badge i {
+    font-size: 16px;
+}
+
+.quantity-value {
+    font-size: 16px;
+    font-weight: 700;
+    min-width: 20px;
+    text-align: center;
+}
+
+.add-more-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-more-btn:hover {
+    background: #c0392b;
+    transform: scale(1.1);
+}
+
+.add-more-btn i {
+    font-size: 18px;
+}
+
+/* ========== МОДАЛЬНОЕ ОКНО (custom) ========== */
+
+/* Контейнер модалки */
+#myCustomModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999999;
+}
+
+/* Затемнение */
+#modalOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+/* Контент модалки */
+#myCustomModal .modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    margin: 100px auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    z-index: 1000000;
+    animation: modalSlideDown 0.3s ease;
+}
+
+/* Анимация появления */
+@keyframes modalSlideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Заголовок */
+#myCustomModal .modal-header {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 20px 25px;
+    border-radius: 20px 20px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#myCustomModal .modal-header h5 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+#myCustomModal .modal-header button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+#myCustomModal .modal-header button:hover {
+    opacity: 1;
+}
+
+/* Тело модалки */
+#myCustomModal .modal-body {
+    padding: 25px;
+}
+
+#myCustomModal .modal-body .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+#myCustomModal .modal-body .col {
+    flex: 1;
+    min-width: 250px;
+}
+
+/* Изображение */
+#customModalImage {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Название блюда */
+#customModalName {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+/* Категория */
+#customModalCategory {
+    color: #7f8c8d;
+    margin-left: 5px;
+}
+
+/* Цена */
+#customModalPrice {
+    font-size: 24px;
+    font-weight: 700;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border-radius: 50px;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+/* Заголовки секций */
+#myCustomModal h6 {
+    font-weight: 700;
+    margin: 15px 0 5px 0;
+    color: #2c3e50;
+}
+
+/* Текст описания и состава */
+#customModalDescription,
+#customModalIngredients {
+    color: #7f8c8d;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+/* Блок с весом и калориями */
+#myCustomModal .meta-row {
+    display: flex;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+#myCustomModal .meta-row small {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #7f8c8d;
+}
+
+#myCustomModal .meta-row i {
+    color: #e74c3c;
+}
+
+/* Подвал модалки */
+#myCustomModal .modal-footer {
+    padding: 20px 25px;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Кнопки */
+#myCustomModal .btn {
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+#myCustomModal .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+#myCustomModal .btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+#myCustomModal .btn-success {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#myCustomModal .btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    #myCustomModal .modal-body .row {
+        flex-direction: column;
+    }
+
+    #myCustomModal .modal-content {
+        margin: 20px auto;
+        width: 95%;
+    }
+
+    #myCustomModal .modal-footer {
+        flex-direction: column;
+    }
+
+    #myCustomModal .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    #customModalName {
+        font-size: 20px;
+    }
+
+    #customModalPrice {
+        font-size: 20px;
+        padding: 8px 16px;
+    }
+
+    #myCustomModal .modal-header {
+        padding: 15px 20px;
+    }
+
+    #myCustomModal .modal-body {
+        padding: 20px;
+    }
+
+    #myCustomModal .modal-footer {
+        padding: 15px 20px;
+    }
+}
+
+/* ========== СЧЕТЧИК ТОВАРОВ ========== */
+.quantity-simple {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8f9fa;
+    padding: 4px;
+    border-radius: 30px;
+    border: 1px solid #e74c3c;
+}
+
+.quantity-minus, .quantity-plus {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quantity-minus {
+    background: #f8f9fa;
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+}
+
+.quantity-minus:hover {
+    background: #e74c3c;
+    color: white;
+    transform: scale(1.1);
+}
+
+.quantity-plus {
+    background: #e74c3c;
+    color: white;
+    border: none;
+}
+
+.quantity-plus:hover {
+    background: #c0392b;
+    transform: scale(1.1);
+}
+
+.quantity-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #e74c3c;
+    font-weight: 600;
+    padding: 0 5px;
+}
+
+.quantity-badge i {
+    font-size: 16px;
+}
+
+.quantity-value {
+    font-size: 16px;
+    font-weight: 700;
+    min-width: 25px;
+    text-align: center;
+}
+
+/* ========== ПАДАЮЩИЕ РОЛЛЫ ========== */
+.falling-sushi {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.sushi-item {
+    position: absolute;
+    top: -10%;
+    font-size: 24px;
+    color: #e74c3c;
+    opacity: 0.12;
+    animation: fall linear infinite;
+    white-space: nowrap;
+    will-change: transform;
+}
+
+/* Разные позиции для каждого ролла */
+.sushi-item:nth-child(1) { left: 5%; animation-duration: 12s; animation-delay: 0s; font-size: 28px; }
+.sushi-item:nth-child(2) { left: 15%; animation-duration: 15s; animation-delay: 2s; font-size: 22px; }
+.sushi-item:nth-child(3) { left: 25%; animation-duration: 10s; animation-delay: 1s; font-size: 32px; }
+.sushi-item:nth-child(4) { left: 35%; animation-duration: 18s; animation-delay: 3s; font-size: 26px; }
+.sushi-item:nth-child(5) { left: 45%; animation-duration: 14s; animation-delay: 4s; font-size: 30px; }
+.sushi-item:nth-child(6) { left: 55%; animation-duration: 16s; animation-delay: 1.5s; font-size: 24px; }
+.sushi-item:nth-child(7) { left: 65%; animation-duration: 13s; animation-delay: 5s; font-size: 34px; }
+.sushi-item:nth-child(8) { left: 75%; animation-duration: 17s; animation-delay: 2.5s; font-size: 20px; }
+.sushi-item:nth-child(9) { left: 85%; animation-duration: 11s; animation-delay: 6s; font-size: 28px; }
+.sushi-item:nth-child(10) { left: 95%; animation-duration: 19s; animation-delay: 0.5s; font-size: 32px; }
+.sushi-item:nth-child(11) { left: 8%; animation-duration: 14s; animation-delay: 7s; font-size: 26px; }
+.sushi-item:nth-child(12) { left: 18%; animation-duration: 12s; animation-delay: 3.5s; font-size: 30px; }
+.sushi-item:nth-child(13) { left: 28%; animation-duration: 16s; animation-delay: 8s; font-size: 22px; }
+.sushi-item:nth-child(14) { left: 38%; animation-duration: 15s; animation-delay: 2s; font-size: 34px; }
+.sushi-item:nth-child(15) { left: 48%; animation-duration: 13s; animation-delay: 9s; font-size: 28px; }
+.sushi-item:nth-child(16) { left: 58%; animation-duration: 17s; animation-delay: 1s; font-size: 24px; }
+.sushi-item:nth-child(17) { left: 68%; animation-duration: 11s; animation-delay: 10s; font-size: 32px; }
+.sushi-item:nth-child(18) { left: 78%; animation-duration: 19s; animation-delay: 4s; font-size: 26px; }
+.sushi-item:nth-child(19) { left: 88%; animation-duration: 15s; animation-delay: 5.5s; font-size: 30px; }
+.sushi-item:nth-child(20) { left: 98%; animation-duration: 12s; animation-delay: 11s; font-size: 22px; }
+
+/* Анимация падения */
+@keyframes fall {
+    from {
+        transform: translateY(-10vh) rotate(0deg);
+    }
+    to {
+        transform: translateY(110vh) rotate(360deg);
+    }
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .sushi-item {
+        opacity: 0.08;
+        font-size: 18px;
+    }
+    .sushi-item:nth-child(n+11) {
+        display: none; /* На мобильных показываем только 10 роллов */
+    }
+}
+
+main, footer, .container {
+    position: relative;
+    z-index: 2;  /* Выше роллов, но ниже хедера */
 }

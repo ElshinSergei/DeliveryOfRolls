@@ -4,11 +4,10 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.deliveryofrolls.dto.ChangePasswordDTO;
 import org.example.deliveryofrolls.dto.ProfileDTO;
-import org.example.deliveryofrolls.entity.Cart;
 import org.example.deliveryofrolls.entity.Order;
 import org.example.deliveryofrolls.entity.User;
-import org.example.deliveryofrolls.service.CartService;
 import org.example.deliveryofrolls.service.OrderService;
 import org.example.deliveryofrolls.service.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,18 +29,13 @@ public class ProfileController {
 
     private final UserService userService;
     private final OrderService orderService;
-    private final CartService cartService;
 
     // Главная страница профиля
     @GetMapping
     public String profile(@AuthenticationPrincipal UserDetails userDetails,
-                          HttpSession session,
                           Model model) {
 
         User user = userService.getCurrentUser(userDetails);
-        Cart cart = cartService.getOrCreateCart(session, userDetails);
-
-        model.addAttribute("cart", cart);
         model.addAttribute("user", user);
         model.addAttribute("pageTitle", "Личный кабинет");
         model.addAttribute("pageCss", "profile.css");
@@ -52,14 +46,10 @@ public class ProfileController {
     // История заказов пользователя
     @GetMapping("/orders")
     public String orders(@AuthenticationPrincipal UserDetails userDetails,
-                         HttpSession session,
                          Model model) {
 
         User user = userService.getCurrentUser(userDetails);
-        List<Order> orders = orderService.getUserOrders(user);
-        Cart cart = cartService.getOrCreateCart(session, userDetails);
-
-        model.addAttribute("cart", cart);
+        List<Order> orders = orderService.getUserOrders(user.getId());
         model.addAttribute("orders", orders);
         model.addAttribute("user", user);
         model.addAttribute("pageTitle", "Мои заказы");
@@ -72,38 +62,41 @@ public class ProfileController {
     @GetMapping("/orders/{orderId}")
     public String orderDetails(@PathVariable Long orderId,
                                @AuthenticationPrincipal UserDetails userDetails,
-                               HttpSession session,
                                Model model) {
 
-        User user = userService.getCurrentUser(userDetails);
-        Order order =  orderService.getOrderWithItems(orderId);
-        Cart cart = cartService.getOrCreateCart(session, userDetails);
-        model.addAttribute("cart", cart);
-        model.addAttribute("order", order);
-        model.addAttribute("user", user);
-        model.addAttribute("pageTitle", "Заказ оформлен");
-        model.addAttribute("pageCss", "profile.css");
+        try {
+            User user = userService.getCurrentUser(userDetails);
+            Order order = orderService.getOrderWithItems(orderId);
 
-        return "profile/order-details";
+            // Проверка принадлежности
+            if (order.getUser() != null && !order.getUser().getId().equals(user.getId())) {
+                throw new IllegalArgumentException("Это не ваш заказ");
+            }
+
+            model.addAttribute("order", order);
+            model.addAttribute("user", user);
+            model.addAttribute("pageCss", "profile.css");
+            return "profile/order-details";
+
+        } catch (Exception e) {
+            log.error("Ошибка при просмотре заказа {}: {}", orderId, e.getMessage());
+            return "redirect:/profile/orders?error=notfound";
+        }
     }
 
     // Редактирование профиля
     @GetMapping("/edit")
     public String editProfile(@AuthenticationPrincipal UserDetails userDetails,
-                              HttpSession session,
                               Model model) {
 
         User user = userService.getCurrentUser(userDetails);
-        Cart cart = cartService.getOrCreateCart(session, userDetails);
 
-        // Заполняем DTO данными пользователя
         ProfileDTO profileDTO = new ProfileDTO();
         profileDTO.setFirstName(user.getFirstName());
         profileDTO.setLastName(user.getLastName());
         profileDTO.setPhone(user.getPhone());
 
         model.addAttribute("profileDTO", profileDTO);
-        model.addAttribute("cart", cart);
         model.addAttribute("user", user);
         model.addAttribute("pageTitle", "Редактирование профиля");
         model.addAttribute("pageCss", "profile.css");
@@ -118,11 +111,9 @@ public class ProfileController {
                                 @AuthenticationPrincipal UserDetails userDetails,
                                 RedirectAttributes redirectAttributes) {
 
-        // Проверка ошибок валидации
         if (bindingResult.hasErrors()) {
             return "profile/edit";
         }
-
         try {
             User user = userService.getCurrentUser(userDetails);
             userService.updateProfile(user.getId(), profileDTO);
@@ -141,8 +132,53 @@ public class ProfileController {
                               @AuthenticationPrincipal UserDetails userDetails,
                               RedirectAttributes redirectAttributes) {
 
+        try {
             orderService.repeatOrder(orderId, session, userDetails);
+            redirectAttributes.addFlashAttribute("success", "Товары добавлены в корзину");
+        } catch (Exception e) {
+            log.error("Ошибка при повторе заказа {}: {}", orderId, e.getMessage());
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
 
-            return "redirect:/cart";
+        return "redirect:/cart";
     }
+
+    // Страница смены пароля
+    @GetMapping("/change-password")
+    public String changePasswordForm(Model model) {
+        model.addAttribute("changePasswordDTO", new ChangePasswordDTO());
+        model.addAttribute("pageTitle", "Смена пароля");
+        model.addAttribute("pageCss", "profile.css");
+        return "profile/change-password";
+    }
+
+    // Обработка смены пароля
+    @PostMapping("/change-password")
+    public String changePassword(@Valid @ModelAttribute ChangePasswordDTO dto,
+                                 BindingResult bindingResult,
+                                 @AuthenticationPrincipal UserDetails userDetails,
+                                 RedirectAttributes redirectAttributes) {
+
+        // Проверяем, что новый пароль и подтверждение совпадают
+        if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
+            bindingResult.rejectValue("confirmPassword", "error", "Пароли не совпадают");
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "profile/change-password";
+        }
+
+        try {
+            User user = userService.getCurrentUser(userDetails);
+            userService.changePassword(user.getId(), dto.getOldPassword(), dto.getNewPassword());
+
+            redirectAttributes.addFlashAttribute("success", "Пароль успешно изменен");
+            return "redirect:/profile";
+
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("oldPassword", "error", e.getMessage());
+            return "profile/change-password";
+        }
+    }
+
 }

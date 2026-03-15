@@ -3,39 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${pageTitle}">Вход в систему</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
 <main>
-
-    <div class="login-box">
-        <h1>RedRolls</h1>
-        <h2>Вход в систему</h2>
-
-        <div th:if="${param.error}" class="error">
-            Неверный email или пароль
-        </div>
-
-        <!-- Сообщение об успешной регистрации -->
-        <div th:if="${success}" >
-            <span th:text="${success}"></span>
-        </div>
-
-        <div th:if="${param.logout}" style="color: #28a745; margin-bottom: 20px; padding: 10px; background: #e6ffe6; border-radius: 5px;">
-            Вы успешно вышли из системы
-        </div>
-
-        <form method="post" th:action="@{/login}">
-            <input type="email" name="username" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Пароль" required>
-            <button type="submit">Войти</button>
-        </form>
-
-        <div class="register-link">
-            Нет аккаунта? <a href="/register" style="color: #dc3545;">Зарегистрироваться</a>
-        </div>
+    <!-- Фон с падающими роллами -->
+    <div class="sushi-bg">
+        <div class="sushi-roll">🍣</div>
+        <div class="sushi-roll">🍱</div>
+        <div class="sushi-roll">🍘</div>
+        <div class="sushi-roll">🍣</div>
+        <div class="sushi-roll">🍱</div>
+        <div class="sushi-roll">🍘</div>
+        <div class="sushi-roll">🍣</div>
+        <div class="sushi-roll">🍱</div>
     </div>
 
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- Логотип -->
+                <a th:href="@{/home}" class="logo">
+                    <i class="bi bi-egg-fried"></i>
+                    <span>RedRolls</span>
+                </a>
 
+            <h2 class="auth-title">Добро пожаловать!</h2>
+            <p class="auth-subtitle">Войдите, чтобы продолжить</p>
+
+            <!-- Сообщение об ошибке -->
+            <div th:if="${param.error}" class="alert alert-error">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span>Неверный email или пароль</span>
+            </div>
+
+            <!-- Сообщение об успешной регистрации -->
+            <div th:if="${success}" class="alert alert-success">
+                <i class="bi bi-check-circle-fill"></i>
+                <span th:text="${success}">Регистрация успешна!</span>
+            </div>
+
+            <!-- Сообщение о выходе -->
+            <div th:if="${param.logout}" class="alert alert-info">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Вы успешно вышли из системы</span>
+            </div>
+
+            <!-- Форма входа -->
+            <form method="post" th:action="@{/login}" class="auth-form">
+
+                <input type="hidden" name="sessionId" th:value="${session.id}"/>
+
+                <div class="input-group">
+                    <i class="bi bi-envelope"></i>
+                    <input type="email"
+                           name="username"
+                           placeholder="Email"
+                           required
+                           autocomplete="email">
+                </div>
+
+                <div class="input-group">
+                    <i class="bi bi-lock"></i>
+                    <input type="password"
+                           name="password"
+                           placeholder="Пароль"
+                           required
+                           autocomplete="current-password">
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox">
+                        <input type="checkbox" name="remember-me">
+                        <span>Запомнить меня</span>
+                    </label>
+                    <a th:href="@{/password/forgot}" class="forgot-link">Забыли пароль?</a>
+                </div>
+
+                <button type="submit" class="auth-btn">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    Войти
+                </button>
+            </form>
+
+            <!-- Ссылка на регистрацию -->
+            <div class="auth-switch">
+                <p>Нет аккаунта?</p>
+                <a th:href="@{/register}" class="auth-link">
+                    <i class="bi bi-person-plus"></i>
+                    Зарегистрироваться
+                </a>
+            </div>
+
+            <!-- Дополнительная информация -->
+            <div class="info-text">
+                <i class="bi bi-shield-check"></i>
+                <span>Ваши данные защищены</span>
+            </div>
+        </div>
+    </div>
 </main>
 </body>
 </html>

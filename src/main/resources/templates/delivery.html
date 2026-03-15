@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main-layout :: html(content=~{::main}, pageCss='delivery.css')}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Доставка и оплата</title>
+</head>
+<body>
+<main>
+    <!-- Герой-секция -->
+    <section class="delivery-hero">
+        <div class="container">
+            <h1 class="delivery-title">Доставка</h1>
+            <p class="delivery-subtitle">Мы доставляем вкусную еду быстро и бесплатно</p>
+        </div>
+    </section>
+
+    <!-- Преимущества доставки -->
+    <section class="delivery-features">
+        <div class="container">
+            <div class="features-grid-delivery">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <h3>Бесплатная доставка</h3>
+                    <p>При заказе от 1000 ₽ в радиусе 5 км от ресторана</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-clock"></i>
+                    </div>
+                    <h3>Быстрая доставка</h3>
+                    <p>Среднее время доставки 35-60 минут</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <h3>Зона доставки</h3>
+                    <p>Доставляем по всему городу</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h3>Круглосуточно</h3>
+                    <p>Принимаем заказы 24/7, доставка с 10:00 до 22:00</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Как мы работаем -->
+    <section class="how-we-work">
+        <div class="container">
+            <h2 class="section-title">Как мы работаем</h2>
+            <div class="steps-grid">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Выбирайте блюда</h3>
+                        <p>Добавьте понравившиеся блюда в корзину</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Оформляйте заказ</h3>
+                        <p>Укажите адрес, время и способ оплаты</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Готовим с любовью</h3>
+                        <p>Начинаем готовить сразу после подтверждения</p>
+                    </div>
+                </div>
+
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Доставляем быстро</h3>
+                        <p>Курьер привезет заказ в указанное время</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+</body>
+</html>

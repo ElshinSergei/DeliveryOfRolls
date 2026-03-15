@@ -1,0 +1,396 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+main {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe9e9 100%);
+    padding: 20px;
+}
+
+/* ========== ПАДАЮЩИЕ РОЛЛЫ ========== */
+.sushi-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden; /* Чтобы роллы не выходили за пределы */
+}
+
+.sushi-roll {
+    position: absolute;
+    font-size: 2rem;
+    opacity: 0.1;
+    animation: fall linear infinite;
+
+    /* ✅ РЕШЕНИЕ: начинаем за пределами экрана */
+    top: -100px;  /* Начинаем выше экрана */
+
+    /* ИЛИ через transform (альтернатива) */
+    /* transform: translateY(-100px); */
+}
+
+/* Анимация падения - от верха до низа */
+@keyframes fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.1;
+    }
+    100% {
+        transform: translateY(calc(100vh + 200px)) rotate(360deg); /* Падаем до конца экрана + еще немного */
+        opacity: 0.05;
+    }
+}
+
+/* Позиционирование по горизонтали и настройки анимации */
+.sushi-roll:nth-child(1) { left: 5%; animation-duration: 15s; animation-delay: 0s; }
+.sushi-roll:nth-child(2) { left: 15%; animation-duration: 12s; animation-delay: 2s; }
+.sushi-roll:nth-child(3) { left: 25%; animation-duration: 18s; animation-delay: 1s; }
+.sushi-roll:nth-child(4) { left: 35%; animation-duration: 14s; animation-delay: 3s; }
+.sushi-roll:nth-child(5) { left: 45%; animation-duration: 16s; animation-delay: 4s; }
+.sushi-roll:nth-child(6) { left: 55%; animation-duration: 20s; animation-delay: 5s; }
+.sushi-roll:nth-child(7) { left: 65%; animation-duration: 17s; animation-delay: 6s; }
+.sushi-roll:nth-child(8) { left: 75%; animation-duration: 19s; animation-delay: 7s; }
+.sushi-roll:nth-child(9) { left: 85%; animation-duration: 15s; animation-delay: 8s; }
+.sushi-roll:nth-child(10) { left: 95%; animation-duration: 18s; animation-delay: 9s; }
+
+/* ========== КОНТЕЙНЕРЫ ========== */
+.auth-container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 450px; /* Одинаковая ширина для обеих форм */
+}
+
+/* ========== КАРТОЧКА ========== */
+.auth-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 40px 35px;
+    box-shadow: 0 20px 60px rgba(231, 76, 60, 0.15),
+    0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+}
+
+.auth-card:hover {
+    transform: translateY(-5px);
+}
+
+/* ========== ЛОГОТИП ========== */
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 32px;
+    font-weight: 700;
+    color: #e74c3c;
+    margin-bottom: 20px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.logo:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+.logo i {
+    font-size: 40px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ========== ЗАГОЛОВКИ ========== */
+.auth-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.auth-subtitle {
+    color: #7f8c8d;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 15px;
+}
+
+/* ========== АЛЕРТЫ ========== */
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 20px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    font-size: 14px;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-error {
+    background: #fee;
+    border-left: 4px solid #e74c3c;
+    color: #c0392b;
+}
+
+.alert-success {
+    background: #e6ffe6;
+    border-left: 4px solid #28a745;
+    color: #218838;
+}
+
+.alert-info {
+    background: #e6f3ff;
+    border-left: 4px solid #3498db;
+    color: #2980b9;
+}
+
+/* ========== ФОРМЫ ========== */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.input-group {
+    position: relative;
+    margin-top: 5px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #e74c3c;
+    font-size: 18px;
+    opacity: 0.7;
+    z-index: 1;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px 15px 15px 50px;
+    border: 2px solid #f0f0f0;
+    border-radius: 15px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.1);
+}
+
+.input-group input::placeholder {
+    color: #bdc3c7;
+}
+
+.input-group input.input-error {
+    border-color: #e74c3c;
+    background-color: #fff5f5;
+}
+
+/* Сообщения об ошибках валидации */
+.error-message {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 5px;
+    margin-left: 15px;
+}
+
+/* ========== ОПЦИИ ФОРМЫ (для страницы входа) ========== */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0 25px;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #e74c3c;
+}
+
+.forgot-link {
+    color: #e74c3c;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+.forgot-link:hover {
+    color: #c0392b;
+    text-decoration: underline;
+}
+
+/* ========== ЧЕКБОКС С УСЛОВИЯМИ (для страницы регистрации) ========== */
+.terms-checkbox {
+    margin: 20px 0;
+}
+
+.terms-checkbox .checkbox {
+    align-items: flex-start;
+    line-height: 1.5;
+}
+
+.terms-checkbox .checkbox input[type="checkbox"] {
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.terms-checkbox .checkbox a {
+    color: #e74c3c;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.terms-checkbox .checkbox a:hover {
+    text-decoration: underline;
+}
+
+/* ========== КНОПКИ ========== */
+.auth-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+}
+
+.auth-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+}
+
+.auth-btn:active {
+    transform: translateY(0);
+}
+
+.auth-btn i {
+    font-size: 18px;
+}
+
+/* ========== ССЫЛКИ НА АЛЬТЕРНАТИВНОЕ ДЕЙСТВИЕ ========== */
+.auth-switch {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.auth-switch p {
+    color: #7f8c8d;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.auth-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 30px;
+    background: white;
+    color: #e74c3c;
+    border: 2px solid #e74c3c;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.auth-link:hover {
+    background: #e74c3c;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.2);
+}
+
+/* ========== ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ (для страницы входа) ========== */
+.info-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+    color: #95a5a6;
+    font-size: 13px;
+}
+
+.info-text i {
+    color: #e74c3c;
+}
+
+/* ========== АДАПТИВНОСТЬ ========== */
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 30px 20px;
+    }
+
+    .auth-title {
+        font-size: 24px;
+    }
+
+    .sushi-roll {
+        font-size: 1.5rem;
+    }
+
+    .form-options {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .terms-checkbox .checkbox {
+        font-size: 12px;
+    }
+}

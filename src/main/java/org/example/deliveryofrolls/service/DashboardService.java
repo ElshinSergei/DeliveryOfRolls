@@ -7,6 +7,9 @@ import org.example.deliveryofrolls.repository.CategoryRepository;
 import org.example.deliveryofrolls.repository.DishRepository;
 import org.example.deliveryofrolls.repository.OrderRepository;
 import org.example.deliveryofrolls.repository.UserRepository;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,6 +17,7 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "dashboard")
 public class DashboardService {
 
     private final OrderRepository orderRepository;
@@ -21,6 +25,7 @@ public class DashboardService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
 
+    @Cacheable(key = "'stats'")
     public DashboardStats getStats() {
         DashboardStats stats = new DashboardStats();
 
@@ -42,7 +47,7 @@ public class DashboardService {
 
         // Блюда
         stats.setTotalDishes(dishRepository.count());                     // всего
-        stats.setAvailableDishes(dishRepository.countByAvailableTrue());  // доступных в меню
+        stats.setAvailableDishes(dishRepository.countByAvailableTrueAndDeletedFalse());  // доступных в меню
         stats.setPopularDishes(orderRepository.findTopPopularDishes());   // популярные
 
         // Пользователи
@@ -53,6 +58,11 @@ public class DashboardService {
         stats.setTotalCategories(categoryRepository.count()); // всего категорий
 
         return stats;
+    }
+
+    @CacheEvict(allEntries = true)
+    public void evictCache() {
+        // Вызывать после создания заказа или изменений
     }
 
 }

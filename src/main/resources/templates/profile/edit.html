@@ -1,49 +1,123 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main-layout :: html(content=~{::main})}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${pageTitle}">Регистрация</title>
+    <title th:text="${pageTitle}">Редактирование профиля</title>
 </head>
 <body>
 <main>
-
-    <div class="register-box">
-        <h1>RedRolls</h1>
-        <h2>Создание аккаунта</h2>
-
-        <form th:action="@{/profile/edit}" th:object="${profileDTO}" method="post">
-
-            <div class="form-group">
-                <label>Имя</label>
-                <input type="text" th:field="*{firstName}"
-                       th:classappend="${#fields.hasErrors('firstName')} ? 'field-error' : ''"
-                       placeholder="Иван" required>
-                <div th:if="${#fields.hasErrors('firstName')}"
-                     th:errors="*{firstName}" class="error"></div>
+    <div class="profile-wrapper">
+        <div class="profile-card">
+            <!-- Шапка профиля -->
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <span>👤</span>
+                </div>
+                <div class="profile-title">
+                    <h1 th:text="${user.firstName + ' ' + user.lastName}">Иван Иванов</h1>
+                    <p th:text="${user.email}">ivan@mail.com</p>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>Фамилия</label>
-                <input type="text" th:field="*{lastName}"
-                       th:classappend="${#fields.hasErrors('lastName')} ? 'field-error' : ''"
-                       placeholder="Иванов" required>
-                <div th:if="${#fields.hasErrors('lastName')}"
-                     th:errors="*{lastName}" class="error"></div>
+            <!-- Основной контент -->
+            <div class="profile-layout">
+                <!-- Боковое меню -->
+                <div class="profile-menu">
+                    <a th:href="@{/profile}" class="profile-menu-item">
+                        <i class="bi bi-person"></i>
+                        <span>Мой профиль</span>
+                    </a>
+                    <a th:href="@{/profile/orders}" class="profile-menu-item">
+                        <i class="bi bi-box"></i>
+                        <span>Мои заказы</span>
+                    </a>
+                    <a th:href="@{/profile/change-password}" class="profile-menu-item">
+                        <i class="bi bi-key"></i>
+                        <span>Сменить пароль</span>
+                    </a>
+                </div>
+
+                <!-- Форма редактирования -->
+                <div class="profile-content">
+                    <div class="content-header">
+                        <h2>✏️ Редактирование профиля</h2>
+                    </div>
+
+                    <!-- Сообщения -->
+                    <div th:if="${success}" class="alert alert-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span th:text="${success}"></span>
+                    </div>
+                    <div th:if="${error}" class="alert alert-error">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <span th:text="${error}"></span>
+                    </div>
+
+                    <!-- Форма -->
+                    <form th:action="@{/profile/edit}" th:object="${profileDTO}" method="post" class="profile-form">
+                        <!-- Имя -->
+                        <div class="form-group">
+                            <label for="firstName">
+                                <i class="bi bi-person"></i> Имя
+                            </label>
+                            <input type="text"
+                                   id="firstName"
+                                   th:field="*{firstName}"
+                                   th:classappend="${#fields.hasErrors('firstName')} ? 'form-error' : ''"
+                                   placeholder="Иван"
+                                   required>
+                            <div th:if="${#fields.hasErrors('firstName')}"
+                                 th:errors="*{firstName}"
+                                 class="error-message"></div>
+                        </div>
+
+                        <!-- Фамилия -->
+                        <div class="form-group">
+                            <label for="lastName">
+                                <i class="bi bi-person-badge"></i> Фамилия
+                            </label>
+                            <input type="text"
+                                   id="lastName"
+                                   th:field="*{lastName}"
+                                   th:classappend="${#fields.hasErrors('lastName')} ? 'form-error' : ''"
+                                   placeholder="Иванов"
+                                   required>
+                            <div th:if="${#fields.hasErrors('lastName')}"
+                                 th:errors="*{lastName}"
+                                 class="error-message"></div>
+                        </div>
+
+                        <!-- Телефон -->
+                        <div class="form-group">
+                            <label for="phone">
+                                <i class="bi bi-telephone"></i> Телефон
+                            </label>
+                            <input type="tel"
+                                   id="phone"
+                                   th:field="*{phone}"
+                                   th:classappend="${#fields.hasErrors('phone')} ? 'form-error' : ''"
+                                   placeholder="+7 (999) 123-45-67"
+                                   required>
+                            <div th:if="${#fields.hasErrors('phone')}"
+                                 th:errors="*{phone}"
+                                 class="error-message"></div>
+                        </div>
+
+                        <!-- Кнопки -->
+                        <div class="form-actions">
+                            <a th:href="@{/profile}" class="btn btn-outline">
+                                <i class="bi bi-x-lg"></i> Отмена
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg"></i> Сохранить
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label>Телефон</label>
-                <input type="tel" th:field="*{phone}"
-                       placeholder="+7 (999) 123-45-67" required>
-                <div th:if="${#fields.hasErrors('phone')}"
-                     th:errors="*{phone}" class="error"></div>
-            </div>
-
-            <button type="submit">Сохранить изменения</button>
-        </form>
-
+        </div>
     </div>
-
 </main>
 </body>
 </html>

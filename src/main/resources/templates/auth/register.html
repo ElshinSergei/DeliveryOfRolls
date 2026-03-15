@@ -3,69 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${pageTitle}">Регистрация</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
 <main>
-
-    <div class="register-box">
-        <h1>RedRolls</h1>
-        <h2>Создание аккаунта</h2>
-
-        <form th:action="@{/register}" th:object="${registerDTO}" method="post">
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" th:field="*{email}"
-                       th:classappend="${#fields.hasErrors('email')} ? 'field-error' : ''"
-                       placeholder="example@mail.com" required>
-                <div th:if="${#fields.hasErrors('email')}"
-                     th:errors="*{email}" class="error"></div>
-            </div>
-
-            <div class="form-group">
-                <label>Пароль</label>
-                <input type="password" th:field="*{password}"
-                       th:classappend="${#fields.hasErrors('password')} ? 'field-error' : ''"
-                       placeholder="Минимум 6 символов" required>
-                <div th:if="${#fields.hasErrors('password')}"
-                     th:errors="*{password}" class="error"></div>
-            </div>
-
-            <div class="form-group">
-                <label>Имя</label>
-                <input type="text" th:field="*{firstName}"
-                       th:classappend="${#fields.hasErrors('firstName')} ? 'field-error' : ''"
-                       placeholder="Иван" required>
-                <div th:if="${#fields.hasErrors('firstName')}"
-                     th:errors="*{firstName}" class="error"></div>
-            </div>
-
-            <div class="form-group">
-                <label>Фамилия</label>
-                <input type="text" th:field="*{lastName}"
-                       th:classappend="${#fields.hasErrors('lastName')} ? 'field-error' : ''"
-                       placeholder="Иванов" required>
-                <div th:if="${#fields.hasErrors('lastName')}"
-                     th:errors="*{lastName}" class="error"></div>
-            </div>
-
-            <div class="form-group">
-                <label>Телефон</label>
-                <input type="tel" th:field="*{phone}"
-                       placeholder="+7 (999) 123-45-67" required>
-                <div th:if="${#fields.hasErrors('phone')}"
-                     th:errors="*{phone}" class="error"></div>
-            </div>
-
-            <button type="submit">Зарегистрироваться</button>
-        </form>
-
-        <div class="login-link">
-            Уже есть аккаунт? <a href="/login" style="color: #dc3545;">Войти</a>
-        </div>
+    <!-- Фон с падающими роллами -->
+    <div class="sushi-bg">
+        <div class="sushi-roll">🍣</div>
+        <div class="sushi-roll">🍱</div>
+        <div class="sushi-roll">🍘</div>
+        <div class="sushi-roll">🍣</div>
+        <div class="sushi-roll">🍱</div>
+        <div class="sushi-roll">🍘</div>
+        <div class="sushi-roll">🍣</div>
+        <div class="sushi-roll">🍱</div>
     </div>
 
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- Логотип -->
+            <a th:href="@{/home}" class="logo">
+                <i class="bi bi-egg-fried"></i>
+                <span>RedRolls</span>
+            </a>
 
+            <h2 class="auth-title">Создание аккаунта</h2>
+            <p class="auth-subtitle">Присоединяйтесь к нам!</p>
 
+            <!-- Сообщение об ошибке -->
+            <div th:if="${error}" class="alert alert-error">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span th:text="${error}">Ошибка регистрации</span>
+            </div>
+
+            <!-- Форма регистрации -->
+            <form th:action="@{/register}" th:object="${registerDTO}" method="post" class="auth-form">
+                <!-- Email -->
+                <div class="input-group">
+                    <i class="bi bi-envelope"></i>
+                    <input type="email"
+                           th:field="*{email}"
+                           th:classappend="${#fields.hasErrors('email')} ? 'input-error' : ''"
+                           placeholder="Email"
+                           required>
+                </div>
+                <div th:if="${#fields.hasErrors('email')}"
+                     th:errors="*{email}"
+                     class="error-message"></div>
+
+                <!-- Пароль -->
+                <div class="input-group">
+                    <i class="bi bi-lock"></i>
+                    <input type="password"
+                           th:field="*{password}"
+                           th:classappend="${#fields.hasErrors('password')} ? 'input-error' : ''"
+                           placeholder="Пароль (минимум 6 символов)"
+                           required>
+                </div>
+                <div th:if="${#fields.hasErrors('password')}"
+                     th:errors="*{password}"
+                     class="error-message"></div>
+
+                <!-- Имя -->
+                <div class="input-group">
+                    <i class="bi bi-person"></i>
+                    <input type="text"
+                           th:field="*{firstName}"
+                           th:classappend="${#fields.hasErrors('firstName')} ? 'input-error' : ''"
+                           placeholder="Имя"
+                           required>
+                </div>
+                <div th:if="${#fields.hasErrors('firstName')}"
+                     th:errors="*{firstName}"
+                     class="error-message"></div>
+
+                <!-- Фамилия -->
+                <div class="input-group">
+                    <i class="bi bi-person-badge"></i>
+                    <input type="text"
+                           th:field="*{lastName}"
+                           th:classappend="${#fields.hasErrors('lastName')} ? 'input-error' : ''"
+                           placeholder="Фамилия"
+                           required>
+                </div>
+                <div th:if="${#fields.hasErrors('lastName')}"
+                     th:errors="*{lastName}"
+                     class="error-message"></div>
+
+                <!-- Телефон -->
+                <div class="input-group">
+                    <i class="bi bi-telephone"></i>
+                    <input type="tel"
+                           th:field="*{phone}"
+                           th:classappend="${#fields.hasErrors('phone')} ? 'input-error' : ''"
+                           placeholder="Телефон"
+                           required>
+                </div>
+                <div th:if="${#fields.hasErrors('phone')}"
+                     th:errors="*{phone}"
+                     class="error-message"></div>
+
+                <!-- Согласие с условиями -->
+                <div class="terms-checkbox">
+                    <label class="checkbox">
+                        <input type="checkbox" required>
+                        <span>Я согласен с <a href="#" target="_blank">условиями использования</a> и <a href="#" target="_blank">политикой конфиденциальности</a></span>
+                    </label>
+                </div>
+
+                <!-- Кнопка регистрации -->
+                <button type="submit" class="auth-btn">
+                    <i class="bi bi-person-plus"></i>
+                    Зарегистрироваться
+                </button>
+            </form>
+
+            <!-- Ссылка на вход -->
+            <div class="auth-switch">
+                <p>Уже есть аккаунт?</p>
+                <a th:href="@{/login}" class="auth-link">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    Войти
+                </a>
+            </div>
+        </div>
+    </div>
 </main>
 </body>
 </html>

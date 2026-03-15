@@ -5,7 +5,7 @@
     <!-- Навигация -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="/">
+            <a class="navbar-brand" th:href="@{/}">
                 <i class="bi bi-egg-fried me-2"></i>RedRolls
             </a>
 
@@ -18,27 +18,22 @@
                 <!-- Основное меню -->
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">
-                            <i class="bi bi-house-door"></i> Главная
+                        <a class="nav-link" th:href="@{/}">
+                            <i class="bi bi-house-door"></i> Меню
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/menu">
-                            <i class="bi bi-menu-button-wide"></i> Меню
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/promotions">
+                        <a class="nav-link" th:href="@{/promotions}">
                             <i class="bi bi-percent"></i> Акции
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/delivery">
+                        <a class="nav-link" th:href="@{/delivery}">
                             <i class="bi bi-truck"></i> Доставка
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/contacts">
+                        <a class="nav-link" th:href="@{/contacts}">
                             <i class="bi bi-telephone"></i> Контакты
                         </a>
                     </li>
@@ -48,24 +43,18 @@
                 <ul class="navbar-nav">
                     <!-- Корзина (всегда видна) -->
                     <li class="nav-item me-3">
-                        <a class="nav-link position-relative" href="/cart">
+                        <a class="nav-link position-relative" th:href="@{/cart}">
                             <i class="bi bi-cart3 fs-5"></i>
-                            <span id="cartCount" class="badge bg-danger cart-badge"  th:text="${cart.items.size() ?: 0}">0</span>
+                            <span id="cartCount" class="badge bg-danger cart-badge"  th:text="${cart.totalItems ?: 0}">0</span>
                         </a>
                     </li>
 
                     <!-- Авторизация -->
                     <li class="nav-item" sec:authorize="!isAuthenticated()">
-                        <a class="btn btn-outline-primary me-2" href="/login">
+                        <a class="btn btn-outline-primary me-2" th:href="@{/login}">
                             <i class="bi bi-box-arrow-in-right"></i> Войти
                         </a>
                     </li>
-                    <li class="nav-item" sec:authorize="!isAuthenticated()">
-                        <a class="btn btn-primary" href="/register">
-                            <i class="bi bi-person-plus"></i> Регистрация
-                        </a>
-                    </li>
-
                     <!-- Профиль (только для авторизованных) -->
                     <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown"
@@ -75,12 +64,12 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a class="dropdown-item" href="/profile">
+                                <a class="dropdown-item" th:href="@{/profile}">
                                     <i class="bi bi-person"></i> Профиль
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/profile/orders">
+                                <a class="dropdown-item" th:href="@{/profile/orders}">
                                     <i class="bi bi-receipt"></i> Мои заказы
                                 </a>
                             </li>
@@ -98,9 +87,6 @@
             </div>
         </div>
     </nav>
-
-
-
 </header>
 </body>
 </html>
