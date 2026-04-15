@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+echo "*.jar" >> .gitignore
+echo "*.tar" >> .gitignore
+echo "deploy/redrolls.jar" >> .gitignore
+echo "deploy/redrolls-app.tar" >> .gitignore
