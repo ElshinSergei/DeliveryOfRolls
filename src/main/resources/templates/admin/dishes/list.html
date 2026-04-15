@@ -14,8 +14,10 @@
             <h3>🍣 Управление меню</h3>
 
             <!-- Кнопка добавления (только в меню) -->
-            <a th:if="${!isArchive}" th:href="@{/admin/dishes/new}" class="btn btn-primary">
-                ➕ Добавить блюдо
+            <a th:if="${!isArchive}" th:href="@{/admin/dishes/new}" class="btn-minimal btn-minimal-primary"
+               style="padding: 10px 20px; font-size: 14px; width: auto; display: inline-flex;">
+                <i class="bi bi-person-plus"></i>
+                Добавить блюдо
             </a>
 
             <div class="view-tabs">

@@ -18,5 +18,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     // Получить только доступные категории, отсортированные по sortOrder
     List<Category> findByAvailableTrueOrderBySortOrderAsc();
 
+    Optional<Category> findByName(String name);
 
 }

@@ -1,7 +1,10 @@
 package org.example.deliveryofrolls.controller.admin;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.deliveryofrolls.dto.RegisterDTO;
 import org.example.deliveryofrolls.entity.User;
 import org.example.deliveryofrolls.repository.UserRepository;
 import org.example.deliveryofrolls.service.UserService;
@@ -11,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -19,6 +23,7 @@ import java.security.Principal;
 @Controller
 @RequestMapping("/admin/users")
 @RequiredArgsConstructor
+@Slf4j
 public class AdminUserController {
 
     private final UserRepository userRepository;
@@ -142,4 +147,47 @@ public class AdminUserController {
 
         return "redirect:/admin/users";
     }
+
+    // ФОРМА СОЗДАНИЯ ПОЛЬЗОВАТЕЛЯ
+    @GetMapping("/new")
+    public String newUserForm(Model model) {
+        model.addAttribute("user", new RegisterDTO());
+        model.addAttribute("roles", User.Role.values());
+        model.addAttribute("pageCss", "create-form.css");
+        model.addAttribute("pageTitle", "Создание пользователя");
+        return "admin/users/create-form"; // Новый шаблон
+    }
+
+    // СОХРАНЕНИЕ НОВОГО ПОЛЬЗОВАТЕЛЯ
+    @PostMapping("/create")
+    public String createUser(@Valid @ModelAttribute("user") RegisterDTO userDTO,
+                             BindingResult bindingResult,
+                             @RequestParam User.Role role,
+                             RedirectAttributes redirectAttributes,
+                             Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("roles", User.Role.values());
+            return "admin/users/create-form";
+        }
+
+        try {
+            userService.createUserByAdmin(userDTO, role);
+            redirectAttributes.addFlashAttribute("success",
+                    "✅ Пользователь " + userDTO.getEmail() + " успешно создан");
+            return "redirect:/admin/users";
+
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("email", "error.user", e.getMessage());
+            model.addAttribute("roles", User.Role.values());
+            return "admin/users/create-form";
+        } catch (Exception e) {
+            log.error("Ошибка при создании пользователя", e);
+            redirectAttributes.addFlashAttribute("error",
+                    "❌ Ошибка при создании пользователя: " + e.getMessage());
+            return "redirect:/admin/users/new";
+        }
+    }
+
+
 }

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <title>Управление акциями</title>
+</head>
+<body>
+<main>
+    <div class="admin-container">
+
+        <!-- Заголовок как в категориях -->
+        <div class="admin-header">
+            <div>
+                <h3>📢 Управление акциями</h3>
+                <p class="text-muted small mb-0">
+                    Всего акций: <span th:text="${#lists.size(promotions)}">0</span>
+                </p>
+            </div>
+            <a th:href="@{/admin/marketing/promotions/new}" class="btn-minimal btn-minimal-primary">
+                <i class="bi bi-plus-circle"></i> Добавить акцию
+            </a>
+        </div>
+
+        <!-- Сообщения -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i><span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}">Ошибка</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Фильтры -->
+        <div class="filters-bar">
+            <div class="filter-item">
+                <i class="bi bi-funnel"></i>
+                <select id="filterStatus" class="form-select border-0 bg-transparent">
+                    <option value="all">Все статусы</option>
+                    <option value="active">Активные</option>
+                    <option value="inactive">Неактивные</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <i class="bi bi-search"></i>
+                <input type="text" id="searchInput" placeholder="Поиск по названию...">
+            </div>
+            <div class="filter-actions">
+                <button class="filter-submit" id="searchBtn">
+                    <i class="bi bi-search me-2"></i>Найти
+                </button>
+                <a href="#" class="filter-reset" id="resetFilters">
+                    <i class="bi bi-arrow-counterclockwise"></i>Сброс
+                </a>
+            </div>
+        </div>
+
+        <!-- Сетка акций -->
+        <div th:if="${not #lists.isEmpty(promotions)}" class="promo-grid">
+            <div th:each="promo : ${promotions}" class="promo-card"
+                 th:data-status="${promo.active} ? 'active' : 'inactive'"
+                 th:data-title="${promo.title}">
+
+                <div class="promo-image-container">
+                    <img th:src="@{${promo.imageUrl}}" class="promo-image" th:alt="${promo.title}">
+                    <span class="promo-badge"
+                          th:classappend="${promo.active} ? 'active' : 'inactive'"
+                          th:text="${promo.active} ? 'Активно' : 'Неактивно'">
+                        Активно
+                    </span>
+                </div>
+
+                <div class="promo-content">
+                    <h4 class="promo-title" th:text="${promo.title}">Название акции</h4>
+                    <div class="promo-description" th:text="${promo.description} ?: 'Описание отсутствует'">
+                        Описание акции...
+                    </div>
+                    <div class="promo-meta">
+                        <span class="sort-order">
+                            <i class="bi bi-sort-numeric-down"></i>
+                            Порядок: <span th:text="${promo.sortOrder}">1</span>
+                        </span>
+                    </div>
+                    <div class="promo-actions">
+                        <a th:href="@{/admin/marketing/promotions/{id}/edit(id=${promo.id})}"
+                           class="action-btn edit" title="Редактировать">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form th:action="@{/admin/marketing/promotions/{id}/delete(id=${promo.id})}"
+                              method="post" style="display: inline;"
+                              onsubmit="return confirm('Удалить акцию?')">
+                            <button type="submit" class="action-btn delete" title="Удалить">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Пустое состояние -->
+        <div th:if="${#lists.isEmpty(promotions)}" class="empty-state text-center py-5">
+            <i class="bi bi-megaphone" style="font-size: 60px; color: #e0e0e0;"></i>
+            <h3 class="mt-3">Акций пока нет</h3>
+            <p class="text-muted mb-4">Добавьте первую акцию, чтобы привлечь клиентов</p>
+            <a th:href="@{/admin/marketing/promotions/new}" class="empty-state-btn">
+                <i class="bi bi-plus-circle"></i>Создать первую акцию
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterStatus = document.getElementById('filterStatus');
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const resetBtn = document.getElementById('resetFilters');
+            const cards = document.querySelectorAll('.promo-card');
+
+            function filterCards() {
+                const status = filterStatus.value;
+                const search = searchInput.value.toLowerCase();
+
+                cards.forEach(card => {
+                    let show = true;
+
+                    if (status !== 'all') {
+                        const cardStatus = card.dataset.status;
+                        if (status === 'active' && cardStatus !== 'active') show = false;
+                        if (status === 'inactive' && cardStatus !== 'inactive') show = false;
+                    }
+
+                    if (search) {
+                        const title = card.dataset.title.toLowerCase();
+                        if (!title.includes(search)) show = false;
+                    }
+
+                    card.style.display = show ? '' : 'none';
+                });
+            }
+
+            filterStatus.addEventListener('change', filterCards);
+            searchInput.addEventListener('input', filterCards);
+            searchBtn.addEventListener('click', filterCards);
+
+            resetBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                filterStatus.value = 'all';
+                searchInput.value = '';
+                filterCards();
+            });
+        });
+    </script>
+</main>
+</body>
+</html>

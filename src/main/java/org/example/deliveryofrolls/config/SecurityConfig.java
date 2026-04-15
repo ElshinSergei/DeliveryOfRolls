@@ -26,14 +26,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/**") // Отключаем CSRF для API
+                )
                 .authorizeHttpRequests(auth -> auth
                         // Разрешаем доступ к загруженным файлам для всех
                         .requestMatchers("/uploads/**").permitAll()
+                        // ===== API ЭНДПОИНТЫ ДЛЯ КАРТЫ И ЗОН ДОСТАВКИ =====
+                        .requestMatchers("/api/delivery-zones/active").permitAll()  // Активные зоны для карты
+                        .requestMatchers("/api/delivery-zones/check").permitAll()
+                        .requestMatchers("/api/pickup-points/active").permitAll()   // Точки самовывоза
+                        .requestMatchers("/api/delivery-zones/admin/**").hasRole("ADMIN") // Админские эндпоинты
                         // Публичные страницы
                         .requestMatchers("/", "/cart/**", "/delivery", "/contacts",
                                 "/register", "/cart/**", "/home", "/error", "/order/**",
                                 "/promotions", "/password/**").permitAll()
+                        .requestMatchers("/api/promo/**").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
 
                         // Админка только для ADMIN

@@ -6,66 +6,105 @@
 </head>
 <body>
 <main>
-    <div class="container-fluid py-4">
-        <!-- Заголовок -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 th:text="${dish.id == null} ? '➕ Добавление блюда' : '✏️ Редактирование блюда'">
-                Добавление блюда
-            </h2>
-            <a th:href="@{/admin/dishes}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-2"></i>Назад
+    <div class="dish-form-container">
+
+        <!-- Заголовок в стиле пользователей -->
+        <div class="dish-header-minimal">
+            <div>
+                <h1 th:text="${dish.id == null} ? '🍣 Добавление блюда' : '✏️ Редактирование блюда'">
+                    Добавление блюда
+                </h1>
+                <div class="subtitle" th:text="${dish.id == null} ?
+                    'Добавьте новое блюдо в меню' :
+                    'Измените параметры блюда'">
+                    Добавьте новое блюдо в меню
+                </div>
+            </div>
+            <a th:href="@{/admin/dishes}" class="btn-minimal btn-minimal-outline">
+                ← Назад
             </a>
         </div>
 
         <!-- Сообщения об ошибках -->
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div th:if="${error}" class="alert alert-danger" style="margin-bottom: 20px;">
             <i class="bi bi-exclamation-triangle-fill me-2"></i>
             <span th:text="${error}">Ошибка</span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
 
         <!-- Форма -->
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-                <form th:action="@{/admin/dishes/save}" method="post"
-                      th:object="${dish}"
-                      enctype="multipart/form-data" class="needs-validation">
+        <div class="edit-card">
+            <form th:action="@{/admin/dishes/save}" method="post"
+                  th:object="${dish}"
+                  enctype="multipart/form-data">
 
-                    <input type="hidden" name="id" th:value="${dish.id}">
+                <input type="hidden" name="id" th:value="${dish.id}">
 
-                    <div class="row g-4">
-                        <!-- Левая колонка - поля формы -->
-                        <div class="col-md-8">
-                            <div class="row g-3">
-                                <!-- Название -->
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold">Название блюда *</label>
-                                    <input type="text" th:field="*{name}" class="form-control" required>
-                                </div>
+                <div class="row">
+                    <!-- Левая колонка - поля формы -->
+                    <div class="col-md-8">
+                        <!-- Название блюда -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-tag"></i> Название блюда <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" th:field="*{name}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+                                   placeholder="Филадельфия" required>
+                            <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback" th:errors="*{name}"></div>
+                        </div>
 
-                                <!-- Описание -->
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold">Описание</label>
-                                    <textarea th:field="*{description}" class="form-control" rows="3"></textarea>
-                                </div>
+                        <!-- Описание -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-text-paragraph"></i> Описание
+                            </label>
+                            <textarea th:field="*{description}" class="form-control"
+                                      rows="3" placeholder="Описание блюда..."></textarea>
+                        </div>
 
-                                <!-- Цена и вес -->
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Цена (₽) *</label>
-                                    <input th:field="*{price}" type="number" class="form-control" step="1" required>
+                        <!-- Цена и вес -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-currency-ruble"></i> Цена (₽) <span class="text-danger">*</span>
+                                    </label>
+                                    <input th:field="*{price}" type="number" class="form-control"
+                                           th:classappend="${#fields.hasErrors('price')} ? 'is-invalid' : ''"
+                                           step="1" required>
+                                    <div th:if="${#fields.hasErrors('price')}" class="invalid-feedback" th:errors="*{price}"></div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Вес (г) *</label>
-                                    <input th:field="*{weight}" type="number" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-circle"></i> Вес (г) <span class="text-danger">*</span>
+                                    </label>
+                                    <input th:field="*{weight}" type="number" class="form-control"
+                                           th:classappend="${#fields.hasErrors('weight')} ? 'is-invalid' : ''"
+                                           required>
+                                    <div th:if="${#fields.hasErrors('weight')}" class="invalid-feedback" th:errors="*{weight}"></div>
                                 </div>
+                            </div>
+                        </div>
 
-                                <!-- Калории и категория -->
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Калории (ккал)</label>
-                                    <input th:field="*{calories}" type="number" class="form-control">
+                        <!-- Калории и категория -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-fire"></i> Калории (ккал)
+                                    </label>
+                                    <input th:field="*{calories}" type="number" class="form-control"
+                                           th:classappend="${#fields.hasErrors('calories')} ? 'is-invalid' : ''">
+                                    <div th:if="${#fields.hasErrors('calories')}" class="invalid-feedback" th:errors="*{calories}"></div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Категория *</label>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-folder"></i> Категория <span class="text-danger">*</span>
+                                    </label>
                                     <select th:field="*{category.id}" class="form-select" required>
                                         <option value="">-- Выберите категорию --</option>
                                         <option th:each="cat : ${categories}"
@@ -74,77 +113,74 @@
                                                 th:selected="${dish.category != null and dish.category.id == cat.id}">
                                         </option>
                                     </select>
-                                </div>
-
-                                <!-- Ингредиенты -->
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold">Ингредиенты</label>
-                                    <input type="text" class="form-control"
-                                           name="ingredientsString"
-                                           th:value="${dish.ingredients != null ?
-                                                     #strings.listJoin(dish.ingredients, ', ') : ''}"
-                                           placeholder="лосось, сыр, огурец">
-                                    <div class="form-text">Введите через запятую</div>
-                                </div>
-
-                                <!-- Доступность -->
-                                <div class="col-12">
-                                    <div class="form-check">
-                                        <input th:field="*{available}" type="checkbox" class="form-check-input"
-                                               id="available">
-                                        <label class="form-check-label" for="available">
-                                            Доступно для заказа
-                                        </label>
-                                    </div>
+                                    <div th:if="${#fields.hasErrors('category.id')}" class="invalid-feedback" th:errors="*{category.id}"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Правая колонка - загрузка фото -->
-                        <div class="col-md-4">
-                            <div class="card bg-light border-0">
-                                <div class="card-body text-center">
-                                    <label class="form-label fw-semibold mb-3">Изображение блюда</label>
+                        <!-- Ингредиенты -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-basket"></i> Ингредиенты
+                            </label>
+                            <input type="text" class="form-control"
+                                   name="ingredientsString"
+                                   th:value="${dish.ingredients != null ?
+                                             #strings.listJoin(dish.ingredients, ', ') : ''}"
+                                   placeholder="лосось, сыр, огурец">
+                            <div class="form-text">Введите через запятую</div>
+                        </div>
 
-                                    <!-- Превью текущего изображения -->
-                                    <div th:if="${dish.imageUrl != null}" class="mb-3">
-                                        <img th:src="@{${dish.imageUrl}}"
-                                             class="img-fluid rounded border"
-                                             style="max-height: 250px; width: 100%; object-fit: cover;">
-                                        <p class="text-muted small mt-2">Текущее изображение</p>
-                                    </div>
-
-                                    <!-- Загрузка нового файла -->
-                                    <div class="mb-3">
-                                        <input type="file" name="imageFile" class="form-control"
-                                               accept="image/*">
-                                        <div class="form-text">
-                                            <i class="bi bi-info-circle me-1"></i>
-                                            Макс. размер 5MB. Форматы: JPG, PNG, WebP
-                                        </div>
-                                    </div>
-
-                                    <!-- Рекомендации -->
-                                    <div class="alert alert-info py-2 small">
-                                        <i class="bi bi-lightbulb me-1"></i>
-                                        Рекомендуемый размер: 1200x1000px
-                                    </div>
-                                </div>
-                            </div>
+                        <!-- Доступность -->
+                        <div class="checkbox-group">
+                            <input type="checkbox" th:field="*{available}" id="available">
+                            <label for="available">Доступно для заказа</label>
                         </div>
                     </div>
 
-                    <!-- Кнопки -->
-                    <div class="d-flex gap-2 mt-4 pt-3 border-top">
-                        <button type="submit" class="btn btn-primary px-4">
-                            <i class="bi bi-check-lg me-2"></i>Сохранить
-                        </button>
-                        <a th:href="@{/admin/dishes}" class="btn btn-outline-secondary px-4">
-                            <i class="bi bi-x-lg me-2"></i>Отмена
-                        </a>
+                    <!-- Правая колонка - изображение -->
+                    <div class="col-md-4">
+                        <div class="image-card">
+                            <label class="form-label">
+                                <i class="bi bi-image"></i> Изображение блюда
+                            </label>
+
+                            <!-- Превью текущего изображения -->
+                            <div th:if="${dish.imageUrl != null}" class="current-image">
+                                <img th:src="@{${dish.imageUrl}}" alt="Превью">
+                                <p class="text-muted small mt-2">Текущее изображение</p>
+                            </div>
+
+                            <!-- Загрузка нового файла -->
+                            <div class="form-group">
+                                <input type="file" name="imageFile" class="form-control"
+                                       accept="image/*">
+                            </div>
+
+                            <!-- Рекомендации -->
+                            <div class="image-hint">
+                                <i class="bi bi-lightbulb me-1"></i>
+                                <strong>Рекомендации:</strong>
+                                <ul class="mt-2 mb-0 ps-3">
+                                    <li>Макс. размер: 5MB</li>
+                                    <li>Форматы: JPG, PNG, WebP</li>
+                                    <li>Размер: 1200x1000px</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="action-bar-minimal">
+                    <a th:href="@{/admin/dishes}" class="btn-minimal btn-minimal-outline">
+                        <i class="bi bi-x-circle"></i> Отмена
+                    </a>
+                    <button type="submit" class="btn-minimal btn-minimal-primary">
+                        <i class="bi bi-check-circle"></i> Сохранить блюдо
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </main>

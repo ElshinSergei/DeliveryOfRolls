@@ -1,6 +1,7 @@
 package org.example.deliveryofrolls.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.deliveryofrolls.entity.Promotion;
 import org.example.deliveryofrolls.repository.PromotionRepository;
 import org.springframework.cache.annotation.CacheConfig;
@@ -15,11 +16,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 @CacheConfig(cacheNames = "promotions")
+@Slf4j
 public class PromotionService {
 
     private final PromotionRepository promotionRepository;
@@ -50,7 +54,13 @@ public class PromotionService {
     @CacheEvict(allEntries = true)
     @Transactional
     public void delete(Long id) {
+
+        Promotion promotion = getById(id);
+        if (promotion.getImageUrl() != null) {
+            deleteOldImageIfExists(promotion);
+        }
         promotionRepository.deleteById(id);
+        log.info("Акция удалена: id={}", id);
     }
 
     // Сохранение
@@ -78,6 +88,13 @@ public class PromotionService {
                     throw new IllegalArgumentException("Файл слишком большой (макс. 5MB)");
                 }
 
+                if (!isNewPromotion) {
+                    Promotion existingPromotion = getById(promotion.getId());
+                    if (existingPromotion.getImageUrl() != null) {
+                        deleteOldImageIfExists(existingPromotion);
+                    }
+                }
+
                 // Очистка имени файла от опасных символов
                 String originalFilename = file.getOriginalFilename();
                 String safeFilename = originalFilename != null ?
@@ -87,7 +104,7 @@ public class PromotionService {
                 String fileName = System.currentTimeMillis() + "_" + safeFilename;
 
                 // Определяем папку для сохранения
-                String uploadDir = System.getProperty("user.home") + "/sushi-uploads/promotions/";
+                String uploadDir = "/uploads/promotions/";
 
                 // Создание директории
                 Path uploadPath = Paths.get(uploadDir);
@@ -117,4 +134,60 @@ public class PromotionService {
         }
     }
 
+    /**
+     * Получить общее количество акций
+     */
+    @Cacheable(key = "'count'")
+    @Transactional(readOnly = true)
+    public long count() {
+        return promotionRepository.count();
+    }
+
+    /**
+     * Получить количество активных акций
+     */
+    @Cacheable(key = "'activeCount'")
+    @Transactional(readOnly = true)
+    public long countActive() {
+        return promotionRepository.countByActiveTrue();
+    }
+
+    /**
+     * Получить последние N акций (для dashboard)
+     */
+    @Cacheable(key = "'recent-' + #limit")
+    @Transactional(readOnly = true)
+    public List<Promotion> findRecent(int limit) {
+        return promotionRepository.findTopByOrderByCreatedAtDesc(limit);
+    }
+
+    /**
+     * Получить статистику по акциям (для dashboard)
+     */
+    @Transactional(readOnly = true)
+    public Map<String, Object> getStatistics() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("total", count());
+        stats.put("active", countActive());
+        stats.put("inactive", count() - countActive());
+
+        // Последние 5 акций
+        stats.put("recent", findRecent(5));
+
+        return stats;
+    }
+
+    private void deleteOldImageIfExists(Promotion promotion) {
+        if (promotion.getImageUrl() != null) {
+            String oldFileName = promotion.getImageUrl().replace("/uploads/promotions/", "");
+            Path oldFilePath = Paths.get("/uploads/promotions/", oldFileName);
+            try {
+                Files.deleteIfExists(oldFilePath);
+                log.info("Удален старый файл акции: {}", oldFileName);
+            } catch (IOException e) {
+                log.error("Не удалось удалить старый файл акции: {}", oldFileName, e);
+            }
+        }
+    }
 }
+

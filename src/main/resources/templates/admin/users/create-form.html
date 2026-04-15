@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <title th:text="${pageTitle}">Создание пользователя</title>
+</head>
+<body>
+<main>
+    <div class="user-form-container">
+
+        <!-- Заголовок -->
+        <div class="user-header-minimal">
+            <div>
+                <h1>👤 Создание пользователя</h1>
+                <div class="subtitle">Заполните форму для создания нового пользователя</div>
+            </div>
+            <a th:href="@{/admin/users}" class="btn-minimal btn-minimal-outline"
+               style="background: white; color: #667eea;">
+                ← Назад
+            </a>
+        </div>
+
+        <!-- Форма -->
+        <div class="edit-card">
+            <form th:action="@{/admin/users/create}" th:object="${user}" method="post">
+
+                <div class="form-group">
+                    <label class="form-label">Email <span class="text-danger">*</span></label>
+                    <input type="email" th:field="*{email}" class="form-control"
+                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                           placeholder="user@example.com" required>
+                    <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback" th:errors="*{email}"></div>
+                </div>
+
+                <div class="row">
+                    <div>
+                        <label class="form-label">Имя <span class="text-danger">*</span></label>
+                        <input type="text" th:field="*{firstName}" class="form-control"
+                               th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid' : ''"
+                               placeholder="Иван" required>
+                        <div th:if="${#fields.hasErrors('firstName')}" class="invalid-feedback" th:errors="*{firstName}"></div>
+                    </div>
+                    <div>
+                        <label class="form-label">Фамилия <span class="text-danger">*</span></label>
+                        <input type="text" th:field="*{lastName}" class="form-control"
+                               th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid' : ''"
+                               placeholder="Иванов" required>
+                        <div th:if="${#fields.hasErrors('lastName')}" class="invalid-feedback" th:errors="*{lastName}"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Телефон <span class="text-danger">*</span></label>
+                    <input type="tel" th:field="*{phone}" class="form-control"
+                           th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid' : ''"
+                           placeholder="+7 (999) 123-45-67" required>
+                    <div th:if="${#fields.hasErrors('phone')}" class="invalid-feedback" th:errors="*{phone}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Пароль <span class="text-danger">*</span></label>
+                    <input type="password" th:field="*{password}" class="form-control"
+                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
+                           placeholder="Минимум 6 символов" required>
+                    <div th:if="${#fields.hasErrors('password')}" class="invalid-feedback" th:errors="*{password}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Роль <span class="text-danger">*</span></label>
+                    <select name="role" class="form-control" required>
+                        <option value="">-- Выберите роль --</option>
+                        <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
+                    </select>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" name="enabled" id="enabled" checked value="true">
+                    <label for="enabled">Аккаунт активен</label>
+                </div>
+
+                <div class="action-bar-minimal">
+                    <a th:href="@{/admin/users}" class="btn-minimal btn-minimal-outline">
+                        <i class="bi bi-x-circle"></i> Отмена
+                    </a>
+                    <button type="submit" class="btn-minimal btn-minimal-primary">
+                        <i class="bi bi-check-circle"></i> Создать пользователя
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

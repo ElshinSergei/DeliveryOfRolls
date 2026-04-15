@@ -8,7 +8,6 @@
 <body>
 <main>
 
-
     <!-- Герой-секция оформления -->
     <section class="checkout-hero">
         <div class="container">
@@ -24,86 +23,233 @@
 
     <!-- Основной контент -->
     <div class="container checkout-container">
-        <div class="checkout-layout">
+        <!-- На мобильных сначала показываем сводку заказа -->
+        <div class="checkout-summary-mobile">
+            <div class="checkout-summary-card collapsed">
+                <div class="summary-header" id="mobileSummaryToggle">
+                    <h2 class="summary-title">
+                        <i class="bi bi-basket me-2"></i>
+                        Ваш заказ
+                    </h2>
+                    <div class="summary-total-mobile">
+                        <span class="total-label">Итого:</span>
+                        <span class="total-value" id="mobileTotalAmount"
+                              th:text="${#numbers.formatDecimal(cart.getTotalPrice(), 0, 0)} + ' ₽'">
+                            1 650 ₽
+                        </span>
+                        <i class="bi bi-chevron-down toggle-icon"></i>
+                    </div>
+                </div>
+                <div class="summary-content" id="mobileSummaryContent">
+                    <!-- Список товаров -->
+                    <div class="summary-items">
+                        <div th:each="item : ${cart.getItems()}" class="summary-item">
+                            <div class="summary-item-info">
+                                <span class="summary-item-name" th:text="${item.dish.name}">Филадельфия</span>
+                                <span class="summary-item-quantity" th:text="${item.quantity} + ' шт'">2 шт</span>
+                            </div>
+                            <span class="summary-item-price"
+                                  th:text="${#numbers.formatDecimal(item.quantity * item.dish.price, 0, 0)} + ' ₽'">
+                                700 ₽
+                            </span>
+                        </div>
+                    </div>
 
+                    <div class="summary-divider"></div>
+
+                    <!-- Детали заказа для мобильной версии -->
+                    <div class="summary-details">
+                        <div class="summary-row">
+                            <span class="summary-label">Товары:</span>
+                            <span class="summary-value" id="mobileSubtotal"
+                                  th:text="${#numbers.formatDecimal(cart.getTotalPrice(), 0, 0)} + ' ₽'">
+                                1 650 ₽
+                            </span>
+                        </div>
+
+                        <!-- Строка со скидкой для мобильной версии -->
+                        <div class="discount-row" id="mobileDiscountRow" style="display: none;">
+                            <span class="summary-label">Скидка <span id="mobileDiscountText"></span>:</span>
+                            <span class="summary-value discount-amount" id="mobileDiscountAmount">-0 ₽</span>
+                        </div>
+
+                        <!-- Блок бонусной скидки для мобильной версии -->
+                        <div class="discount-row" id="mobileBonusDiscountRow" style="display: none;">
+                            <span class="summary-label">Скидка бонусами:</span>
+                            <span class="summary-value discount-amount" id="mobileBonusDiscountAmount">-0 ₽</span>
+                        </div>
+
+                        <div class="summary-row">
+                            <span class="summary-label">Доставка:</span>
+                            <span class="summary-value" th:if="${orderDTO.deliveryType == 'DELIVERY'}">
+                                Бесплатно
+                            </span>
+                            <span class="summary-value" th:if="${orderDTO.deliveryType == 'PICKUP'}">
+                                Самовывоз
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="summary-divider"></div>
+
+                    <!-- Итоговая сумма для мобильной версии -->
+                    <div class="summary-row total">
+                        <span class="summary-label">Итого:</span>
+                        <span class="summary-value" id="mobileTotalFinal"
+                              th:text="${#numbers.formatDecimal(cart.getTotalPrice(), 0, 0)} + ' ₽'">
+                            1 650 ₽
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="checkout-layout">
             <!-- Левая колонка - форма -->
             <div class="checkout-form-section">
                 <div class="checkout-form-card">
-
                     <form th:action="@{/order/create}" method="post" th:object="${orderDTO}" class="checkout-form">
+                        <!-- Сообщение об ошибке -->
+                        <div th:if="${error}" class="alert alert-error">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span th:text="${error}">Ошибка</span>
+                        </div>
 
+                        <!-- Имя -->
                         <div class="form-group">
                             <label for="customerName" class="form-label">
-                                <i class="bi bi-person me-1"></i> Имя *
+                                <i class="bi bi-person me-1"></i> Имя <span class="required-star">*</span>
                             </label>
                             <input type="text"
                                    class="form-control"
+                                   th:classappend="${#fields.hasErrors('customerName')} ? 'is-invalid' : ''"
                                    id="customerName"
                                    th:field="*{customerName}"
                                    placeholder="Введите ваше имя">
                             <div th:if="${#fields.hasErrors('customerName')}"
-                                 class="form-error"
+                                 class="invalid-feedback"
                                  th:errors="*{customerName}"></div>
                         </div>
 
+                        <!-- Телефон -->
                         <div class="form-group">
                             <label for="customerPhone" class="form-label">
-                                <i class="bi bi-telephone me-1"></i> Телефон *
+                                <i class="bi bi-telephone me-1"></i> Телефон <span class="required-star">*</span>
                             </label>
                             <input type="tel"
                                    class="form-control"
+                                   th:classappend="${#fields.hasErrors('customerPhone')} ? 'is-invalid' : ''"
                                    id="customerPhone"
                                    th:field="*{customerPhone}"
-                                   placeholder="+7 (999) 123-45-67">
+                                   placeholder="+7 (999) 123-45-67"
+                                   maxlength="18">
                             <div th:if="${#fields.hasErrors('customerPhone')}"
-                                 class="form-error"
+                                 class="invalid-feedback"
                                  th:errors="*{customerPhone}"></div>
+                            <small class="form-text text-muted">Формат: +7 (999) 123-45-67</small>
                         </div>
 
-                        <div class="form-group">
+                        <!-- Адрес - только для отображения, с кнопкой выбора -->
+                        <div class="form-group" id="addressGroup">
                             <label for="deliveryAddress" class="form-label">
-                                <i class="bi bi-geo-alt me-1"></i> Адрес доставки *
+                                <i class="bi bi-geo-alt me-1"></i> Адрес доставки <span class="required-star">*</span>
                             </label>
-                            <textarea class="form-control"
-                                      id="deliveryAddress"
-                                      th:field="*{deliveryAddress}"
-                                      rows="3"
-                                      placeholder="Улица, дом, квартира"></textarea>
-                            <div th:if="${#fields.hasErrors('deliveryAddress')}"
-                                 class="form-error"
-                                 th:errors="*{deliveryAddress}"></div>
-                        </div>
 
-                        <div class="form-row">
-                            <div class="form-group half">
-                                <label for="deliveryType" class="form-label">
-                                    <i class="bi bi-truck me-1"></i> Способ получения
-                                </label>
-                                <select class="form-control"
-                                        id="deliveryType"
-                                        th:field="*{deliveryType}">
-                                    <option value="">-- Выберите способ --</option>
-                                    <option value="DELIVERY">🚚 Доставка</option>
-                                    <option value="PICKUP">🏪 Самовывоз</option>
-                                </select>
+                            <!-- Поле для отображения выбранного адреса (только для чтения) -->
+                            <div class="input-group">
+                                <input type="text"
+                                       class="form-control address-readonly"
+                                       id="deliveryAddress"
+                                       th:field="*{deliveryAddress}"
+                                       placeholder="Адрес не выбран"
+                                       readonly
+                                       style="background-color: #f8f9fa;">
+                                <button class="btn btn-outline-primary change-address-btn" type="button" id="changeAddressBtn">
+                                    <i class="bi bi-pencil"></i> Изменить
+                                </button>
                             </div>
 
+                            <!-- Детали адреса - компактный блок -->
+                            <div id="addressDetailsContainer" style="display: none;">
+                                <div class="address-details-grid">
+                                    <div class="address-detail-item">
+                                        <label class="detail-label">Подъезд</label>
+                                        <input type="text"
+                                               class="form-control detail-input"
+                                               id="deliveryEntrance"
+                                               th:field="*{deliveryEntrance}"
+                                               placeholder="№"
+                                               maxlength="10">
+                                    </div>
+                                    <div class="address-detail-item">
+                                        <label class="detail-label">Этаж</label>
+                                        <input type="text"
+                                               class="form-control detail-input"
+                                               id="deliveryFloor"
+                                               th:field="*{deliveryFloor}"
+                                               placeholder="№"
+                                               maxlength="10">
+                                    </div>
+                                    <div class="address-detail-item">
+                                        <label class="detail-label">Квартира</label>
+                                        <input type="text"
+                                               class="form-control detail-input"
+                                               id="deliveryApartment"
+                                               th:field="*{deliveryApartment}"
+                                               placeholder="№"
+                                               maxlength="10">
+                                    </div>
+                                    <div class="address-detail-item address-intercom">
+                                        <label class="detail-label">Домофон</label>
+                                        <input type="text"
+                                               class="form-control detail-input"
+                                               id="deliveryIntercom"
+                                               th:field="*{deliveryIntercom}"
+                                               placeholder="код"
+                                               maxlength="20">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div th:if="${#fields.hasErrors('deliveryAddress')}"
+                                 class="invalid-feedback"
+                                 th:errors="*{deliveryAddress}"></div>
+                            <small class="form-text text-muted" id="addressHint">
+                                <i class="bi bi-info-circle"></i>
+                                Адрес доставки можно изменить в шапке сайта или нажав кнопку "Изменить"
+                            </small>
+                        </div>
+
+                        <input type="hidden" id="deliveryType" name="deliveryType" th:value="${cart.deliveryType}">
+
+                            <!-- Время доставки -->
                             <div class="form-group half">
-                                <label for="deliveryTime" class="form-label">
+                                <label class="form-label">
                                     <i class="bi bi-clock me-1"></i> Время доставки
                                 </label>
-                                <input type="datetime-local"
-                                       class="form-control"
-                                       id="deliveryTime"
-                                       th:field="*{deliveryTime}">
-                            </div>
+                                <select class="form-control" id="deliveryTimeSelect">
+                                    <option value="">Как можно скорее</option>
+                                    <option value="12:00">12:00 - 13:00</option>
+                                    <option value="13:00">13:00 - 14:00</option>
+                                    <option value="14:00">14:00 - 15:00</option>
+                                    <option value="15:00">15:00 - 16:00</option>
+                                    <option value="16:00">16:00 - 17:00</option>
+                                    <option value="17:00">17:00 - 18:00</option>
+                                    <option value="18:00">18:00 - 19:00</option>
+                                    <option value="19:00">19:00 - 20:00</option>
+                                    <option value="20:00">20:00 - 21:00</option>
+                                    <option value="21:00">21:00 - 22:00</option>
+                                </select>
+                                <input type="hidden" id="deliveryTime" name="deliveryTime" th:field="*{deliveryTime}">
                         </div>
 
+                        <!-- Способ оплаты -->
                         <div class="form-group">
                             <label for="paymentMethod" class="form-label">
-                                <i class="bi bi-credit-card me-1"></i> Способ оплаты
+                                <i class="bi bi-credit-card me-1"></i> Способ оплаты <span class="required-star">*</span>
                             </label>
                             <select class="form-control"
+                                    th:classappend="${#fields.hasErrors('paymentMethod')} ? 'is-invalid' : ''"
                                     id="paymentMethod"
                                     th:field="*{paymentMethod}">
                                 <option value="">-- Выберите способ оплаты --</option>
@@ -113,20 +259,121 @@
                             </select>
                         </div>
 
+                        <!-- Комментарий -->
                         <div class="form-group">
                             <label for="notes" class="form-label">
                                 <i class="bi bi-chat-dots me-1"></i> Комментарий к заказу
                             </label>
                             <textarea class="form-control"
+                                      th:classappend="${#fields.hasErrors('notes')} ? 'is-invalid' : ''"
                                       id="notes"
                                       th:field="*{notes}"
-                                      rows="3"
+                                      rows="2"
+                                      maxlength="200"
                                       placeholder="Дополнительные пожелания, звонок в домофон и т.д."></textarea>
                             <div th:if="${#fields.hasErrors('notes')}"
-                                 class="form-error"
+                                 class="invalid-feedback"
                                  th:errors="*{notes}"></div>
                         </div>
 
+                        <div th:if="${user != null}" class="bonus-section">
+                            <div class="bonus-header" onclick="toggleBonus()">
+                                <div class="header-left">
+                                    <i class="bi bi-gem"></i>
+                                    <span>У вас есть бонусы?</span>
+                                </div>
+                                <div class="bonus-balance-right" th:if="${bonusBalance > 0}">
+                                    <i class="bi bi-star-fill"></i>
+                                    <strong th:text="${bonusBalance}">92</strong> ₽
+                                </div>
+                                <i class="bi bi-chevron-down toggle-icon"></i>
+                            </div>
+
+                            <div class="bonus-content" id="bonusContent" style="display: none;">
+                                <!-- Предупреждение о минимальной сумме -->
+                                <div th:if="${bonusSettings != null and cart.totalPrice < bonusSettings.minOrderAmount}"
+                                     class="bonus-warning">
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                    Минимальная сумма для списания бонусов:
+                                    <strong th:text="${#numbers.formatDecimal(bonusSettings.minOrderAmount, 0, 0)}">500</strong> ₽
+                                </div>
+
+                                <div class="bonus-input-group">
+                                    <input type="number"
+                                           class="form-control"
+                                           id="bonusInput"
+                                           min="0"
+                                           th:max="${maxSpendable}"
+                                           th:disabled="${bonusSettings != null and cart.totalPrice < bonusSettings.minOrderAmount}"
+                                           placeholder="Сколько бонусов использовать?">
+                                    <button type="button"
+                                            class="btn-bonus-apply"
+                                            id="applyBonusBtn"
+                                            th:disabled="${bonusSettings != null and cart.totalPrice < bonusSettings.minOrderAmount}">
+                                        Применить
+                                    </button>
+                                </div>
+
+                                <div class="bonus-message" id="bonusMessage"></div>
+
+                                <div class="bonus-hint">
+                                    <i class="bi bi-info-circle"></i>
+                                    Можно использовать до <span th:text="${maxSpendable}">0</span> бонусов
+                                    (1 бонус = 1 ₽, но не более <span th:text="${bonusSettings != null ? bonusSettings.maxSpendPercent : 30}">30</span>% от заказа)
+                                </div>
+
+                                <div class="bonus-applied-info" style="display: none;">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>Бонусы применены: <strong id="appliedBonusAmount">0</strong> ₽</span>
+                                    <button type="button" class="btn-cancel-bonus" onclick="cancelBonuses()">
+                                        <i class="bi bi-x-circle"></i> Отменить
+                                    </button>
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="usedBonuses" name="usedBonuses"
+                                   th:value="${orderDTO.usedBonuses != null ? orderDTO.usedBonuses : 0}">
+                        </div>
+
+                        <!-- Блок промокода -->
+                        <div class="promo-section">
+                            <div class="promo-header" onclick="togglePromo()">
+                                <div class="header-left">
+                                    <i class="bi bi-ticket-perforated"></i>
+                                    <span>У вас есть промокод?</span>
+                                </div>
+                                <i class="bi bi-chevron-down toggle-icon"></i>
+                            </div>
+
+                            <div class="promo-content" id="promoContent" style="display: none;">
+                                <div class="promo-input-group">
+                                    <input type="text"
+                                           class="form-control"
+                                           id="promoCodeInput"
+                                           placeholder="Введите промокод"
+                                           maxlength="20"
+                                           style="text-transform: uppercase;">
+                                    <button type="button" class="btn-promo-apply" id="applyPromoBtn">
+                                        Применить
+                                    </button>
+                                </div>
+                                <div class="promo-message" id="promoMessage"></div>
+
+                                <div class="promo-applied-info" style="display: none;">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>Промокод применен: <strong id="appliedPromoCodeDisplay"></strong></span>
+                                    <button type="button" class="btn-cancel-promo" onclick="cancelPromo()">
+                                        <i class="bi bi-x-circle"></i> Отменить
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Скрытое поле для отправки промокода -->
+                        <input type="hidden" id="appliedPromoCode" name="appliedPromoCode"
+                               th:value="${orderDTO.appliedPromoCode}">
+
+                        <!-- Кнопка подтверждения -->
                         <button type="submit" class="btn-checkout">
                             <i class="bi bi-check-circle"></i>
                             Подтвердить заказ
@@ -135,8 +382,8 @@
                 </div>
             </div>
 
-            <!-- Правая колонка - сводка заказа -->
-            <div class="checkout-summary-section">
+            <!-- Правая колонка - сводка заказа (десктоп версия) -->
+            <div class="checkout-summary-desktop">
                 <div class="checkout-summary-card">
                     <h2 class="summary-title">
                         <i class="bi bi-basket me-2"></i>
@@ -159,15 +406,29 @@
 
                     <div class="summary-divider"></div>
 
-                    <!-- Детали заказа -->
+                    <!-- Детали заказа для десктоп версии -->
                     <div class="summary-details">
+
                         <div class="summary-row">
                             <span class="summary-label">Товары:</span>
-                            <span class="summary-value"
+                            <span class="summary-value" id="subtotal"
                                   th:text="${#numbers.formatDecimal(cart.getTotalPrice(), 0, 0)} + ' ₽'">
                                 1 650 ₽
                             </span>
                         </div>
+
+                        <!-- Строка со скидкой для десктоп версии -->
+                        <div class="discount-row" id="desktopDiscountRow" style="display: none;">
+                            <span class="summary-label">Скидка <span id="desktopDiscountText"></span>:</span>
+                            <span class="summary-value discount-amount" id="desktopDiscountAmount">-0 ₽</span>
+                        </div>
+
+                        <!-- Блок бонусной скидки для десктоп версии -->
+                        <div class="discount-row" id="desktopBonusDiscountRow" style="display: none;">
+                            <span class="summary-label">Скидка бонусами:</span>
+                            <span class="summary-value discount-amount" id="desktopBonusDiscountAmount">-0 ₽</span>
+                        </div>
+
                         <div class="summary-row">
                             <span class="summary-label">Доставка:</span>
                             <span class="summary-value" th:if="${orderDTO.deliveryType == 'DELIVERY'}">
@@ -176,15 +437,18 @@
                             <span class="summary-value" th:if="${orderDTO.deliveryType == 'PICKUP'}">
                                 Самовывоз
                             </span>
+                            <span class="summary-value text-muted" th:unless="${orderDTO.deliveryType == 'DELIVERY' or orderDTO.deliveryType == 'PICKUP'}">
+                                Не выбрана
+                            </span>
                         </div>
                     </div>
 
                     <div class="summary-divider"></div>
 
-                    <!-- Итоговая сумма -->
+                    <!-- Итоговая сумма для десктоп версии -->
                     <div class="summary-row total">
                         <span class="summary-label">Итого:</span>
-                        <span class="summary-value"
+                        <span class="summary-value" id="totalAmount"
                               th:text="${#numbers.formatDecimal(cart.getTotalPrice(), 0, 0)} + ' ₽'">
                             1 650 ₽
                         </span>
@@ -199,6 +463,7 @@
         </div>
     </div>
 
+    <script th:src="@{/js/checkout.js}"></script>
 </main>
 </body>
 </html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <title>Маркетинг</title>
+</head>
+<body>
+<main class="marketing-dashboard">
+    <div class="container-fluid py-4">
+
+        <!-- Заголовок с действиями -->
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1>📊 Маркетинговая панель</h1>
+                    <p class="text-muted">Управление акциями и промокодами</p>
+                </div>
+                <div class="btn-group">
+                    <a th:href="@{/admin/marketing/promotions}" class="btn-minimal btn-minimal-primary">
+                        <i class="bi bi-megaphone me-2"></i>Все акции
+                    </a>
+                    <a th:href="@{/admin/marketing/promocodes}" class="btn-minimal btn-minimal-primary">
+                        <i class="bi bi-ticket-perforated me-2"></i>Все промокоды
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Карточки статистики -->
+        <div class="stats-grid">
+            <!-- Карточка акций -->
+            <div class="stat-card">
+                <div class="stat-icon promotion">
+                    <i class="bi bi-megaphone"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Всего акций</div>
+                    <div class="stat-number" th:text="${promotionsCount}">12</div>
+                    <div class="stat-desc">
+                        <span class="text-success" th:text="${activePromotionsCount}">8</span> активных,
+                        <span class="text-secondary" th:text="${promotionsCount - activePromotionsCount}">4</span> неактивных
+                    </div>
+                    <a th:href="@{/admin/marketing/promotions}" class="stat-link">
+                        <i class="bi bi-arrow-right"></i> Управление акциями
+                    </a>
+                </div>
+            </div>
+
+            <!-- Карточка промокодов -->
+            <div class="stat-card">
+                <div class="stat-icon promocode">
+                    <i class="bi bi-ticket-perforated"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Всего промокодов</div>
+                    <div class="stat-number" th:text="${promoCodesCount}">24</div>
+                    <div class="stat-desc">
+                        <span class="text-success" th:text="${activePromoCodesCount}">15</span> действующих,
+                        <span class="text-secondary" th:text="${expiredPromoCodesCount}">9</span> истекших
+                    </div>
+                    <a th:href="@{/admin/marketing/promocodes}" class="stat-link">
+                        <i class="bi bi-arrow-right"></i> Управление промокодами
+                    </a>
+                </div>
+            </div>
+
+            <!-- Карточка использований -->
+            <div class="stat-card">
+                <div class="stat-icon usage">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Всего использований</div>
+                    <div class="stat-number" th:text="${totalUsageCount}">342</div>
+                    <div class="stat-desc">промокодов применено</div>
+                    <a th:href="@{/admin/marketing/promocodes/report}" class="stat-link">
+                        <i class="bi bi-arrow-right"></i> Подробный отчет
+                    </a>
+                </div>
+            </div>
+
+            <!-- Карточка бонусов -->
+            <div class="stat-card">
+                <div class="stat-icon bonus">
+                    <i class="bi bi-gem"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-label">Бонусная система</div>
+                    <div class="stat-number" th:text="${totalBonusBalance}">2 495</div>
+                    <div class="stat-desc">
+                        всего бонусов у пользователей
+                    </div>
+                    <div class="stat-desc">
+                        <span class="text-success" th:text="${activeBonusUsers}">3</span> активных пользователей
+                    </div>
+                    <a th:href="@{/admin/marketing/bonus-settings}" class="stat-link">
+                        <i class="bi bi-arrow-right"></i> Настройка бонусов
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- СЕКЦИЯ АКЦИЙ И ПРОМОКОДОВ В ОДНОЙ СТРОКЕ -->
+        <div class="row">
+            <!-- Левая колонка - Акции -->
+            <div class="col-lg-6 mb-4">
+                <div class="section-title">
+                    <i class="bi bi-megaphone"></i> Последние акции
+                    <a th:href="@{/admin/marketing/promotions}" class="section-link">
+                        Все <i class="bi bi-chevron-right"></i>
+                    </a>
+                </div>
+
+                <div class="cards-grid-single">
+                    <div th:if="${not #lists.isEmpty(recentPromotions)}">
+                        <div th:each="promo : ${recentPromotions}" class="promo-card">
+                            <img th:if="${promo.imageUrl}" th:src="@{${promo.imageUrl}}" class="promo-image"
+                                 th:alt="${promo.title}">
+                            <img th:unless="${promo.imageUrl}" src="/images/no-image.jpg" class="promo-image"
+                                 alt="Нет изображения">
+                            <div class="promo-info">
+                                <div class="promo-header">
+                                    <h4 class="promo-title" th:text="${promo.title}">Название акции</h4>
+                                    <span class="promo-badge" th:classappend="${promo.active} ? 'active' : 'inactive'"
+                                          th:text="${promo.active} ? 'Активно' : 'Неактивно'">Активно</span>
+                                </div>
+                                <div class="promo-description" th:text="${promo.description} ?: 'Описание отсутствует'">
+                                    Описание акции...
+                                </div>
+                                <div class="promo-footer">
+                                    <span class="promo-order">
+                                        <i class="bi bi-sort-numeric-down"></i> <span th:text="${promo.sortOrder}">0</span>
+                                    </span>
+                                    <a th:href="@{/admin/marketing/promotions/{id}/edit(id=${promo.id})}" class="promo-edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(recentPromotions)}" class="empty-state small">
+                        <i class="bi bi-megaphone"></i>
+                        <p>Акций пока нет</p>
+                        <a th:href="@{/admin/marketing/promotions/new}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-plus-circle"></i> Создать
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Правая колонка - Промокоды -->
+            <div class="col-lg-6 mb-4">
+                <div class="section-title">
+                    <i class="bi bi-ticket-perforated"></i> Популярные промокоды
+                    <a th:href="@{/admin/marketing/promocodes}" class="section-link">
+                        Все <i class="bi bi-chevron-right"></i>
+                    </a>
+                </div>
+
+                <div class="cards-grid-single">
+                    <div th:if="${not #lists.isEmpty(popularPromoCodes)}">
+                        <div th:each="promo : ${popularPromoCodes}" class="code-card"
+                             th:classappend="${promo.discountType == 'PERCENTAGE'} ? 'percent' : 'fixed'">
+                            <div class="code-header">
+                                <span class="code-value" th:text="${promo.code}">WELCOME10</span>
+                                <span class="code-type" th:classappend="${promo.discountType == 'PERCENTAGE'} ? 'percent' : 'fixed'"
+                                      th:text="${promo.discountType == 'PERCENTAGE'} ? '%' : '₽'">%</span>
+                            </div>
+                            <div class="code-stats">
+                                <div class="code-stat">
+                                    <span class="label">Скидка</span>
+                                    <span class="number" th:text="${promo.discountType.name() == 'PERCENTAGE' ?
+                                    promo.discountValue + '%' : promo.discountValue + ' ₽'}">10%</span>
+                                </div>
+                                <div class="code-stat">
+                                    <span class="label">От</span>
+                                    <span class="number" th:text="${promo.minOrderAmount} + ' ₽'">500 ₽</span>
+                                </div>
+                                <div class="code-stat">
+                                    <span class="label">Использован</span>
+                                    <span class="number" th:text="${promo.usedCount} + '/' + ${promo.usageLimit}">15/100</span>
+                                </div>
+                            </div>
+                            <div class="code-footer">
+                                <span class="code-date">
+                                    <i class="bi bi-calendar"></i>
+                                    <span th:text="${#temporals.format(promo.validUntil, 'dd.MM')}">31.12</span>
+                                </span>
+                                <div class="code-actions">
+                                    <a th:href="@{/admin/marketing/promocodes/{id}/edit(id=${promo.id})}" class="code-edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(popularPromoCodes)}" class="empty-state small">
+                        <i class="bi bi-ticket-perforated"></i>
+                        <p>Промокодов пока нет</p>
+                        <a th:href="@{/admin/marketing/promocodes/new}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-plus-circle"></i> Создать
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Быстрые действия -->
+        <div class="quick-actions">
+            <div class="section-title">
+                <i class="bi bi-lightning-charge"></i> Быстрые действия
+            </div>
+            <div class="actions-grid">
+                <a th:href="@{/admin/marketing/promotions/new}" class="action-card">
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Новая акция</span>
+                </a>
+                <a th:href="@{/admin/marketing/promocodes/new}" class="action-card">
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Новый промокод</span>
+                </a>
+                <a th:href="@{/admin/marketing/promotions}" class="action-card">
+                    <i class="bi bi-megaphone"></i>
+                    <span>Все акции</span>
+                </a>
+                <a th:href="@{/admin/marketing/promocodes}" class="action-card">
+                    <i class="bi bi-ticket-perforated"></i>
+                    <span>Все промокоды</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</main>
+</body>
+</html>

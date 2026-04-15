@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Мои адреса</title>
+</head>
+<body>
+<main>
+    <div class="profile-wrapper">
+        <div class="profile-card">
+            <!-- Шапка профиля (такая же как на главной) -->
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <span>👤</span>
+                </div>
+                <div class="profile-title">
+                    <h1 th:text="${user.firstName + ' ' + user.lastName}">Иван Иванов</h1>
+                    <p th:text="${user.email}">ivan@mail.com</p>
+                </div>
+            </div>
+
+            <!-- Основной контент -->
+            <div class="profile-layout">
+                <!-- Боковое меню (такое же как на главной) -->
+                <div class="profile-menu">
+                    <a th:href="@{/profile}" class="profile-menu-item">
+                        <i class="bi bi-person"></i>
+                        <span>Мой профиль</span>
+                    </a>
+                    <a th:href="@{/profile/orders}" class="profile-menu-item">
+                        <i class="bi bi-box"></i>
+                        <span>Мои заказы</span>
+                    </a>
+                    <a th:href="@{/profile/addresses}" class="profile-menu-item active">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>Мои адреса</span>
+                    </a>
+                    <a th:href="@{/profile/bonuses}" class="profile-menu-item">
+                        <i class="bi bi-gem"></i>
+                        <span>Мои бонусы</span>
+                    </a>
+                    <a th:href="@{/profile/change-password}" class="profile-menu-item">
+                        <i class="bi bi-key"></i>
+                        <span>Сменить пароль</span>
+                    </a>
+                </div>
+
+                <!-- Контент адресов -->
+                <div class="profile-content">
+                    <div class="content-header">
+                        <h2>📍 Мои адреса</h2>
+                        <a th:href="@{/profile/addresses/new}" class="btn-add">
+                            <i class="bi bi-plus-circle"></i> Добавить адрес
+                        </a>
+                    </div>
+
+                    <!-- Сообщения -->
+                    <div th:if="${success}" class="alert alert-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span th:text="${success}"></span>
+                    </div>
+                    <div th:if="${error}" class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <span th:text="${error}"></span>
+                    </div>
+
+                    <!-- Список адресов -->
+                    <div th:if="${not #lists.isEmpty(addresses)}" class="addresses-grid">
+                        <div th:each="addr : ${addresses}" class="address-card">
+
+                            <!-- Бейдж основного адреса -->
+                            <div th:if="${addr.default}" class="default-badge">
+                                ⭐ Основной адрес
+                            </div>
+
+                            <!-- Адрес -->
+                            <div class="address-main" th:text="${addr.address}">
+                                ул. Пушкина, д. 10
+                            </div>
+
+                            <!-- Детали -->
+                            <div class="address-details">
+                                <div th:if="${addr.entrance != null and !addr.entrance.isEmpty()}" class="detail-item">
+                                    <i class="bi bi-door-open"></i>
+                                    <span>Подъезд: <span th:text="${addr.entrance}">1</span></span>
+                                </div>
+                                <div th:if="${addr.floor != null and !addr.floor.isEmpty()}" class="detail-item">
+                                    <i class="bi bi-stairs"></i>
+                                    <span>Этаж: <span th:text="${addr.floor}">3</span></span>
+                                </div>
+                                <div th:if="${addr.apartment != null and !addr.apartment.isEmpty()}" class="detail-item">
+                                    <i class="bi bi-house"></i>
+                                    <span>Квартира: <span th:text="${addr.apartment}">42</span></span>
+                                </div>
+                                <div th:if="${addr.comment != null and !addr.comment.isEmpty()}" class="detail-item">
+                                    <i class="bi bi-chat-dots"></i>
+                                    <span th:text="${addr.comment}">Домофон 42</span>
+                                </div>
+                            </div>
+
+                            <!-- Кнопки действий -->
+                            <div class="address-actions">
+                                <!-- Сделать основным (если еще не основной) -->
+                                <form th:if="${!addr.default}"
+                                      th:action="@{/profile/addresses/{id}/set-default(id=${addr.id})}"
+                                      method="post"
+                                      style="display: inline;">
+                                    <button type="submit" class="btn-address">
+                                        <i class="bi bi-star"></i> Сделать основным
+                                    </button>
+                                </form>
+
+                                <!-- Редактировать -->
+                                <a th:href="@{/profile/addresses/{id}/edit(id=${addr.id})}"
+                                   class="btn-address edit">
+                                    <i class="bi bi-pencil"></i> Изменить
+                                </a>
+
+                                <!-- Удалить -->
+                                <form th:action="@{/profile/addresses/{id}/delete(id=${addr.id})}"
+                                      method="post"
+                                      style="display: inline;"
+                                      onsubmit="return confirm('Удалить этот адрес?')">
+                                    <button type="submit" class="btn-address delete">
+                                        <i class="bi bi-trash"></i> Удалить
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Пустой список -->
+                    <div th:if="${#lists.isEmpty(addresses)}" class="empty-addresses">
+                        <i class="bi bi-geo-alt"></i>
+                        <h3>У вас пока нет сохраненных адресов</h3>
+                        <p>Добавьте адрес, чтобы быстро оформлять заказы</p>
+                        <a th:href="@{/profile/addresses/new}" class="btn-add">
+                            <i class="bi bi-plus-circle"></i> Добавить первый адрес
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

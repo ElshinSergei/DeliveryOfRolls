@@ -315,3 +315,28 @@ main {
         font-size: 12px;
     }
 }
+
+/* Дополнительные стили для маски */
+.input-group {
+    position: relative;
+}
+
+.input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #e74c3c;
+    z-index: 1;
+}
+
+.input-group input {
+    padding-left: 45px !important;
+}
+
+.form-hint {
+    font-size: 12px;
+    color: #7f8c8d;
+    margin-top: 5px;
+    margin-left: 45px;
+}

@@ -110,4 +110,14 @@ public class AdminOrderController {
         return response;
     }
 
+    @GetMapping("/count-new")
+    @ResponseBody
+    public Map<String, Object> getNewOrdersCount() {
+        Map<String, Object> response = new HashMap<>();
+        long count = orderService.countNewOrders();
+        response.put("count", count);
+        log.info("Количество новых заказов: {}", count);
+        return response;
+    }
+
 }

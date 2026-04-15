@@ -1,5 +1,6 @@
 package org.example.deliveryofrolls.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -33,6 +35,20 @@ public class Order {
     private BigDecimal totalPrice;   //Итоговая стоимость
 
     private String deliveryAddress;
+
+    // ========== НОВЫЕ ПОЛЯ ДЛЯ ДЕТАЛЕЙ АДРЕСА ==========
+    @Column(name = "delivery_entrance", length = 10)
+    private String deliveryEntrance;   // подъезд
+
+    @Column(name = "delivery_floor", length = 10)
+    private String deliveryFloor;      // этаж
+
+    @Column(name = "delivery_apartment", length = 10)
+    private String deliveryApartment;  // квартира
+
+    @Column(name = "delivery_intercom", length = 20)
+    private String deliveryIntercom;   // домофон
+    // ================================================
 
     // Контактная информация
     @Column(nullable = false)
@@ -63,6 +79,18 @@ public class Order {
     private LocalDateTime deliveryTime; // желаемое время доставки
 
     private String notes; // комментарий к заказу
+
+    @Column(name = "promo_code")
+    private String promoCode;
+
+    @Column(name = "discount_amount", precision = 10, scale = 2)
+    private BigDecimal discountAmount;
+
+    @Column(name = "bonus_used")
+    private Integer bonusUsed = 0;  // Сколько бонусов потратил
+
+    @Column(name = "bonus_earned")
+    private Integer bonusEarned = 0;  // Сколько бонусов начислено
 
     public enum OrderStatus {
         PENDING,

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <title th:text="${promotion.id == null} ? 'Добавление акции' : 'Редактирование акции'">Управление акцией</title>
+</head>
+<body>
+<main>
+    <div class="promo-form-container">
+
+        <!-- Заголовок в стиле промокодов -->
+        <div class="promo-header-minimal">
+            <div>
+                <h1 th:text="${promotion.id == null} ? '📢 Добавление акции' : '✏️ Редактирование акции'">
+                    Добавление акции
+                </h1>
+                <div class="subtitle" th:text="${promotion.id == null} ?
+                    'Заполните форму для создания новой акции' :
+                    'Измените параметры акции'">
+                    Заполните форму
+                </div>
+            </div>
+            <a th:href="@{/admin/marketing/promotions}" class="btn-minimal btn-minimal-outline">
+                <i class="bi bi-arrow-left me-2"></i>Назад
+            </a>
+        </div>
+
+        <!-- Сообщения об успехе/ошибке -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${error}">Ошибка</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Форма -->
+        <div class="edit-card">
+            <form th:action="@{/admin/marketing/promotions/save}"
+                  th:object="${promotion}"
+                  method="post"
+                  enctype="multipart/form-data">
+
+                <input type="hidden" name="id" th:value="*{id}">
+
+                <!-- Основная информация -->
+                <h4 class="section-title-minimal">📋 Основная информация</h4>
+
+                <div class="form-group">
+                    <label>Название акции <span class="text-danger">*</span></label>
+                    <input type="text"
+                           th:field="*{title}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('title')} ? 'is-invalid' : ''"
+                           placeholder="Например: Счастливые часы"
+                           required>
+                    <div th:if="${#fields.hasErrors('title')}"
+                         class="invalid-feedback"
+                         th:errors="*{title}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Подробное описание акции <span class="text-danger">*</span></label>
+                    <textarea th:field="*{description}"
+                              class="form-control"
+                              th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''"
+                              rows="6"
+                              required
+                              maxlength="500"
+                              placeholder="Опишите условия акции, сроки действия, особые предложения..."></textarea>
+                    <div class="form-text">Максимум 500 символов. Сейчас: <span id="charCount">0</span>/500</div>
+                    <div th:if="${#fields.hasErrors('description')}"
+                         class="invalid-feedback"
+                         th:errors="*{description}"></div>
+                </div>
+
+                <!-- Изображение -->
+                <h4 class="section-title-minimal mt-4">🖼️ Изображение</h4>
+
+                <!-- Текущее изображение (только для редактирования) -->
+                <div th:if="${promotion.id != null and promotion.imageUrl != null}" class="current-image-preview">
+                    <label class="form-label fw-bold">Текущее изображение</label>
+                    <div>
+                        <img th:src="@{*{imageUrl}}"
+                             alt="Превью">
+                    </div>
+                    <div class="image-upload-hint">
+                        <i class="bi bi-info-circle"></i>
+                        Оставьте поле ниже пустым, чтобы не менять изображение
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Изображение акции
+                        <span th:if="${promotion.id == null}" class="text-danger">*</span>
+                        <span th:if="${promotion.id != null}" class="text-muted">(необязательно)</span>
+                    </label>
+                    <input type="file"
+                           name="imageFile"
+                           class="form-control"
+                           accept="image/*"
+                           th:required="${promotion.id == null}">
+                    <div class="form-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Рекомендуемый размер: 1000x720px. Максимум 5MB.
+                    </div>
+                </div>
+
+                <!-- Дополнительные настройки -->
+                <h4 class="section-title-minimal mt-4">⚙️ Дополнительные настройки</h4>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Порядок сортировки</label>
+                            <input type="number"
+                                   th:field="*{sortOrder}"
+                                   class="form-control"
+                                   th:classappend="${#fields.hasErrors('sortOrder')} ? 'is-invalid' : ''"
+                                   min="0"
+                                   step="1"
+                                   placeholder="0 - первый, 1 - второй">
+                            <div class="form-text">Чем меньше число, тем выше акция в списке</div>
+                            <div th:if="${#fields.hasErrors('sortOrder')}"
+                                 class="invalid-feedback"
+                                 th:errors="*{sortOrder}"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Статус -->
+                <div class="checkbox-group">
+                    <input type="checkbox"
+                           th:field="*{active}"
+                           id="activeCheck">
+                    <label for="activeCheck">
+                        Акция активна
+                    </label>
+                </div>
+                <div class="form-text" style="margin-left: 32px;">
+                    Если выключено, акция не будет отображаться на сайте
+                </div>
+
+                <!-- Кнопки -->
+                <div class="action-bar-minimal">
+                    <a th:href="@{/admin/marketing/promotions}" class="btn-minimal btn-minimal-outline">
+                        <i class="bi bi-x-circle me-2"></i>Отмена
+                    </a>
+                    <button type="submit" class="btn-minimal btn-minimal-primary">
+                        <i class="bi bi-check-circle me-2"></i>
+                        <span th:text="${promotion.id == null} ? 'Создать акцию' : 'Сохранить изменения'">
+                            Сохранить
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Счетчик символов для описания
+            const descriptionField = document.querySelector('textarea[name="description"]');
+            const charCount = document.getElementById('charCount');
+
+            if (descriptionField && charCount) {
+                charCount.textContent = descriptionField.value.length;
+
+                descriptionField.addEventListener('input', function() {
+                    charCount.textContent = this.value.length;
+                });
+            }
+
+            // Предпросмотр изображения (опционально)
+            const imageInput = document.querySelector('input[name="imageFile"]');
+            if (imageInput) {
+                imageInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const file = this.files[0];
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('Файл слишком большой. Максимальный размер 5MB.');
+                            this.value = '';
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</main>
+</body>
+</html>

@@ -1,0 +1,188 @@
+/* ========== MOBILE ADDRESS SELECTOR STYLES ========== */
+
+/* Mobile address selector container */
+.mobile-address-selector {
+    display: flex;
+    align-items: center;
+    margin-right: 12px;
+}
+
+/* Mobile address selector */
+.mobile-address-selector .address-selector-mobile {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(231, 76, 60, 0.2);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #2d3748;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    min-width: 140px;
+    max-width: 200px;
+}
+
+.mobile-address-selector .address-selector-mobile:hover {
+    background: #fff5f5;
+    border-color: #e74c3c;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.15);
+}
+
+.mobile-address-selector .address-selector-mobile i {
+    color: #e74c3c;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.mobile-address-selector .address-selector-mobile span {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+.mobile-address-selector .address-selector-mobile .bi-chevron-down {
+    font-size: 10px;
+    color: #a0aec0;
+    flex-shrink: 0;
+    margin-left: 2px;
+}
+
+/* Mobile cart wrapper */
+.mobile-cart-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+/* Mobile cart button */
+.mobile-cart-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(231, 76, 60, 0.2);
+    border-radius: 50%;
+    color: #e74c3c;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    position: relative;
+}
+
+.mobile-cart-btn:hover {
+    background: #fff5f5;
+    border-color: #e74c3c;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.15);
+    color: #e74c3c;
+    text-decoration: none;
+}
+
+.mobile-cart-btn i {
+    font-size: 16px;
+}
+
+/* Mobile cart badge */
+.mobile-cart-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 4px;
+    border-radius: 30px;
+    min-width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(231, 76, 60, 0.4);
+}
+
+/* Mobile menu toggle */
+.mobile-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(231, 76, 60, 0.2);
+    border-radius: 50%;
+    color: #e74c3c;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.mobile-menu-toggle:hover {
+    background: #fff5f5;
+    border-color: #e74c3c;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.15);
+}
+
+.mobile-menu-toggle i {
+    font-size: 16px;
+}
+
+/* Mobile top bar */
+.mobile-top-bar {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    gap: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .mobile-address-selector .address-selector-mobile {
+        min-width: 120px;
+        max-width: 160px;
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+    
+    .mobile-address-selector .address-selector-mobile i {
+        font-size: 12px;
+    }
+    
+    .mobile-cart-btn,
+    .mobile-menu-toggle {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .mobile-cart-btn i,
+    .mobile-menu-toggle i {
+        font-size: 14px;
+    }
+    
+    .mobile-cart-badge {
+        font-size: 8px;
+        min-width: 14px;
+        height: 14px;
+    }
+}
+
+/* Ensure proper spacing in mobile menu */
+@media (max-width: 991px) {
+    .mobile-address-selector {
+        flex: 1;
+        margin-right: 8px;
+    }
+    
+    .mobile-cart-wrapper {
+        margin-right: 8px;
+    }
+}

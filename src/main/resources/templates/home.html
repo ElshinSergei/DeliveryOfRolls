@@ -16,11 +16,13 @@
 
                 <div class="promo-slider-track" id="promoSlider">
                     <div th:each="promo : ${promotions}" class="promo-slide">
+                        <a th:href="@{/promotions}" class="promo-link">
                             <div class="promo-card">
                                 <img th:src="@{${promo.imageUrl}}"
                                      th:alt="${promo.title}"
                                      class="promo-image">
                             </div>
+                        </a>
                     </div>
                 </div>
 
@@ -34,8 +36,8 @@
         <div class="container">
             <div class="categories-wrapper">
                 <a th:each="category : ${categories}"
-                   th:href="'#' + ${#strings.toLowerCase(category.name)}"
-                   th:data-category="${#strings.toLowerCase(category.name)}"
+                   th:href="'#' + ${#strings.replace(#strings.toLowerCase(category.name), ' ', '-')}"
+                   th:data-category="${#strings.replace(#strings.toLowerCase(category.name), ' ', '-')}"
                    class="category-link"
                    th:text="${category.name}">
                 </a>
@@ -49,15 +51,15 @@
 
             <!-- Динамические блоки категорий -->
             <div th:each="category : ${categories}"
-                 th:id="${#strings.toLowerCase(category.name)}"
+                 th:id="${#strings.replace(#strings.toLowerCase(category.name), ' ', '-')}"
                  class="category-block">
 
                 <h2 class="category-title" th:text="${category.name}"></h2>
 
-                <div class="dishes-grid">
+                <div class="my-dishes-grid" id="main-dishes-grid">
                     <th:block th:each="dish: ${dishes}">
-                        <div th:if="${dish.category.id == category.id}" class="dish-card">
-                            <div class="card dish-card-inner shadow-sm">
+                        <div th:if="${dish.category.id == category.id}" class="my-dish-card">
+                            <div class="card h-100 dish-card-inner shadow-sm">
 
                                 <input type="hidden" class="full-description" th:value="${dish.description}">
                                 <input type="hidden" class="full-ingredients" th:value="${dish.ingredients != null ?
@@ -231,8 +233,6 @@
         <div class="sushi-item">🍥</div>
         <div class="sushi-item">🍙</div>
     </div>
-
-
 </main>
 </body>
 </html>

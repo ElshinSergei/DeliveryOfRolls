@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/admin-layout :: html(content=~{::main})}">
 <head>
@@ -6,74 +7,86 @@
 </head>
 <body>
 <main>
-    <div class="form-container">
-        <!-- Заголовок -->
-        <div class="form-header">
-            <h2 th:text="${category.id == null} ? '➕ Добавление категории' : '✏️ Редактирование категории'">
-                Добавление категории
-            </h2>
-            <a th:href="@{/admin/categories}" class="btn btn-secondary">← Назад</a>
+    <div class="category-form-container">
+
+        <!-- Заголовок в стиле пользователей -->
+        <div class="category-header-minimal">
+            <div>
+                <h1 th:text="${category.id == null} ? '➕ Добавление категории' : '✏️ Редактирование категории'">
+                    Добавление категории
+                </h1>
+                <div class="subtitle" th:text="${category.id == null} ?
+                    'Создайте новую категорию для меню' :
+                    'Измените параметры категории'">
+                    Создайте новую категорию для меню
+                </div>
+            </div>
+            <a th:href="@{/admin/categories}" class="btn-minimal btn-minimal-outline">
+                ← Назад
+            </a>
         </div>
 
         <!-- Форма -->
-        <form th:action="@{/admin/categories/save}" method="post" th:object="${category}">
-            <!-- ID (только для редактирования) -->
-            <input type="hidden" name="id" th:value="${category.id}">
+        <div class="edit-card">
+            <form th:action="@{/admin/categories/save}" th:object="${category}" method="post">
 
-            <!-- Название категории -->
-            <div class="form-group">
-                <label for="name">Название категории *</label>
-                <input type="text" id="name" class="form-control" th:field="*{name}"
-                       th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
-                       placeholder="Например: Роллы, Суши, Сеты" required>
-                <div th:if="${#fields.hasErrors('name')}"
-                     th:errors="*{name}" class="invalid-feedback"></div>
-                <small class="form-text">Отображается в меню и на карточках блюд</small>
-            </div>
+                <!-- ID (только для редактирования) -->
+                <input type="hidden" name="id" th:value="${category.id}">
 
-            <!-- Описание категории -->
-            <div class="form-group">
-                <label for="description">Описание</label>
-                <textarea id="description" class="form-control" th:field="*{description}"
-                          rows="3" placeholder="Краткое описание категории..."></textarea>
-                <small class="form-text">Необязательное поле. Будет отображаться в меню</small>
-            </div>
+                <!-- Название категории -->
+                <div class="form-group">
+                    <label class="form-label">Название категории <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" th:field="*{name}"
+                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+                           placeholder="Например: Роллы, Суши, Сеты" required>
+                    <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback" th:errors="*{name}"></div>
+                    <div class="form-text">Отображается в меню и на карточках блюд</div>
+                </div>
 
-            <!-- Порядок сортировки -->
-            <div class="form-group">
-                <label for="sortOrder">Порядок сортировки</label>
-                <input type="number" id="sortOrder" class="form-control" th:field="*{sortOrder}"
-                       min="0" value="0">
-                <small class="form-text">Чем меньше число, тем выше в списке</small>
-            </div>
+                <!-- Описание категории -->
+                <div class="form-group">
+                    <label class="form-label">Описание</label>
+                    <textarea class="form-control" th:field="*{description}"
+                              rows="4" placeholder="Краткое описание категории..."></textarea>
+                    <div class="form-text">Необязательное поле. Будет отображаться в меню</div>
+                </div>
 
-            <div class="form-group">
-                <label class="d-block">Доступность</label>
-                <div class="form-check form-switch">
+                <!-- Порядок сортировки -->
+                <div class="form-group">
+                    <label class="form-label">Порядок сортировки</label>
+                    <input type="number" class="form-control" th:field="*{sortOrder}"
+                           min="0" value="0">
+                    <div class="form-text">Чем меньше число, тем выше категория в списке</div>
+                </div>
+
+                <!-- Доступность (в стиле чекбокса пользователей) -->
+                <div class="switch-group">
                     <input type="checkbox"
                            class="form-check-input"
                            id="available"
-                           name="available"
+                           th:field="*{available}"
                            th:checked="${category.available}"
                            value="true">
                     <label class="form-check-label" for="available">
                         Категория доступна в меню
                     </label>
                 </div>
-                <small class="form-text">Если выключить, категория не будет показываться на сайте</small>
-            </div>
+                <div class="form-text" style="margin-left: 5px; margin-top: -10px;">
+                    Если выключить, категория не будет показываться на сайте
+                </div>
 
-            <!-- Кнопки -->
-            <div class="form-actions" style="display: flex; gap: 10px; margin-top: 30px;">
-                <button type="submit" class="btn btn-primary">
-                    💾 Сохранить
-                </button>
-                <a th:href="@{/admin/categories}" class="btn btn-secondary">
-                    Отмена
-                </a>
-            </div>
-                </form>
-            </div>
+                <!-- Кнопки в стиле пользователей -->
+                <div class="action-bar-minimal">
+                    <a th:href="@{/admin/categories}" class="btn-minimal btn-minimal-outline">
+                        <i class="bi bi-x-circle"></i> Отмена
+                    </a>
+                    <button type="submit" class="btn-minimal btn-minimal-primary">
+                        <i class="bi bi-check-circle"></i> Сохранить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </main>
 </body>
 </html>

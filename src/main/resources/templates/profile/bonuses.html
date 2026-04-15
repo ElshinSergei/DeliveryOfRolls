@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Мои бонусы</title>
+</head>
+<body>
+<main>
+    <div class="profile-wrapper">
+        <div class="profile-card">
+            <!-- Шапка профиля -->
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <span>👤</span>
+                </div>
+                <div class="profile-title">
+                    <h1 th:text="${user.firstName + ' ' + user.lastName}">Иван Иванов</h1>
+                    <p th:text="${user.email}">ivan@mail.com</p>
+                </div>
+            </div>
+
+            <!-- Основной контент -->
+            <div class="profile-layout">
+                <!-- Боковое меню -->
+                <div class="profile-menu">
+                    <a th:href="@{/profile}" class="profile-menu-item">
+                        <i class="bi bi-person"></i>
+                        <span>Мой профиль</span>
+                    </a>
+                    <a th:href="@{/profile/orders}" class="profile-menu-item">
+                        <i class="bi bi-box"></i>
+                        <span>Мои заказы</span>
+                    </a>
+                    <a th:href="@{/profile/addresses}" class="profile-menu-item">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>Мои адреса</span>
+                    </a>
+                    <a th:href="@{/profile/bonuses}" class="profile-menu-item active">
+                        <i class="bi bi-gem"></i>
+                        <span>Мои бонусы</span>
+                    </a>
+                    <a th:href="@{/profile/change-password}" class="profile-menu-item">
+                        <i class="bi bi-key"></i>
+                        <span>Сменить пароль</span>
+                    </a>
+                </div>
+
+                <!-- Контент бонусов -->
+                <div class="profile-content">
+                    <div class="content-header">
+                        <h2>🎁 Мои бонусы</h2>
+                    </div>
+
+                    <!-- Бонусная карточка -->
+                    <div class="bonus-header-card">
+                        <div>
+                            <div class="bonus-balance" th:text="${account.balance}">0</div>
+                            <div class="bonus-label">доступно бонусов</div>
+                        </div>
+                        <div>
+                            <i class="bi bi-gem" style="font-size: 48px;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Статистика -->
+                    <div class="bonus-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" th:text="${account.totalEarned}">0</div>
+                            <div class="stat-label">Всего начислено</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" th:text="${account.totalSpent}">0</div>
+                            <div class="stat-label">Всего потрачено</div>
+                        </div>
+                    </div>
+
+                    <!-- История транзакций -->
+                    <div class="section-title">
+                        <i class="bi bi-clock-history"></i>
+                        История начислений и списаний
+                    </div>
+
+                    <div th:if="${not #lists.isEmpty(transactions)}" class="transactions-table">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Описание</th>
+                                <th>Тип</th>
+                                <th>Сумма</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="tx : ${transactions}">
+                                <td th:text="${#temporals.format(tx.createdAt, 'dd.MM.yyyy HH:mm')}">
+                                    19.03.2026 15:30
+                                </td>
+                                <td th:text="${tx.description}">Начисление за заказ</td>
+                                <td>
+                                        <span class="transaction-type"
+                                              th:classappend="${tx.type.name() == 'REGISTRATION'} ? 'type-registration' :
+                                                              (${tx.type.name() == 'ORDER_EARN'} ? 'type-order-earn' :
+                                                              (${tx.type.name() == 'ORDER_SPEND'} ? 'type-order-spend' :
+                                                              (${tx.type.name() == 'BIRTHDAY'} ? 'type-birthday' : '')))"
+                                              th:text="${tx.type.name() == 'REGISTRATION'} ? 'Регистрация' :
+                                                       (${tx.type.name() == 'ORDER_EARN'} ? 'Начисление' :
+                                                       (${tx.type.name() == 'ORDER_SPEND'} ? 'Списание' :
+                                                       (${tx.type.name() == 'BIRTHDAY'} ? 'День рождения' : '')))">
+                                            Начисление
+                                        </span>
+                                </td>
+                                <td>
+                                        <span class="transaction-amount"
+                                              th:classappend="${tx.amount > 0} ? 'positive' : 'negative'"
+                                              th:text="${tx.amount > 0} ? '+' + ${tx.amount} : ${tx.amount}">
+                                            +100
+                                        </span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Пустое состояние -->
+                    <div th:if="${#lists.isEmpty(transactions)}" class="empty-state">
+                        <i class="bi bi-gem"></i>
+                        <h3>История пока пуста</h3>
+                        <p>Совершите первый заказ, чтобы получить бонусы!</p>
+                    </div>
+
+                    <!-- Информация о бонусах -->
+                    <div class="bonus-info" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 12px;">
+                        <h5 style="margin-bottom: 15px; color: #2c3e50;">
+                            <i class="bi bi-info-circle"></i> Как работают бонусы?
+                        </h5>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li style="margin-bottom: 10px;">• 5% от суммы заказа начисляется бонусами</li>
+                            <li style="margin-bottom: 10px;">• 1 бонус = 1 рубль</li>
+                            <li style="margin-bottom: 10px;">• Можно оплатить до 30% от заказа бонусами</li>
+                            <li style="margin-bottom: 10px;">• 100 бонусов в подарок за регистрацию</li>
+                            <li>• 200 бонусов в день рождения</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

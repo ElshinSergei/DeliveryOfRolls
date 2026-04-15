@@ -1,5 +1,6 @@
 package org.example.deliveryofrolls.repository;
 
+import org.example.deliveryofrolls.entity.Category;
 import org.example.deliveryofrolls.entity.Dish;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -43,4 +44,6 @@ public interface DishRepository extends JpaRepository<Dish, Long>, JpaSpecificat
 
     // Удаленные блюда
     List<Dish> findByDeletedTrue();
+
+    List<Dish> findByCategoryAndAvailableTrue(Category category);
 }

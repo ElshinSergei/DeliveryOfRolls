@@ -33,6 +33,14 @@
                         <i class="bi bi-box"></i>
                         <span>Мои заказы</span>
                     </a>
+                    <a th:href="@{/profile/addresses}" class="profile-menu-item">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>Мои адреса</span>
+                    </a>
+                    <a th:href="@{/profile/bonuses}" class="profile-menu-item">
+                        <i class="bi bi-gem"></i>
+                        <span>Мои бонусы</span>
+                    </a>
                     <a th:href="@{/profile/change-password}" class="profile-menu-item">
                         <i class="bi bi-key"></i>
                         <span>Сменить пароль</span>
@@ -167,10 +175,38 @@
                         </table>
                     </div>
 
-                    <!-- Итого -->
+                    <!-- Детализация суммы (если есть промокод) -->
+                    <div th:if="${order.promoCode != null and order.discountAmount != null}" class="price-details">
+                        <div class="price-row subtotal">
+                            <span>Сумма без скидки:</span>
+                            <span th:text="${#numbers.formatDecimal(order.totalPrice + order.discountAmount, 0, 0)} + ' ₽'">1 640 ₽</span>
+                        </div>
+                        <div class="price-row discount">
+        <span>
+            Скидка по промокоду
+            <span class="promo-code" th:text="${order.promoCode}">WELCOME10</span>
+        </span>
+                            <span th:text="'-' + ${#numbers.formatDecimal(order.discountAmount, 0, 0)} + ' ₽'">-82 ₽</span>
+                        </div>
+                    </div>
+
+                    <!-- Итоговая сумма (всегда показываем) -->
                     <div class="order-total">
                         <span class="total-label">Итого:</span>
-                        <span class="total-amount" th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">1 250 ₽</span>
+                        <span class="total-amount" th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">1 558 ₽</span>
+                    </div>
+
+
+                    <!-- Бонусы в заказе -->
+                    <div class="bonus-details" th:if="${order.bonusUsed != null and order.bonusUsed > 0}">
+                        <div class="bonus-row used">
+                            <span>Списано бонусов:</span>
+                            <span class="bonus-amount" th:text="'-' + ${order.bonusUsed} + ' ₽'">-100 ₽</span>
+                        </div>
+                    </div>
+                    <div class="bonus-earned" th:if="${order.bonusEarned != null and order.bonusEarned > 0}">
+                        <i class="bi bi-gem"></i>
+                        <span>Начислено бонусов: <strong th:text="${order.bonusEarned}">100</strong></span>
                     </div>
 
                     <!-- Кнопки действий -->

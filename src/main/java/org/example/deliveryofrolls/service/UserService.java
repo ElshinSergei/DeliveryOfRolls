@@ -23,6 +23,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     // Получение текущего пользователя из UserDetails
     public User getCurrentUser(UserDetails userDetails) {
@@ -43,7 +44,6 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("Пользователь не найден"));
     }
 
-    // регистрация
     public void registerUser(RegisterDTO registerDTO) {
 
         if(userRepository.existsByEmail(registerDTO.getEmail())) {
@@ -61,7 +61,18 @@ public class UserService {
         user.setRole(User.Role.ROLE_USER);
         user.setEnabled(true);
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // ========== ОТПРАВКА ПРИВЕТСТВЕННОГО ПИСЬМА ==========
+        try {
+            emailService.sendWelcomeEmail(savedUser, 100);
+            log.info("✅ Приветственное письмо отправлено на {}", savedUser.getEmail());
+        } catch (Exception e) {
+            log.error("❌ Не удалось отправить приветственное письмо на {}: {}",
+                    savedUser.getEmail(), e.getMessage());
+            // Не бросаем исключение - регистрация уже прошла успешно
+        }
+        // ====================================================
     }
 
     // Обновление
@@ -72,6 +83,7 @@ public class UserService {
         user.setFirstName(profileDTO.getFirstName());
         user.setLastName(profileDTO.getLastName());
         user.setPhone(profileDTO.getPhone());
+        user.setBirthDate(profileDTO.getBirthDate());
         userRepository.save(user);
     }
 
@@ -150,4 +162,27 @@ public class UserService {
         return user.isEnabled() ? "разблокирован" : "заблокирован";
     }
 
+    // Создание пользователя администратором
+    @Transactional
+    public User createUserByAdmin(RegisterDTO userDTO, User.Role role) {
+        // Проверка на существующий email
+        if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Пользователь с таким email уже существует");
+        }
+
+        User user = new User();
+        user.setEmail(userDTO.getEmail());
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setPhone(userDTO.getPhone());
+        user.setRole(role);
+        user.setEnabled(true);
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+        return userRepository.save(user);
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
 }

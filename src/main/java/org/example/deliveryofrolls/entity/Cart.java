@@ -38,6 +38,30 @@ public class Cart {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Column(name = "delivery_type")
+    private String deliveryType; // 'DELIVERY' или 'PICKUP'
+
+    @Column(name = "delivery_address", length = 500)
+    private String deliveryAddress;
+
+    @Column(name = "delivery_time")
+    private String deliveryTime;
+
+    @Column(name = "min_order_required")
+    private Integer minOrderRequired;
+
+    @Column(name = "selected_zone_id")
+    private Long selectedZoneId;
+
+    @Column(name = "selected_zone_name")
+    private String selectedZoneName;
+
+    @Column(name = "pickup_point_id")
+    private Long pickupPointId;
+
+    @Column(name = "pickup_point_name")
+    private String pickupPointName;
+
     // Общая стоимость корзины
     public BigDecimal getTotalPrice() {
         if (items == null || items.isEmpty()) {

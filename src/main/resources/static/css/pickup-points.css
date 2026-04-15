@@ -1,0 +1,53 @@
+.pickup-points-container {
+    margin-top: 20px;
+}
+
+.pickup-points-table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.pickup-points-table th {
+    background: #f8f9fa;
+    padding: 12px 16px;
+    font-weight: 600;
+}
+
+.pickup-points-table td {
+    padding: 12px 16px;
+    vertical-align: middle;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-active {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.status-inactive {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.modal-lg-custom {
+    max-width: 700px;
+}
+
+.coordinates-info {
+    font-size: 12px;
+    color: #6c757d;
+    font-family: monospace;
+}

@@ -245,10 +245,7 @@ public class DishService {
             Dish oldDish = dishRepository.findById(dish.getId()).orElse(null);
             if (oldDish != null && oldDish.getImageUrl() != null) {
                 String oldFileName = oldDish.getImageUrl().replace("/uploads/dishes/", "");
-                Path oldFilePath = Paths.get(
-                        System.getProperty("user.home") + "/sushi-uploads/dishes/",
-                        oldFileName
-                );
+                Path oldFilePath = Paths.get("/uploads/dishes/", oldFileName);
                 try {
                     Files.deleteIfExists(oldFilePath);
                     log.info("Удален старый файл: {}", oldFileName);
@@ -260,7 +257,7 @@ public class DishService {
     }
 
     private String saveImageFile(MultipartFile file) throws IOException {
-        String uploadDir = System.getProperty("user.home") + "/sushi-uploads/dishes/";
+        String uploadDir = "/uploads/dishes/";
         Path uploadPath = Paths.get(uploadDir);
 
         if (!Files.exists(uploadPath)) {

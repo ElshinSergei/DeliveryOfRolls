@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/admin/promotions")
+@RequestMapping("/admin/marketing/promotions")
 @RequiredArgsConstructor
 public class AdminPromotionController {
 
@@ -21,7 +21,7 @@ public class AdminPromotionController {
         model.addAttribute("promotions", promotionService.getAllPromotions());
         model.addAttribute("pageTitle", "Управление акциями");
         model.addAttribute("pageCss", "admin-promotions.css");
-        return "admin/promotions/list";
+        return "admin/marketing/promotions/list";
     }
 
     @GetMapping("/new")
@@ -29,7 +29,7 @@ public class AdminPromotionController {
         model.addAttribute("promotion", new Promotion());
         model.addAttribute("pageTitle", "Добавление акции");
         model.addAttribute("pageCss", "admin-promotions.css");
-        return "admin/promotions/form";
+        return "admin/marketing/promotions/form";
     }
 
     @PostMapping("/save")
@@ -49,20 +49,20 @@ public class AdminPromotionController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
 
             String redirectUrl = promotion.getId() == null ?
-                    "redirect:/admin/promotions/new" :
-                    "redirect:/admin/promotions/" + promotion.getId() + "/edit";
+                    "redirect:/admin/marketing/promotions/new" :
+                    "redirect:/admin/marketing/promotions/" + promotion.getId() + "/edit";
             return redirectUrl;
 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Ошибка: " + e.getMessage());
 
             String redirectUrl = promotion.getId() == null ?
-                    "redirect:/admin/promotions/new" :
-                    "redirect:/admin/promotions/" + promotion.getId() + "/edit";
+                    "redirect:/admin/marketing/promotions/new" :
+                    "redirect:/admin/marketing/promotions/" + promotion.getId() + "/edit";
             return redirectUrl;
         }
 
-        return "redirect:/admin/promotions";
+        return "redirect:/admin/marketing/promotions";
     }
 
     @PostMapping("/{id}/delete")
@@ -70,7 +70,7 @@ public class AdminPromotionController {
                                   RedirectAttributes redirectAttributes) {
         promotionService.delete(id);
         redirectAttributes.addFlashAttribute("success", "Акция успешно удалена");
-        return "redirect:/admin/promotions";
+        return "redirect:/admin/marketing/promotions";
     }
 
     @GetMapping("/{id}/edit")
@@ -79,6 +79,6 @@ public class AdminPromotionController {
         model.addAttribute("promotion", promotion);
         model.addAttribute("pageTitle", "Редактирование акции");
         model.addAttribute("pageCss", "admin-promotions.css");
-        return "admin/promotions/form";
+        return "admin/marketing/promotions/form";
     }
 }

@@ -336,4 +336,9 @@ public class CartService {
         session.setAttribute("cart", cart);
 
     }
+
+    public void save(Cart cart) {
+        cartRepository.save(cart);
+        log.info("Корзина сохранена: ID={}, deliveryType={}", cart.getId(), cart.getDeliveryType());
+    }
 }

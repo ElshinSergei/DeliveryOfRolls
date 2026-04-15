@@ -21,7 +21,6 @@ public class AuthController {
 
     @GetMapping("/login")
     public String login(Model model, HttpSession session) {
-        System.out.println("Login page loaded, session: " + session.getId());
         return "auth/login";
     }
 

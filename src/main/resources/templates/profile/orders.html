@@ -32,6 +32,14 @@
                         <i class="bi bi-box"></i>
                         <span>Мои заказы</span>
                     </a>
+                    <a th:href="@{/profile/addresses}" class="profile-menu-item">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>Мои адреса</span>
+                    </a>
+                    <a th:href="@{/profile/bonuses}" class="profile-menu-item">
+                        <i class="bi bi-gem"></i>
+                        <span>Мои бонусы</span>
+                    </a>
                     <a th:href="@{/profile/change-password}" class="profile-menu-item">
                         <i class="bi bi-key"></i>
                         <span>Сменить пароль</span>
@@ -83,6 +91,22 @@
                                         <span class="info-label">Сумма</span>
                                         <span class="info-value" th:text="${order.totalPrice != null ? #numbers.formatDecimal(order.totalPrice, 0, 0) : 0} + ' ₽'">
                                             1250 ₽
+                                        </span>
+                                    </div>
+
+                                    <!-- Бонусы в списке заказов -->
+                                    <div th:if="${order.bonusUsed != null and order.bonusUsed > 0}" class="bonus-badge">
+                                        <i class="bi bi-gem"></i> <span th:text="'-' + ${order.bonusUsed} + ' ₽'">-100 ₽</span>
+                                    </div>
+                                    <div th:if="${order.bonusEarned != null and order.bonusEarned > 0}" class="bonus-badge earned">
+                                        <i class="bi bi-gem"></i> +<span th:text="${order.bonusEarned}">100</span>
+                                    </div>
+
+                                    <div class="info-item" th:if="${order.promoCode != null and order.discountAmount != null}">
+                                        <span class="info-label">ПРОМОКОД</span>
+                                        <span class="info-value promo-value">
+                                            <span class="promo-code-badge" th:text="${order.promoCode}">WELCOME10</span>
+                                            <span class="promo-discount" th:text="'-' + ${#numbers.formatDecimal(order.discountAmount, 0, 0)} + ' ₽'">-82 ₽</span>
                                         </span>
                                     </div>
                                     <div class="info-item">

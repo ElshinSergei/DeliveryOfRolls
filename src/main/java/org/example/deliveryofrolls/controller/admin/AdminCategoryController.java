@@ -33,6 +33,7 @@ public class AdminCategoryController {
     public String newCategory(Model model) {
         model.addAttribute("category", new Category());
         model.addAttribute("pageTitle", "Добавление категории");
+        model.addAttribute("pageCss", "category.css");
         return "admin/categories/form";
     }
 
@@ -43,6 +44,7 @@ public class AdminCategoryController {
         Category category = categoryService.getCategoryById(id);
         model.addAttribute("category", category);
         model.addAttribute("pageTitle", "Редактирование категории");
+        model.addAttribute("pageCss", "category.css");
 
         return "admin/categories/form";
     }

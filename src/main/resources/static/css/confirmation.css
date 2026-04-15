@@ -1,4 +1,7 @@
-body { background: linear-gradient(135deg, #fff5f5 0%, #fff 100%); }
+body { 
+    background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+    padding-top: 60px !important;
+}
 
 .success-wrapper {
     max-width: 800px;
@@ -212,4 +215,111 @@ h1 {
     .items-table {
         font-size: 13px;
     }
+}
+
+/* Стили для ошибок валидации */
+.is-invalid {
+    border-color: #dc3545 !important;
+    background-color: #fff8f8;
+}
+
+.invalid-feedback {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.alert-error i {
+    font-size: 1.2rem;
+}
+
+/* Стили для промокода на странице подтверждения */
+.promo-info {
+    margin: 15px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+}
+
+.promo-detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.promo-code-badge {
+    font-family: 'Courier New', monospace;
+    background: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #667eea;
+    border: 1px solid #667eea;
+}
+
+.promo-discount-amount {
+    font-weight: 700;
+    color: #2ecc71;
+    font-size: 18px;
+}
+
+/* Детализация суммы */
+.total-details {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 15px;
+}
+
+.total-row.subtotal {
+    color: #7f8c8d;
+    border-bottom: 1px dashed #e0e0e0;
+}
+
+.total-row.discount {
+    color: #2ecc71;
+    font-weight: 500;
+}
+
+.total-row.final {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.promo-code {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #667eea;
+    background: white;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid #667eea;
 }

@@ -1,6 +1,6 @@
 .profile-wrapper {
     max-width: 1000px;
-    margin: 120px auto;
+    margin: 90px auto 40px auto;
     padding: 0 20px;
 }
 
@@ -578,7 +578,7 @@
 
 @media (max-width: 480px) {
     .profile-wrapper {
-        margin: 100px auto;
+        margin: 140px auto 40px auto;
         padding: 10px;
     }
 
@@ -685,4 +685,305 @@
     .form-actions {
         flex-direction: column;
     }
+}
+
+/* Стили для промокода в истории заказов (новая версия) */
+.promo-value {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.promo-code-badge {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, #667eea20, #764ba220);
+    color: #667eea;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid #667eea40;
+    display: inline-block;
+}
+
+.promo-discount {
+    color: #2ecc71 !important;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Стили для детализации цены */
+.price-details {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 15px;
+}
+
+.price-row.subtotal {
+    color: #7f8c8d;
+    border-bottom: 1px dashed #e0e0e0;
+}
+
+.price-row.discount {
+    color: #2ecc71;
+    font-weight: 500;
+}
+
+.promo-code {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, #667eea20, #764ba220);
+    color: #667eea;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #667eea40;
+    margin-left: 5px;
+}
+
+.bonuses-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.bonus-header-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.bonus-balance {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.bonus-label {
+    font-size: 14px;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.bonus-stats {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    gap: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+.stat-item {
+    flex: 1;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #7f8c8d;
+    margin-top: 5px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title i {
+    color: #e74c3c;
+}
+
+.transactions-table {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    background: #f8f9fa;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.table td {
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+.transaction-amount {
+    font-weight: 600;
+}
+
+.transaction-amount.positive {
+    color: #2ecc71;
+}
+
+.transaction-amount.negative {
+    color: #e74c3c;
+}
+
+.transaction-type {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.type-registration { background: #667eea20; color: #667eea; }
+.type-order-earn { background: #2ecc7120; color: #2ecc71; }
+.type-order-spend { background: #e74c3c20; color: #e74c3c; }
+.type-birthday { background: #ffd70020; color: #ffd700; }
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 16px;
+}
+
+.empty-state i {
+    font-size: 48px;
+    color: #e0e0e0;
+    margin-bottom: 15px;
+}
+
+.empty-state h3 {
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    color: #7f8c8d;
+}
+
+@media (max-width: 768px) {
+    .bonus-header-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .bonus-stats {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .table th:nth-child(3),
+    .table td:nth-child(3) {
+        display: none;
+    }
+}
+
+/* Стили для бонусов */
+.bonus-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.bonus-row.used {
+    color: #e74c3c;
+}
+
+.bonus-row.earned {
+    color: #2ecc71;
+}
+
+.bonus-amount {
+    font-weight: 600;
+}
+
+.bonus-earned {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background: #f0f9f0;
+    border-radius: 8px;
+    color: #2ecc71;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bonus-earned i {
+    font-size: 18px;
+}
+
+/* Заблокированное поле */
+.disabled-field {
+    background-color: #f8f9fa;
+    color: #6c757d;
+    cursor: not-allowed;
+    border-color: #e9ecef;
+}
+
+/* Блок с информацией о заблокированной дате */
+.birthdate-locked {
+    background: #f0f9ff;
+    border-left: 3px solid #2196f3;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.birthdate-locked i {
+    color: #2196f3;
+    margin-right: 8px;
+}
+
+.birthdate-hint {
+    margin-top: 8px;
+    color: #e67e22;
 }

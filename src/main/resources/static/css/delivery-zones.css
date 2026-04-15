@@ -1,0 +1,718 @@
+/* Стили для страницы управления зонами доставки */
+.zones-container {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.zones-list {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.zones-header {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.zones-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.zone-items {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.zone-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.zone-item:hover {
+    background: #f8f9fa;
+}
+
+.zone-item.active {
+    background: #e7f1ff;
+    border-left: 4px solid #0d6efd;
+}
+
+.zone-name {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.zone-color-badge {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.zone-details {
+    font-size: 12px;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.zone-status {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.status-active {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.status-inactive {
+    background: #f8d7da;
+    color: #842029;
+}/* Стили для страницы управления зонами доставки */
+.zones-container {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.zones-list {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.zones-header {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.zones-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.zone-items {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.zone-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9ecef;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.zone-item:hover {
+    background: #f8f9fa;
+}
+
+.zone-item.active {
+    background: #e7f1ff;
+    border-left: 4px solid #0d6efd;
+}
+
+.zone-name {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.zone-color-badge {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.zone-details {
+    font-size: 12px;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.zone-status {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.status-active {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.status-inactive {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.zone-actions {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    gap: 8px;
+}
+
+.zone-item:hover .zone-actions {
+    display: flex;
+}
+
+.map-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+#map {
+    height: 600px;
+    width: 100%;
+}
+
+.map-controls {
+    padding: 10px;
+    background: white;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-icon {
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.color-preview {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    border: 2px solid #dee2e6;
+}
+
+.points-info {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: monospace;
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+.draw-tools-info {
+    background: #e7f1ff;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .zones-container {
+        grid-template-columns: 1fr;
+    }
+
+    .map-controls .btn {
+        flex: 1;
+    }
+}
+
+.search-container {
+    background: white;
+    border-radius: 6px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#addressSearch {
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+#addressSearch:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+#searchBtn {
+    border-radius: 0;
+    white-space: nowrap;
+}
+
+/* ========== СТИЛИ ДЛЯ ВЫПАДАЮЩЕГО СПИСКА АДРЕСОВ ========== */
+.search-wrapper {
+    position: relative;
+}
+
+.suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    max-height: 350px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-top: 5px;
+}
+
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.suggestion-item:hover {
+    background-color: #f8f9fa;
+}
+
+.suggestion-item i {
+    font-size: 18px;
+    color: #dc3545;
+    flex-shrink: 0;
+}
+
+.suggestion-address {
+    flex: 1;
+}
+
+.suggestion-main {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.suggestion-city {
+    font-size: 12px;
+    color: #999;
+}
+
+.suggestions-dropdown {
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========== СТИЛИ ДЛЯ ТОЧЕК САМОВЫВОЗА ========== */
+.pickup-points-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.pickup-point-item {
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+}
+
+.pickup-point-item:hover {
+    background: #f5f5f5;
+    border-color: #4caf50;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.pickup-point-item.selected {
+    background: #e8f5e9;
+    border-color: #4caf50;
+}
+
+.pickup-point-item .name {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.pickup-point-item .address {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 3px;
+}
+
+.pickup-point-item .hours {
+    font-size: 11px;
+    color: #999;
+    margin-top: 4px;
+}
+
+.pickup-single-info {
+    background: #e8f5e9;
+    padding: 12px;
+    border-radius: 10px;
+    border-left: 4px solid #4caf50;
+}
+
+/* ========== СТИЛИ ДЛЯ КАРТЫ И МОДАЛЬНОГО ОКНА ========== */
+.map-wrapper {
+    width: 100%;
+    height: 400px;
+    margin-top: 15px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f5f5f5;
+    transition: all 0.3s ease;
+}
+
+#addressMap {
+    width: 100%;
+    height: 100%;
+}
+
+/* Стили для информационного блока о доставке */
+.delivery-zone-info {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #f8f9fa;
+    border-left: 4px solid;
+    transition: all 0.3s;
+}
+
+.delivery-zone-info .zone-status {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.delivery-zone-info .zone-message {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* Кнопка подтверждения */
+.confirm-btn {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.confirm-btn:hover:not(:disabled) {
+    background: #218838;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.confirm-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Стили для вкладок доставки/самовывоза */
+.delivery-tabs {
+    display: flex;
+    gap: 10px;
+    background: #f5f5f5;
+    padding: 4px;
+    border-radius: 12px;
+}
+
+.delivery-tab {
+    padding: 8px 20px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.delivery-tab.active {
+    background: white;
+    color: #dc3545;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.delivery-tab:hover:not(.active) {
+    background: #e9ecef;
+}
+
+/* Стили для селектора адреса в хедере */
+.address-selector, .address-selector-mobile {
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    background: #f8f9fa;
+    border-radius: 20px;
+}
+
+.address-selector:hover, .address-selector-mobile:hover {
+    background: #e9ecef;
+    transform: translateY(-1px);
+}
+
+.address-selector i, .address-selector-mobile i {
+    font-size: 16px;
+}
+
+#selectedAddress, #selectedAddressMobile {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #333;
+}
+
+/* Анимация для выбранной точки */
+.pickup-point-highlight {
+    animation: pulse 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Стили для всплывающих окон карты */
+.ymaps-2-1-79-balloon__content {
+    font-family: inherit;
+    font-size: 13px;
+}
+
+/* Стили для скролла списка точек */
+.pickup-points-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.pickup-points-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.pickup-points-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.pickup-points-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+    .delivery-tab {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .pickup-point-item {
+        padding: 10px;
+    }
+
+    .suggestion-main {
+        font-size: 12px;
+    }
+
+    .map-wrapper {
+        height: 300px;
+    }
+
+    .confirm-btn {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+
+.zone-actions {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    gap: 8px;
+}
+
+.zone-item:hover .zone-actions {
+    display: flex;
+}
+
+.map-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+#map {
+    height: 600px;
+    width: 100%;
+}
+
+.map-controls {
+    padding: 10px;
+    background: white;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-icon {
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.color-preview {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    border: 2px solid #dee2e6;
+}
+
+.points-info {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: monospace;
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+.draw-tools-info {
+    background: #e7f1ff;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .zones-container {
+        grid-template-columns: 1fr;
+    }
+
+    .map-controls .btn {
+        flex: 1;
+    }
+}
+
+.search-container {
+    background: white;
+    border-radius: 6px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#addressSearch {
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+#addressSearch:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+#searchBtn {
+    border-radius: 0;
+    white-space: nowrap;
+}
+
+/* Стили для точек самовывоза */
+.pickup-point-item {
+    padding: 10px;
+    margin-bottom: 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pickup-point-item:hover {
+    background: #f5f5f5;
+    border-color: #4caf50;
+}
+
+.pickup-point-item.selected {
+    background: #e8f5e9;
+    border-color: #4caf50;
+}
+
+.pickup-point-item .name {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.pickup-point-item .address {
+    font-size: 12px;
+    color: #666;
+}
+
+.pickup-point-item .hours {
+    font-size: 11px;
+    color: #999;
+    margin-top: 4px;
+}

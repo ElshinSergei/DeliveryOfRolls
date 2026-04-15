@@ -10,11 +10,10 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    // связывание URL-путей с физическими файлами на диске
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + System.getProperty("user.home") + "/sushi-uploads/")
-                .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS));;
+                .addResourceLocations("file:/uploads/")
+                .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS));
     }
 }

@@ -1,0 +1,75 @@
+/* ========== FIX FOR MOBILE GRID LAYOUT ========== */
+
+/* Mobile devices (up to 767px) - 1 column */
+@media (max-width: 767px) {
+    .my-dishes-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    /* Horizontal cards */
+    .dish-card-inner {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        padding: 10px !important;
+    }
+
+    .dish-img {
+        width: 90px !important;
+        height: 90px !important;
+        margin-right: 12px !important;
+        flex-shrink: 0 !important;
+    }
+
+    .card-body {
+        padding: 0 !important;
+        flex: 1 !important;
+    }
+
+    .ingredients {
+        display: none !important;
+    }
+
+    .card-text {
+        font-size: 11px !important;
+        -webkit-line-clamp: 2 !important;
+    }
+
+    .dish-price {
+        font-size: 16px !important;
+    }
+
+    .btn-sm {
+        padding: 5px 10px !important;
+        font-size: 11px !important;
+    }
+}
+
+/* Tablets (from 768px to 1023px) - 2 columns */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .my-dishes-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 16px !important;
+    }
+}
+
+/* Small desktop (from 1024px to 1279px) - 3 columns */
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .my-dishes-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 20px !important;
+    }
+}
+
+/* Large desktop (from 1280px) - 4 columns */
+@media (min-width: 1280px) {
+    .my-dishes-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 25px !important;
+    }
+}

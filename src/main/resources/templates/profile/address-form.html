@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main-layout :: html(content=~{::main})}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Добавление адреса</title>
+</head>
+<body>
+<main>
+    <div class="profile-wrapper">
+        <div class="profile-card">
+            <!-- Шапка профиля -->
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <span>👤</span>
+                </div>
+                <div class="profile-title">
+                    <h1 th:text="${user.firstName + ' ' + user.lastName}">Иван Иванов</h1>
+                    <p th:text="${user.email}">ivan@mail.com</p>
+                </div>
+            </div>
+
+            <!-- Основной контент -->
+            <div class="profile-layout">
+                <!-- Боковое меню -->
+                <div class="profile-menu">
+                    <a th:href="@{/profile}" class="profile-menu-item">
+                        <i class="bi bi-person"></i>
+                        <span>Мой профиль</span>
+                    </a>
+                    <a th:href="@{/profile/orders}" class="profile-menu-item">
+                        <i class="bi bi-box"></i>
+                        <span>Мои заказы</span>
+                    </a>
+                    <a th:href="@{/profile/addresses}" class="profile-menu-item active">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>Мои адреса</span>
+                    </a>
+                    <a th:href="@{/profile/bonuses}" class="profile-menu-item">
+                        <i class="bi bi-gem"></i>
+                        <span>Мои бонусы</span>
+                    </a>
+                    <a th:href="@{/profile/change-password}" class="profile-menu-item">
+                        <i class="bi bi-key"></i>
+                        <span>Сменить пароль</span>
+                    </a>
+                </div>
+
+                <!-- Форма адреса -->
+                <div class="profile-content">
+                    <div class="content-header">
+                        <h2 th:text="${address.id == null} ? '➕ Добавление адреса' : '✏️ Редактирование адреса'"></h2>
+                        <a th:href="@{/profile/addresses}" class="btn-cancel" style="flex: 0; padding: 8px 20px;">
+                            <i class="bi bi-arrow-left"></i> Назад
+                        </a>
+                    </div>
+
+                    <div class="form-card">
+                        <form th:action="@{/profile/addresses/save}"
+                              th:object="${address}"
+                              method="post">
+
+                            <input type="hidden" name="id" th:value="*{id}">
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-geo-alt"></i> Адрес <span class="text-danger">*</span>
+                                </label>
+                                <input type="text"
+                                       th:field="*{address}"
+                                       class="form-control"
+                                       placeholder="ул. Пушкина, д. 10"
+                                       required>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Подъезд</label>
+                                    <input type="text"
+                                           th:field="*{entrance}"
+                                           class="form-control"
+                                           placeholder="1">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Этаж</label>
+                                    <input type="text"
+                                           th:field="*{floor}"
+                                           class="form-control"
+                                           placeholder="3">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Квартира</label>
+                                    <input type="text"
+                                           th:field="*{apartment}"
+                                           class="form-control"
+                                           placeholder="42">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-chat-dots"></i> Комментарий
+                                </label>
+                                <textarea th:field="*{comment}"
+                                          class="form-control"
+                                          rows="3"
+                                          placeholder="Домофон, код от подъезда..."></textarea>
+                            </div>
+
+                            <div class="checkbox-group">
+                                <input type="checkbox"
+                                       th:field="*{default}"
+                                       id="defaultCheck">
+                                <label for="defaultCheck">Сделать основным адресом</label>
+                            </div>
+
+                            <div class="form-actions">
+                                <a th:href="@{/profile/addresses}" class="btn-cancel">Отмена</a>
+                                <button type="submit" class="btn-save">
+                                    <i class="bi bi-check-circle"></i>
+                                    <span th:text="${address.id == null} ? 'Сохранить адрес' : 'Сохранить изменения'">
+                                        Сохранить
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

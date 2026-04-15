@@ -6,8 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.deliveryofrolls.dto.ChangePasswordDTO;
 import org.example.deliveryofrolls.dto.ProfileDTO;
+import org.example.deliveryofrolls.entity.BonusAccount;
+import org.example.deliveryofrolls.entity.BonusTransaction;
 import org.example.deliveryofrolls.entity.Order;
 import org.example.deliveryofrolls.entity.User;
+import org.example.deliveryofrolls.service.BonusService;
 import org.example.deliveryofrolls.service.OrderService;
 import org.example.deliveryofrolls.service.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
@@ -29,6 +33,7 @@ public class ProfileController {
 
     private final UserService userService;
     private final OrderService orderService;
+    private final BonusService bonusService;
 
     // Главная страница профиля
     @GetMapping
@@ -75,6 +80,7 @@ public class ProfileController {
 
             model.addAttribute("order", order);
             model.addAttribute("user", user);
+            model.addAttribute("pageTitle", "Детальный просмотр заказа");
             model.addAttribute("pageCss", "profile.css");
             return "profile/order-details";
 
@@ -95,11 +101,17 @@ public class ProfileController {
         profileDTO.setFirstName(user.getFirstName());
         profileDTO.setLastName(user.getLastName());
         profileDTO.setPhone(user.getPhone());
+        profileDTO.setBirthDate(user.getBirthDate());
+
+        // Добавляем отформатированную дату отдельно
+        String birthDateFormatted = user.getBirthDate() != null ?
+                user.getBirthDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : "";
 
         model.addAttribute("profileDTO", profileDTO);
         model.addAttribute("user", user);
         model.addAttribute("pageTitle", "Редактирование профиля");
         model.addAttribute("pageCss", "profile.css");
+        model.addAttribute("birthDateFormatted", birthDateFormatted);
 
         return "profile/edit";
     }
@@ -179,6 +191,24 @@ public class ProfileController {
             bindingResult.rejectValue("oldPassword", "error", e.getMessage());
             return "profile/change-password";
         }
+    }
+
+    // Мои бонусы
+    @GetMapping("/bonuses")
+    public String bonuses(@AuthenticationPrincipal UserDetails userDetails,
+                          Model model) {
+
+        User user = userService.getCurrentUser(userDetails);
+        BonusAccount account = bonusService.getOrCreateAccount(user);
+        List<BonusTransaction> transactions = bonusService.getTransactionHistory(user);
+
+        model.addAttribute("user", user);
+        model.addAttribute("account", account);
+        model.addAttribute("transactions", transactions);
+        model.addAttribute("pageTitle", "Мои бонусы");
+        model.addAttribute("pageCss", "profile.css");
+
+        return "profile/bonuses";
     }
 
 }

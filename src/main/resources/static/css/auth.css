@@ -394,3 +394,94 @@ main {
         font-size: 12px;
     }
 }
+
+/* Улучшенная мобильная версия */
+@media (max-width: 480px) {
+    main {
+        padding: 15px;
+    }
+
+    .auth-container {
+        max-width: 100%;
+    }
+
+    .auth-card {
+        padding: 25px 20px;
+        border-radius: 20px;
+    }
+
+    .auth-title {
+        font-size: 22px;
+        margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .logo {
+        font-size: 28px;
+        margin-bottom: 15px;
+    }
+
+    .input-group input {
+        padding: 14px 14px 14px 45px;
+        font-size: 16px; /* Лучше для мобильных */
+    }
+
+    .input-group i {
+        left: 14px;
+        font-size: 16px;
+    }
+
+    .auth-btn {
+        padding: 14px;
+        font-size: 16px;
+    }
+
+    .form-options {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .terms-checkbox .checkbox {
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    .auth-link {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .alert {
+        padding: 12px 15px;
+        font-size: 13px;
+    }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 360px) {
+    .auth-card {
+        padding: 20px 15px;
+    }
+
+    .auth-title {
+        font-size: 20px;
+    }
+
+    .logo {
+        font-size: 24px;
+    }
+
+    .input-group input {
+        padding: 12px 12px 12px 40px;
+    }
+
+    .input-group i {
+        left: 12px;
+        font-size: 14px;
+    }
+}

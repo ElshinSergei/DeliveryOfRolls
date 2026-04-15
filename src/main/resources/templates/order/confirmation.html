@@ -44,34 +44,79 @@
                         <small>Тип</small>
                         <span th:text="${order.deliveryType == 'DELIVERY' ? 'Доставка' : 'Самовывоз'}">Доставка</span>
                     </div>
-                    <div class="info-item" th:if="${order.deliveryAddress}">
+                    <div class="info-item" th:if="${order.deliveryAddress != null and !order.deliveryAddress.isEmpty()}">
                         <small>Адрес</small>
                         <span th:text="${order.deliveryAddress}">ул. Пушкина</span>
+                    </div>
+
+                    <!-- Детали адреса -->
+                    <div th:if="${order.deliveryEntrance != null or order.deliveryFloor != null or order.deliveryApartment != null or order.deliveryIntercom != null}"
+                         class="info-item" style="margin-top: 5px;">
+                        <small>Детали доставки</small>
+                        <span>
+                            <span th:if="${order.deliveryEntrance != null and !order.deliveryEntrance.isEmpty()}"
+                                  th:text="'подъезд ' + ${order.deliveryEntrance}"></span>
+                            <span th:if="${order.deliveryFloor != null and !order.deliveryFloor.isEmpty()}"
+                                  th:text="', этаж ' + ${order.deliveryFloor}"></span>
+                            <span th:if="${order.deliveryApartment != null and !order.deliveryApartment.isEmpty()}"
+                                  th:text="', кв. ' + ${order.deliveryApartment}"></span>
+                            <span th:if="${order.deliveryIntercom != null and !order.deliveryIntercom.isEmpty()}"
+                                  th:text="', домофон ' + ${order.deliveryIntercom}"></span>
+                        </span>
+                    </div>
+
+                    <div class="info-item" th:if="${order.deliveryTime != null}">
+                        <small>Время</small>
+                        <span th:text="${#temporals.format(order.deliveryTime, 'dd.MM.yyyy HH:mm')}">01.01.2024 18:00</span>
                     </div>
                 </div>
 
                 <!-- Состав заказа -->
-                <table class="items-table">
-                    <thead>
-                    <tr>
-                        <th>Товар</th>
-                        <th>Кол-во</th>
-                        <th>Сумма</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="item : ${order.items}">
-                        <td th:text="${item.dishName}">Филадельфия</td>
-                        <td th:text="${item.quantity}">2</td>
-                        <td th:text="${#numbers.formatDecimal(item.totalPrice, 0, 0)} + ' ₽'">700 ₽</td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div class="items-section">
+                    <h3>Состав заказа</h3>
+                    <table class="items-table">
+                        <thead>
+                        <tr>
+                            <th>Товар</th>
+                            <th>Кол-во</th>
+                            <th>Цена</th>
+                            <th>Сумма</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${order.items}">
+                            <td th:text="${item.dishName}">Филадельфия</td>
+                            <td th:text="${item.quantity}">2</td>
+                            <td th:text="${#numbers.formatDecimal(item.priceAtOrder, 0, 0)} + ' ₽'">350 ₽</td>
+                            <td th:text="${#numbers.formatDecimal(item.totalPrice, 0, 0)} + ' ₽'">700 ₽</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                <!-- Итого -->
-                <div class="total-row">
+                <!-- Детализация суммы -->
+                <div class="total-details" th:if="${order.discountAmount != null and order.discountAmount > 0}">
+                    <div class="total-row subtotal">
+                        <span>Сумма без скидки:</span>
+                        <span th:text="${#numbers.formatDecimal(order.totalPrice + order.discountAmount, 0, 0)} + ' ₽'">1 640 ₽</span>
+                    </div>
+                    <div class="total-row discount">
+                        <span>Скидка по промокоду <span class="promo-code" th:text="${order.promoCode}">12345</span>
+                              <span th:if="${order.promoCode != null}">(5%)</span>:</span>
+                        <span th:text="'-' + ${#numbers.formatDecimal(order.discountAmount, 0, 0)} + ' ₽'">-82 ₽</span>
+                    </div>
+                </div>
+
+                <!-- БОНУСЫ (если использовались) -->
+                <div th:if="${order.bonusUsed != null and order.bonusUsed > 0}" class="total-row bonus">
+                    <span>Списано бонусов:</span>
+                    <span th:text="'-' + ${order.bonusUsed} + ' ₽'">-100 ₽</span>
+                </div>
+
+                <!-- Итоговая сумма -->
+                <div class="total-row final">
                     <span>Итого:</span>
-                    <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">1 250 ₽</span>
+                    <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">1 558 ₽</span>
                 </div>
 
                 <!-- Способ оплаты -->
@@ -85,7 +130,7 @@
                 </div>
 
                 <!-- Комментарий (если есть) -->
-                <div class="info-item" th:if="${order.notes}" style="margin-top: 10px;">
+                <div class="info-item" th:if="${order.notes != null and !order.notes.isEmpty()}" style="margin-top: 10px;">
                     <small>Комментарий</small>
                     <span th:text="${order.notes}">Позвонить за 10 минут</span>
                 </div>
@@ -102,6 +147,239 @@
             </div>
         </div>
     </div>
+
+    <script th:src="@{/js/checkout.js}"></script>
+
+    <script th:inline="javascript">
+        // На странице подтверждения заказа
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Страница подтверждения заказа загружена');
+
+            // Получаем данные заказа из модели (без сериализации всей модели)
+            const orderId = /*[[${order.id}]]*/ null;
+            const orderDeliveryType = /*[[${order.deliveryType}]]*/ null;
+            const orderDeliveryAddress = /*[[${order.deliveryAddress}]]*/ null;
+            const orderDeliveryEntrance = /*[[${order.deliveryEntrance}]]*/ null;
+            const orderDeliveryFloor = /*[[${order.deliveryFloor}]]*/ null;
+            const orderDeliveryApartment = /*[[${order.deliveryApartment}]]*/ null;
+            const orderDeliveryIntercom = /*[[${order.deliveryIntercom}]]*/ null;
+
+            console.log('ID заказа:', orderId);
+            console.log('Тип доставки:', orderDeliveryType);
+            console.log('Адрес:', orderDeliveryAddress);
+
+            if (orderDeliveryType === 'DELIVERY' && orderDeliveryAddress) {
+                console.log('Заказ на доставку, адрес:', orderDeliveryAddress);
+
+                // Создаем объект с деталями адреса
+                const addressDetails = {
+                    address: orderDeliveryAddress,
+                    entrance: orderDeliveryEntrance || '',
+                    floor: orderDeliveryFloor || '',
+                    apartment: orderDeliveryApartment || '',
+                    intercom: orderDeliveryIntercom || ''
+                };
+
+                // Сохраняем в localStorage для backup
+                localStorage.setItem('lastOrderAddress', JSON.stringify(addressDetails));
+                localStorage.setItem('deliveryAddress', JSON.stringify({
+                    type: 'delivery',
+                    text: orderDeliveryAddress,
+                    zone: {
+                        name: 'Доставка',
+                        minOrder: 0,
+                        deliveryTime: ''
+                    }
+                }));
+
+                // Показываем предложение сохранить адрес через 1.5 секунды
+                setTimeout(() => {
+                    console.log('Вызываем предложение сохранить адрес');
+                    // Проверяем, существует ли функция в глобальной области
+                    if (typeof promptSaveAddressFromOrder === 'function') {
+                        promptSaveAddressFromOrder(addressDetails);
+                    } else {
+                        console.log('Функция promptSaveAddressFromOrder не найдена, создаем вручную');
+                        createSimpleSavePrompt(addressDetails);
+                    }
+                }, 1500);
+            }
+        });
+
+        // Простое предложение сохранить адрес (на случай, если функция из checkout.js не загрузилась)
+        function createSimpleSavePrompt(addressDetails) {
+            const address = addressDetails.address;
+            const entrance = addressDetails.entrance;
+            const floor = addressDetails.floor;
+            const apartment = addressDetails.apartment;
+            const intercom = addressDetails.intercom;
+
+            if (!address || address.trim() === '') return;
+
+            // Проверяем, не показывали ли уже
+            const skipKey = `skip_save_address_${address}`;
+            if (sessionStorage.getItem(skipKey) === 'true') return;
+
+            let promptDiv = document.getElementById('saveAddressPrompt');
+            if (promptDiv) promptDiv.remove();
+
+            promptDiv = document.createElement('div');
+            promptDiv.id = 'saveAddressPrompt';
+            promptDiv.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                padding: 15px 20px;
+                max-width: 350px;
+                z-index: 9998;
+                border-left: 4px solid #e74c3c;
+                animation: slideInRight 0.3s ease;
+            `;
+
+            let displayAddress = address;
+            if (displayAddress.length > 40) {
+                displayAddress = displayAddress.substring(0, 37) + '...';
+            }
+
+            promptDiv.innerHTML = `
+                <div style="display: flex; align-items: start; gap: 12px;">
+                    <i class="bi bi-star-fill" style="color: #f1c40f; font-size: 20px;"></i>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; margin-bottom: 5px;">Сохранить адрес в избранное?</div>
+                        <div style="font-size: 12px; color: #666; margin-bottom: 10px;">${displayAddress}</div>
+                        <div style="display: flex; gap: 10px;">
+                            <button id="saveAddressYesBtn" style="background: #e74c3c; color: white; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 13px;">Сохранить</button>
+                            <button id="saveAddressNoBtn" style="background: #f5f5f5; border: none; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 13px;">Не сейчас</button>
+                        </div>
+                    </div>
+                    <button id="saveAddressCloseBtn" style="background: none; border: none; cursor: pointer; color: #999; font-size: 18px;">×</button>
+                </div>
+            `;
+
+            document.body.appendChild(promptDiv);
+
+            document.getElementById('saveAddressYesBtn').onclick = async () => {
+                promptDiv.remove();
+                await saveAddressToFavoritesSimple(address, entrance, floor, apartment, intercom);
+            };
+
+            document.getElementById('saveAddressNoBtn').onclick = () => {
+                promptDiv.remove();
+                sessionStorage.setItem(skipKey, 'true');
+            };
+
+            document.getElementById('saveAddressCloseBtn').onclick = () => {
+                promptDiv.remove();
+            };
+        }
+
+        // Простая функция сохранения адреса
+        async function saveAddressToFavoritesSimple(address, entrance, floor, apartment, intercom) {
+            const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || 'X-CSRF-TOKEN';
+
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            if (csrfToken) headers[csrfHeader] = csrfToken;
+
+            try {
+                const response = await fetch('/profile/addresses/api/save', {
+                    method: 'POST',
+                    headers: headers,
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        address: address,
+                        entrance: entrance,
+                        floor: floor,
+                        apartment: apartment,
+                        comment: intercom,
+                        isDefault: false
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showNotification('✅ Адрес сохранен в избранное', 'success');
+                } else {
+                    console.error('Ошибка сохранения:', data);
+                    showNotification('❌ Не удалось сохранить адрес', 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showNotification('❌ Ошибка при сохранении адреса', 'error');
+            }
+        }
+
+        function showNotification(message, type) {
+            let container = document.getElementById('notificationContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'notificationContainer';
+                container.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    z-index: 10000;
+                `;
+                document.body.appendChild(container);
+            }
+
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                background: ${type === 'success' ? '#28a745' : '#dc3545'};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                margin-top: 10px;
+                animation: fadeInOut 3s ease;
+                cursor: pointer;
+            `;
+            notification.innerHTML = message;
+            notification.onclick = () => notification.remove();
+
+            container.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // Добавляем CSS анимации
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            @keyframes fadeInOut {
+                0% {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                10% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                90% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </main>
 </body>
 </html>

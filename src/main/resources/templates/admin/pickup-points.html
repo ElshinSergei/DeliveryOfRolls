@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <title>Управление точками самовывоза</title>
+</head>
+<main>
+    <div class="admin-container">
+
+        <!-- Заголовок как в категориях -->
+        <div class="admin-header">
+            <h3>🏪 Управление точками самовывоза</h3>
+            <button class="btn-minimal btn-minimal-primary" onclick="openCreateModal()">
+                <i class="bi bi-plus-circle"></i> Добавить точку
+            </button>
+        </div>
+
+        <!-- Сообщения -->
+        <div id="successMessage" class="alert alert-success" style="display: none;"></div>
+        <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+
+        <!-- Таблица точек самовывоза -->
+        <div class="pickup-points-container">
+            <div class="pickup-points-table">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Адрес</th>
+                        <th>Время работы</th>
+                        <th>Телефон</th>
+                        <th>Статус</th>
+                        <th>Порядок</th>
+                        <th>Действия</th>
+                    </tr>
+                    </thead>
+                    <tbody id="pickupPointsList">
+                    <tr>
+                        <td colspan="7" class="text-center p-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Загрузка...</span>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно создания/редактирования -->
+    <div class="modal fade" id="pickupPointModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Добавление точки самовывоза</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="pickupPointForm">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Название *</label>
+                                    <input type="text" class="form-control" id="pointName" required>
+                                    <small class="text-muted">Например: Главный ресторан</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Адрес *</label>
+                            <input type="text" class="form-control" id="pointAddress" required>
+                            <small class="text-muted">Полный адрес точки самовывоза</small>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Координаты</label>
+                                    <input type="text" class="form-control" id="pointCoordinates" placeholder="56.2294, 58.0105">
+                                    <small class="text-muted">Формат: широта, долгота (например: 56.2294, 58.0105)</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Телефон</label>
+                                    <input type="text" class="form-control" id="pointPhone" placeholder="+7 (999) 123-45-67">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Время работы</label>
+                            <input type="text" class="form-control" id="pointWorkingHours" placeholder="Ежедневно с 10:00 до 23:00">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Описание</label>
+                            <textarea class="form-control" id="pointDescription" rows="3" placeholder="Дополнительная информация о точке самовывоза"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Порядок отображения</label>
+                                    <input type="number" class="form-control" id="pointDisplayOrder" value="0">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Статус</label>
+                                    <select class="form-select" id="pointActive">
+                                        <option value="true">Активна</option>
+                                        <option value="false">Неактивна</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-minimal btn-minimal-outline" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn-minimal btn-minimal-primary" onclick="savePickupPoint()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения удаления -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Подтверждение удаления</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите удалить точку <strong id="deletePointName"></strong>?</p>
+                    <p class="text-danger">Это действие невозможно отменить.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-minimal btn-minimal-outline" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn-minimal btn-minimal-danger" onclick="confirmDelete()">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast уведомления -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+        <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+            <div class="toast-header">
+                <i class="bi bi-bell-fill me-2"></i>
+                <strong class="me-auto">Уведомление</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage"></div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/pickup-points.js}"></script>
+</main>
+</html>

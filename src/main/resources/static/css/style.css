@@ -1,5 +1,5 @@
 body {
-    padding-top: 65px !important;
+    padding-top: 0 !important;
     background: linear-gradient(135deg, #fff5f5 0%, #ffe9e9 100%);
 }
 
@@ -23,20 +23,36 @@ body {
     transform: translateX(0);
 }
 
-.cart-notification-success {
-    border-left-color: #28a745;
+/* Все уведомления - зеленые */
+.cart-notification-success,
+.cart-notification-warning,
+.cart-notification-info {
+    background: linear-gradient(135deg, #28a745, #1e7e34) !important;
+    border-left-color: #1e7e34 !important;
+    color: white;
 }
 
-.cart-notification-success strong {
-    color: #28a745;
+.cart-notification-success strong,
+.cart-notification-warning strong,
+.cart-notification-info strong {
+    color: white;
 }
 
+.cart-notification-success .notification-content p,
+.cart-notification-warning .notification-content p,
+.cart-notification-info .notification-content p {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Красные уведомления (ошибки) оставляем красными */
 .cart-notification-error {
-    border-left-color: #dc3545;
+    background: linear-gradient(135deg, #dc3545, #a71d2a) !important;
+    border-left-color: #a71d2a !important;
+    color: white;
 }
 
 .cart-notification-error strong {
-    color: #dc3545;
+    color: white;
 }
 
 .notification-content {
@@ -51,22 +67,21 @@ body {
 
 .notification-content p {
     margin: 0;
-    color: #6c757d;
     font-size: 14px;
 }
 
 .notification-close {
     background: none;
     border: none;
-    font-size: 24px;
-    color: #adb5bd;
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.7);
     cursor: pointer;
     padding: 0 5px;
     margin-left: 10px;
 }
 
 .notification-close:hover {
-    color: #495057;
+    color: white;
 }
 
 /* Анимация для счетчика */

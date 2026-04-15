@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <title>Управление зонами доставки</title>
+    <link rel="stylesheet" th:href="@{/css/delivery-zones.css}">
+</head>
+<main>
+    <div class="admin-container">
+
+        <!-- Заголовок как в категориях -->
+        <div class="admin-header">
+            <h3>🗺️ Управление зонами доставки</h3>
+            <button class="btn-minimal btn-minimal-primary" id="createZoneBtn">
+                <i class="bi bi-plus-circle"></i> Добавить зону
+            </button>
+        </div>
+
+        <!-- Сообщения -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <!-- Контейнер с картой и списком -->
+        <div class="zones-container">
+            <!-- Список зон -->
+            <div class="zones-list">
+                <div class="zones-header">
+                    <h4><i class="bi bi-geo-alt"></i> Зоны доставки</h4>
+                    <button class="btn-refresh" id="refreshZonesBtn" title="Обновить">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </button>
+                </div>
+                <div id="zonesList" class="zone-items">
+                    <div class="text-center p-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Загрузка...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Карта -->
+            <div class="map-container">
+                <div class="map-controls">
+                    <div class="search-container">
+                        <input type="text" id="addressSearch" class="form-control" placeholder="Поиск адреса...">
+                        <button id="searchBtn" class="btn-map-search">
+                            <i class="bi bi-search"></i> Найти
+                        </button>
+                    </div>
+                    <button class="btn-map-action" id="drawPolygonBtn">
+                        <i class="bi bi-pencil-square"></i> Рисовать
+                    </button>
+                    <button class="btn-map-action" id="clearDrawingBtn">
+                        <i class="bi bi-trash"></i> Очистить
+                    </button>
+                    <button class="btn-map-action" id="fitMapBtn">
+                        <i class="bi bi-arrows-fullscreen"></i> Все зоны
+                    </button>
+                </div>
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно создания/редактирования -->
+    <div class="modal fade" id="zoneModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Создание зоны доставки</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="zoneForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Название зоны *</label>
+                                    <input type="text" class="form-control" id="zoneName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Время доставки</label>
+                                    <input type="text" class="form-control" id="zoneDeliveryTime" placeholder="30-45 мин" value="30-45 мин">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Цвет заливки</label>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <input type="color" class="form-control form-control-color w-auto" id="zoneColor" value="#0d6efd">
+                                        <input type="text" class="form-control" id="zoneColorText" value="#0d6efd">
+                                        <div class="color-preview" id="colorPreview" style="background: #0d6efd;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Цвет границы</label>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <input type="color" class="form-control form-control-color w-auto" id="zoneBorderColor" value="#0b5ed7">
+                                        <input type="text" class="form-control" id="zoneBorderColorText" value="#0b5ed7">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Прозрачность (0-1)</label>
+                                    <input type="number" class="form-control" id="zoneFillOpacity" step="0.1" min="0" max="1" value="0.3">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Минимальная сумма заказа (₽)</label>
+                                    <input type="number" class="form-control" id="zoneMinOrder" value="500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Статус</label>
+                            <select class="form-select" id="zoneActive">
+                                <option value="true">Активна</option>
+                                <option value="false">Неактивна</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Координаты полигона</label>
+                            <textarea id="zonePoints" class="form-control points-info" rows="4" readonly placeholder="Нарисуйте полигон на карте"></textarea>
+                            <div class="draw-tools-info">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Как создать зону:</strong>
+                                <ol class="mb-0 mt-1 ps-3">
+                                    <li>Нажмите кнопку "Рисовать" на карте</li>
+                                    <li>Нажмите на карте для создания точек полигона</li>
+                                    <li>Дважды кликните для завершения рисования</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-minimal btn-minimal-outline" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn-minimal btn-minimal-primary" id="saveZoneBtn">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения удаления -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Подтверждение удаления</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите удалить зону <strong id="deleteZoneName"></strong>?</p>
+                    <p class="text-danger">Это действие невозможно отменить.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-minimal btn-minimal-outline" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn-minimal btn-minimal-danger" id="confirmDeleteBtn">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast уведомления -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+        <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+            <div class="toast-header">
+                <i class="bi bi-bell-fill me-2"></i>
+                <strong class="me-auto">Уведомление</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage"></div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/delivery-zones.js}"></script>
+</main>
+</html>

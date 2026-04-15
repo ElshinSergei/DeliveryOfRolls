@@ -234,3 +234,15 @@
     white-space: nowrap !important;
     box-shadow: none !important;
 }
+
+.address-row {
+    align-items: flex-start !important;
+}
+
+.address-value {
+    white-space: normal !important;
+    word-break: break-word !important;
+    line-height: 1.4;
+    max-width: 300px;
+    text-align: left;
+}

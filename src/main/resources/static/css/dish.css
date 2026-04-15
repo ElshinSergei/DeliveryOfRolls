@@ -1,0 +1,241 @@
+.dish-form-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.dish-header-minimal {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.dish-header-minimal h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+}
+
+.dish-header-minimal .subtitle {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.btn-minimal {
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.btn-minimal-outline {
+    background: white;
+    color: #4a5568;
+    border-color: #e2e8f0;
+}
+
+.btn-minimal-outline:hover {
+    background: #f7fafc;
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.btn-minimal-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-minimal-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.edit-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #4a5568;
+}
+
+.form-label i {
+    color: #667eea;
+    margin-right: 5px;
+}
+
+.form-control, .form-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.2s;
+}
+
+.form-control:focus, .form-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-control.is-invalid {
+    border-color: #e53e3e;
+}
+
+.invalid-feedback {
+    color: #e53e3e;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-text {
+    color: #718096;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+
+.col-md-6, .col-md-8, .col-md-4, .col-12 {
+    padding: 0 10px;
+}
+
+.col-md-6 {
+    width: 50%;
+}
+
+.col-md-8 {
+    width: 66.666%;
+}
+
+.col-md-4 {
+    width: 33.333%;
+}
+
+.col-12 {
+    width: 100%;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #667eea;
+}
+
+.checkbox-group label {
+    font-weight: 500;
+    color: #2d3748;
+    cursor: pointer;
+}
+
+.image-card {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 20px;
+    border: 2px dashed #e2e8f0;
+    text-align: center;
+}
+
+.current-image {
+    margin-bottom: 20px;
+}
+
+.current-image img {
+    max-height: 250px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+}
+
+.image-hint {
+    background: #667eea10;
+    border-left: 4px solid #667eea;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #4a5568;
+    margin-top: 15px;
+    text-align: left;
+}
+
+.action-bar-minimal {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #e2e8f0;
+}
+
+.action-bar-minimal .btn-minimal-outline,
+.action-bar-minimal .btn-minimal-primary {
+    flex: 1;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .col-md-6, .col-md-8, .col-md-4 {
+        width: 100%;
+    }
+
+    .action-bar-minimal {
+        flex-direction: column;
+    }
+
+    .dish-header-minimal {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .row {
+        margin: 0;
+    }
+}

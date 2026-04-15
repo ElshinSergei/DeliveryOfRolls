@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: 12a27z18A
+      MYSQL_DATABASE: sushishop
+    ports:
+      - "3306:3306"
+    volumes:
+      - redrolls_mysql_data:/var/lib/mysql
+    restart: always
+
+  app:
+    image: redrolls-app:latest
+    container_name: redrolls_app
+    ports:
+      - "8080:8080"        # HTTP port
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/sushishop?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 12a27z18A
+    volumes:
+      - /root/sushi-uploads:/uploads
+    depends_on:
+      - db
+    restart: always
+
+volumes:
+  redrolls_mysql_data:
+    external: true

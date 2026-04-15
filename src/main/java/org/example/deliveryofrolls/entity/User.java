@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -39,6 +40,12 @@ public class User {
     private Cart cart;
 
     private boolean enabled;
+
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+
+    @Column(name = "birthday_bonus_granted")
+    private boolean birthdayBonusGranted = false; // флаг, что бонус уже начислен в этом году
 
     @CreationTimestamp
     private LocalDateTime registeredAt;

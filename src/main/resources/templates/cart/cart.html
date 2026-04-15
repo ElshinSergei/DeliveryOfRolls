@@ -119,6 +119,44 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- ========== БЛОК АКСЕССУАРОВ (ПАЛОЧКИ И Т.Д.) ========== -->
+                <div class="cart-accessories" th:if="${not #lists.isEmpty(accessories)}">
+                    <h4>Дополнительно к заказу</h4>
+
+                    <div th:each="item : ${accessories}" class="accessory-item"
+                         th:data-dish-id="${item.id}" th:data-dish-name="${item.name}">
+                        <div class="accessory-info">
+                            <!-- Фото аксессуара (если есть) -->
+                            <img th:if="${item.imageUrl != null}"
+                                 th:src="@{${item.imageUrl}}"
+                                 class="accessory-image"
+                                 th:alt="${item.name}">
+                            <!-- Иконка по умолчанию (если фото нет) -->
+                            <i th:unless="${item.imageUrl != null}" class="bi bi-egg-fried"></i>
+                            <div>
+                                <span class="accessory-name" th:text="${item.name}">Палочки</span>
+                                <span class="accessory-price" th:text="${#numbers.formatDecimal(item.price, 0, 0)} + ' ₽'">9 ₽</span>
+                            </div>
+                        </div>
+                        <div class="accessory-controls">
+                            <button class="accessory-minus" th:data-dish-id="${item.id}" type="button">
+                                <i class="bi bi-dash"></i>
+                            </button>
+                            <span class="accessory-quantity" th:id="|accessory-qty-${item.id}|">0</span>
+                            <button class="accessory-plus" th:data-dish-id="${item.id}" type="button">
+                                <i class="bi bi-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="accessory-note">
+                        <i class="bi bi-info-circle"></i>
+                        <small>Добавьте аксессуары к вашему заказу</small>
+                    </div>
+                </div>
+                <!-- ======================================================= -->
+
             </div>
 
             <!-- Правая колонка - итоги и оформление -->
@@ -129,7 +167,7 @@
                     <!-- Стоимость товаров -->
                     <div class="summary-row">
                         <span class="summary-label">Товары</span>
-                        <span class="summary-value"
+                        <span class="summary-value" id="subtotal-value"
                               th:text="${#numbers.formatDecimal(cart.getTotalPrice(), 0, 0) + ' ₽'}">
                             1 650 ₽
                         </span>
@@ -138,7 +176,7 @@
                     <!-- Итого -->
                     <div class="summary-row total">
                         <span class="summary-label">Итого</span>
-                        <span class="summary-value"
+                        <span class="summary-value" id="cart-total"
                               th:text="${#numbers.formatDecimal(cart.getTotalPrice(), 0, 0) + ' ₽'}">
                             1 650 ₽
                         </span>
@@ -174,6 +212,88 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (function() {
+            // Функция проверки выбран ли адрес
+            function isAddressSelected() {
+                const savedAddress = localStorage.getItem('deliveryAddress');
+                if (!savedAddress) return false;
+
+                try {
+                    const addressData = JSON.parse(savedAddress);
+                    // Адрес выбран, если есть текст и тип
+                    return addressData && (addressData.text || addressData.type);
+                } catch(e) {
+                    return false;
+                }
+            }
+
+            // Если адрес уже выбран при загрузке страницы - обновляем состояние кнопки
+            document.addEventListener('DOMContentLoaded', function() {
+                const checkoutBtn = document.querySelector('.btn-checkout');
+                if (!checkoutBtn) return;
+
+                const originalHref = checkoutBtn.getAttribute('href');
+
+                // ⭐ ПРОВЕРЯЕМ АДРЕС ПРИ ЗАГРУЗКЕ ⭐
+                if (isAddressSelected()) {
+                    console.log('✅ Адрес уже выбран в хедере, кнопка активна');
+                    checkoutBtn.style.opacity = '1';
+                    checkoutBtn.classList.remove('disabled');
+                } else {
+                    console.log('❌ Адрес не выбран, кнопка будет просить выбрать');
+                    checkoutBtn.style.opacity = '0.6';
+                    checkoutBtn.classList.add('disabled');
+                }
+
+                // Обработчик клика
+                checkoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    if (isAddressSelected()) {
+                        console.log('✅ Адрес есть, переходим к оформлению');
+                        window.location.href = originalHref || '/order/checkout';
+                    } else {
+                        console.log('❌ Адреса нет, открываем выбор');
+                        showAddressRequiredModal();
+                    }
+                });
+            });
+
+            function showAddressRequiredModal() {
+                showNotification('warning', '⚠️ Адрес не выбран', 'Пожалуйста, выберите адрес доставки или точку самовывоза');
+
+                if (typeof window.openAddressModal === 'function') {
+                    window.openAddressModal();
+                } else {
+                    const addressSelector = document.getElementById('addressSelector');
+                    if (addressSelector) addressSelector.click();
+                }
+            }
+
+            function showNotification(type, title, message) {
+                const oldNotification = document.querySelector('.cart-address-warning');
+                if (oldNotification) oldNotification.remove();
+
+                const warningDiv = document.createElement('div');
+                warningDiv.className = `alert alert-${type === 'warning' ? 'warning' : 'danger'} alert-dismissible fade show cart-address-warning`;
+                warningDiv.innerHTML = `
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong>${title}</strong> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+                const summaryCard = document.querySelector('.cart-summary-card');
+                if (summaryCard) {
+                    summaryCard.insertBefore(warningDiv, summaryCard.querySelector('.btn-checkout'));
+                }
+
+                setTimeout(() => warningDiv.remove(), 5000);
+            }
+        })();
+    </script>
+
 </main>
 </body>
 </html>

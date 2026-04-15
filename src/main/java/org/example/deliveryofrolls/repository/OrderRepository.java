@@ -39,12 +39,12 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     BigDecimal sumTotalPriceByCreatedAtAfter(@Param("date") LocalDateTime date);
 
     // ТОП-5 популярных блюд
-    @Query("SELECT d.name as name, COUNT(oi) as count " +
-            "FROM OrderItem oi " +
-            "JOIN oi.dish d " +
+    @Query(value = "SELECT d.name as name, COUNT(oi.id) as count " +
+            "FROM order_items oi " +
+            "JOIN dishes d ON oi.dish_id = d.id " +
             "GROUP BY d.name " +
             "ORDER BY count DESC " +
-            "LIMIT 5")
+            "LIMIT 5", nativeQuery = true)
     List<Map<String, Object>> findTopPopularDishes();
 
     // Все заказы конкретного пользователя

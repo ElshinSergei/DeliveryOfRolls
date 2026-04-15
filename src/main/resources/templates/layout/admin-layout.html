@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="html(content)">
 <head>
     <meta charset="UTF-8">
     <meta name="context-path" th:content="${contextPath}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${pageTitle}">Доставка суши</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,65 +16,223 @@
         <link rel="stylesheet" th:href="@{|/css/${pageCss}|}">
     </th:block>
 
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=0af3c165-a4a3-406b-b2cd-82c6935acedf&lang=ru_RU" type="text/javascript"></script>
 </head>
 
 <body>
 
-<header style="background: #343a40; color: white; padding: 15px 0;">
-    <div style="max-width: 1400px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
-        <div style="display: flex; align-items: center; gap: 40px;">
-            <h2 style="margin: 0; font-size: 24px;">🍣 RedRolls</h2>
-            <nav style="display: flex; gap: 20px;">
-                <a th:href="@{/admin}"
-                   style="color: white; text-decoration: none; padding: 5px 10px; border-radius: 5px;">
-                    📊 Главная
-                </a>
-                <a th:href="@{/admin/orders}"
-                   style="color: white; text-decoration: none; padding: 5px 10px; border-radius: 5px;">
-                    📦 Заказы
-                </a>
-                <a th:href="@{/admin/dishes}"
-                   style="color: white; text-decoration: none; padding: 5px 10px; border-radius: 5px;">
-                    🍣 Меню
-                </a>
-                <a th:href="@{/admin/categories}"
-                   style="color: white; text-decoration: none; padding: 5px 10px; border-radius: 5px;">
-                    📁 Категории
-                </a>
-                <a th:href="@{/admin/users}"
-                   style="color: white; text-decoration: none; padding: 5px 10px; border-radius: 5px;">
-                    👥 Пользователи
-                </a>
-                <a th:href="@{/admin/promotions}"
-                   style="color: white; text-decoration: none; padding: 5px 10px; border-radius: 5px;">
-                    📢 Акции
-                </a>
-            </nav>
+<!-- ========== СОВРЕМЕННЫЙ ХЕДЕР АДМИНКИ ========== -->
+<header class="admin-header-modern">
+    <div class="admin-header-container">
+        <!-- Левая часть: логотип и название -->
+        <div class="admin-header-logo">
+            <div class="logo-icon">🍣</div>
+            <div class="logo-text">
+                <span class="logo-title">RedRolls</span>
+                <span class="logo-badge">Admin</span>
+            </div>
         </div>
-        <div>
-            <span style="margin-right: 20px;" th:text="${#authentication.name}">admin</span>
-            <a th:href="@{/home}" style="color: white; text-decoration: none;" target="_blank">🌐 На сайт</a>
-            <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 15px;">
-                <button type="submit" style="background: #dc3545; color: white; border: none; padding: 5px 15px; border-radius: 5px; cursor: pointer;">Выйти</button>
+
+        <!-- Центральная часть: навигация (десктоп) -->
+        <nav class="admin-nav-desktop">
+            <a th:href="@{/admin}" class="nav-link">
+                <i class="bi bi-speedometer2"></i>
+                <span>Дашборд</span>
+            </a>
+            <a th:href="@{/admin/orders}" class="nav-link">
+                <i class="bi bi-box-seam"></i>
+                <span>Заказы</span>
+                <span class="nav-badge" id="newOrdersCount">0</span>
+            </a>
+            <a th:href="@{/admin/dishes}" class="nav-link">
+                <i class="bi bi-egg-fried"></i>
+                <span>Меню</span>
+            </a>
+            <a th:href="@{/admin/categories}" class="nav-link">
+                <i class="bi bi-folder2"></i>
+                <span>Категории</span>
+            </a>
+            <a th:href="@{/admin/users}" class="nav-link">
+                <i class="bi bi-people"></i>
+                <span>Пользователи</span>
+            </a>
+            <a th:href="@{/admin/marketing}" class="nav-link">
+                <i class="bi bi-megaphone"></i>
+                <span>Маркетинг</span>
+            </a>
+            <a th:href="@{/admin/delivery-zones}" class="nav-link">
+                <i class="bi bi-geo-alt"></i>
+                <span>Зоны</span>
+            </a>
+            <a th:href="@{/admin/pickup-points}" class="nav-link">
+                <i class="bi bi-shop"></i>
+                <span>Самовывоз</span>
+            </a>
+        </nav>
+
+        <!-- Правая часть: пользователь и действия -->
+        <div class="admin-header-actions">
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="admin-user-info">
+                <div class="user-avatar-mini">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <div class="user-details">
+                    <span class="user-name" th:text="${#authentication.name}">admin</span>
+                    <span class="user-role">Администратор</span>
+                </div>
+            </div>
+
+            <div class="admin-actions">
+                <a th:href="@{/home}" class="action-btn" target="_blank" title="Перейти на сайт">
+                    <i class="bi bi-globe2"></i>
+                </a>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <button type="submit" class="action-btn logout-btn" title="Выйти">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Мобильное меню (скрыто по умолчанию) -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <div class="mobile-user-info">
+                <i class="bi bi-person-circle"></i>
+                <span th:text="${#authentication.name}">admin</span>
+            </div>
+        </div>
+        <nav class="mobile-nav-links">
+            <a th:href="@{/admin}" class="mobile-nav-link">
+                <i class="bi bi-speedometer2"></i>
+                <span>Дашборд</span>
+            </a>
+            <a th:href="@{/admin/orders}" class="mobile-nav-link">
+                <i class="bi bi-box-seam"></i>
+                <span>Заказы</span>
+            </a>
+            <a th:href="@{/admin/dishes}" class="mobile-nav-link">
+                <i class="bi bi-egg-fried"></i>
+                <span>Меню</span>
+            </a>
+            <a th:href="@{/admin/categories}" class="mobile-nav-link">
+                <i class="bi bi-folder2"></i>
+                <span>Категории</span>
+            </a>
+            <a th:href="@{/admin/users}" class="mobile-nav-link">
+                <i class="bi bi-people"></i>
+                <span>Пользователи</span>
+            </a>
+            <a th:href="@{/admin/marketing}" class="mobile-nav-link">
+                <i class="bi bi-megaphone"></i>
+                <span>Маркетинг</span>
+            </a>
+            <a th:href="@{/admin/delivery-zones}" class="mobile-nav-link">
+                <i class="bi bi-geo-alt"></i>
+                <span>Зоны доставки</span>
+            </a>
+            <a th:href="@{/admin/pickup-points}" class="mobile-nav-link">
+                <i class="bi bi-shop"></i>
+                <span>Точки самовывоза</span>
+            </a>
+        </nav>
+        <div class="mobile-menu-footer">
+            <a th:href="@{/home}" class="mobile-footer-link">
+                <i class="bi bi-globe2"></i> Перейти на сайт
+            </a>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="mobile-logout-btn">
+                    <i class="bi bi-box-arrow-right"></i> Выйти
+                </button>
             </form>
         </div>
     </div>
 </header>
 
-
-<main style="max-width: 1400px; margin: 30px auto; padding: 0 20px;">
-    <div th:replace="${content}"></div>
+<main class="admin-main">
+    <div class="admin-content" th:replace="${content}"></div>
 </main>
 
+<!-- Затемнение для мобильного меню -->
+<div class="menu-overlay" id="menuOverlay"></div>
 
-<footer style="background: #f8f9fa; padding: 20px 0; margin-top: 50px;">
-    <div style="max-width: 1400px; margin: 0 auto; padding: 0 20px; text-align: center; color: #6c757d;">
+<footer class="admin-footer">
+    <div class="admin-footer-content">
         <p>© 2026 RedRolls. Панель администратора</p>
+        <p class="footer-version">Версия 1.0</p>
     </div>
 </footer>
 
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/js/admin.js}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Мобильное меню
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', function() {
+                mobileMenu.classList.toggle('open');
+                // menuOverlay.classList.toggle('open');
+                document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+            });
+        }
+
+        if (menuOverlay) {
+            menuOverlay.addEventListener('click', function() {
+                mobileMenu.classList.remove('open');
+                menuOverlay.classList.remove('open');
+                document.body.style.overflow = '';
+            });
+
+            // Обновляем счетчик в хедере
+            if (typeof updateNewOrdersCount === 'function') {
+                updateNewOrdersCount();
+            }
+        }
+    });
+
+    // ========== СЧЕТЧИК НОВЫХ ЗАКАЗОВ ==========
+    async function updateNewOrdersCount() {
+        try {
+            const response = await fetch(contextPath + '/admin/orders/count-new');
+            if (response.ok) {
+                const data = await response.json();
+                const badge = document.getElementById('newOrdersCount');
+                if (badge) {
+                    const count = data.count || 0;
+                    badge.textContent = count;
+
+                    if (count > 0) {
+                        badge.style.display = 'inline-flex';
+                        badge.classList.add('pulse');
+                        setTimeout(() => badge.classList.remove('pulse'), 500);
+                        console.log(`📦 Новых заказов: ${count}`); // Для отладки
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('❌ Ошибка обновления счетчика:', error);
+        }
+    }
+
+    // Запускаем при загрузке
+    document.addEventListener('DOMContentLoaded', () => {
+        updateNewOrdersCount();
+        setInterval(updateNewOrdersCount, 30000); // Обновляем каждые 30 секунд
+    });
+
+</script>
+
 </body>
 </html>

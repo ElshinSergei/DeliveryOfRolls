@@ -1,25 +1,28 @@
 const contextPath = document.querySelector('meta[name="context-path"]')?.content || '';
 
-<!-- Изменение статуса заказа через модальное окно -->
+// Изменение статуса заказа через модальное окно
 document.addEventListener('DOMContentLoaded', function() {
     const statusModal = document.getElementById('statusModal');
     if (!statusModal) return; // Если модалки нет на странице - выходим
     let currentOrderId = null; // переменная для хранения ID
+    let currentStatus = null; // переменная для хранения текущего статуса
 
     statusModal.addEventListener('show.bs.modal', function(event) {
         // Кнопка, которая открыла модалку
         const button = event.relatedTarget;
         // Получаем данные из data-атрибутов
         const orderId = button.getAttribute('data-order-id');
-        const currentStatus = button.getAttribute('data-current-status');
+        const currentStatusValue = button.getAttribute('data-current-status');
 
         currentOrderId = orderId; // Сохраняем ID заказа
+        currentStatus = currentStatusValue; // Сохраняем текущий статус
+
         document.getElementById('modalOrderId').textContent = orderId; // Обновляем заголовок
 
         // Выбираем текущий статус в селекте
         const select = document.getElementById('modalStatusSelect');
         Array.from(select.options).forEach(option => {
-            if (option.value === currentStatus) {
+            if (option.value === currentStatusValue) {
                 option.selected = true;
             }
         });
@@ -38,6 +41,18 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('❌ Ошибка: ID заказа не найден');
             return;
         }
+
+        // ===== НОВАЯ ПРОВЕРКА ДЛЯ ОТМЕНЫ ЗАКАЗА =====
+        if (status === 'CANCELLED' && currentStatus !== 'CANCELLED') {
+            const confirmCancel = confirm('⚠️ При отмене заказа:\n' +
+                '• Потраченные бонусы будут возвращены\n' +
+                '• Начисленные бонусы будут списаны\n' +
+                'Продолжить?');
+            if (!confirmCancel) {
+                return;
+            }
+        }
+        // ============================================
 
         submitBtn.disabled = true;
         submitBtn.innerHTML = '⏳';
@@ -103,4 +118,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-

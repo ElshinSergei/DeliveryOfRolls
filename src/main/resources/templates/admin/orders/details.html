@@ -63,9 +63,9 @@
                     <span class="label">Тип:</span>
                     <span class="value" th:text="${order.deliveryType.name() == 'DELIVERY' ? 'Доставка' : 'Самовывоз'}"></span>
                 </div>
-                <div th:if="${order.deliveryAddress != null}" class="info-row-minimal">
+                <div th:if="${order.deliveryAddress != null}" class="info-row-minimal address-row">
                     <span class="label">Адрес:</span>
-                    <span class="value" th:text="${order.deliveryAddress}">ул. Пушкина, 10</span>
+                    <span class="value address-text" th:text="${order.deliveryAddress}">ул. Пушкина, д. 10, подъезд 1, этаж 3, кв 42</span>
                 </div>
                 <div th:if="${order.deliveryTime != null}" class="info-row-minimal">
                     <span class="label">Время:</span>
@@ -88,6 +88,17 @@
                     <span class="value" style="font-weight: 600; color: #38a169;"
                           th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">1 250 ₽</span>
                 </div>
+
+                <!-- ===== БОНУСЫ В АДМИНКЕ ===== -->
+                <div th:if="${order.bonusUsed != null and order.bonusUsed > 0}" class="info-row-minimal">
+                    <span class="label">Списано бонусов:</span>
+                    <span class="value" style="color: #e74c3c;" th:text="'-' + ${order.bonusUsed} + ' ₽'">-100 ₽</span>
+                </div>
+                <div th:if="${order.bonusEarned != null and order.bonusEarned > 0}" class="info-row-minimal">
+                    <span class="label">Начислено бонусов:</span>
+                    <span class="value" style="color: #2ecc71;" th:text="'+' + ${order.bonusEarned}">+100</span>
+                </div>
+                <!-- =========================== -->
             </div>
         </div>
 
@@ -121,10 +132,25 @@
                 </tr>
                 </tbody>
                 <tfoot>
+                <!-- Показываем детализацию только если есть промокод -->
+                <tr th:if="${order.promoCode != null and order.discountAmount != null}">
+                    <td colspan="3" class="text-right" style="color: #7f8c8d;">Сумма без скидки:</td>
+                    <td class="text-right" style="color: #7f8c8d;"
+                        th:text="${#numbers.formatDecimal(order.totalPrice + order.discountAmount, 0, 0)} + ' ₽'">1 640 ₽</td>
+                </tr>
+                <tr th:if="${order.promoCode != null and order.discountAmount != null}">
+                    <td colspan="3" class="text-right" style="color: #2ecc71;">
+                        Скидка по промокоду <span th:text="${order.promoCode}">WELCOME10</span>:
+                    </td>
+                    <td class="text-right" style="color: #2ecc71;"
+                        th:text="'-' + ${#numbers.formatDecimal(order.discountAmount, 0, 0)} + ' ₽'">-82 ₽</td>
+                </tr>
+
+                <!-- Итог всегда показываем -->
                 <tr>
                     <td colspan="3" class="text-right" style="font-weight: 600;">Итого:</td>
                     <td class="text-right" style="font-weight: 600; color: #38a169;"
-                        th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">1 250 ₽</td>
+                        th:text="${#numbers.formatDecimal(order.totalPrice, 0, 0)} + ' ₽'">1 558 ₽</td>
                 </tr>
                 </tfoot>
             </table>

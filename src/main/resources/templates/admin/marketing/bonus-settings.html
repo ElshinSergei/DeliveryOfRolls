@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <title>Настройки бонусной системы</title>
+</head>
+<body>
+<main>
+    <div class="settings-container">
+        <div class="settings-header">
+            <h1>⚙️ Настройки бонусной системы</h1>
+            <a th:href="@{/admin/marketing}" class="btn-minimal btn-minimal-outline">← Назад</a>
+        </div>
+
+        <!-- ===== БЛОК ДЛЯ СООБЩЕНИЙ ===== -->
+        <div th:if="${success}" class="alert alert-success" style="margin-bottom: 20px;">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${success}">Настройки сохранены</span>
+        </div>
+        <div th:if="${error}" class="alert alert-danger" style="margin-bottom: 20px;">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span th:text="${error}">Ошибка</span>
+        </div>
+        <!-- ============================= -->
+
+        <form th:action="@{/admin/marketing/bonus-settings}" th:object="${settings}" method="post">
+            <div class="settings-card">
+                <h3>Основные параметры</h3>
+
+                <div class="form-group">
+                    <label>Процент начисления бонусов</label>
+                    <input type="number" th:field="*{earnPercent}" min="0" max="100">
+                    <small>Сколько % от суммы заказа начислять бонусами</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Максимальный процент списания</label>
+                    <input type="number" th:field="*{maxSpendPercent}" min="0" max="100">
+                    <small>Сколько % от заказа можно оплатить бонусами</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Минимальная сумма заказа</label>
+                    <input type="number" th:field="*{minOrderAmount}" min="0" step="100">
+                    <small>Минимальная сумма для списания бонусов</small>
+                </div>
+
+                <h3>Приветственные бонусы</h3>
+                <div class="form-group">
+                    <label>Бонусы за регистрацию</label>
+                    <input type="number" th:field="*{registrationBonus}" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Бонусы в день рождения</label>
+                    <input type="number" th:field="*{birthdayBonus}" min="0">
+                </div>
+
+                <h3>Дополнительно</h3>
+                <div class="form-group">
+                    <label>Срок годности бонусов (дней)</label>
+                    <input type="number" th:field="*{bonusExpiryDays}" min="0">
+                    <small>0 - бессрочные</small>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" th:field="*{enabled}" id="enabled">
+                    <label for="enabled">Включить бонусную систему</label>
+                </div>
+
+                <button type="submit" class="btn-save">Сохранить настройки</button>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>

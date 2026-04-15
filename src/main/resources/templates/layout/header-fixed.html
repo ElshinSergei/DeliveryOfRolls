@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<body>
+<header th:fragment="header">
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=0af3c165-a4a3-406b-b2cd-82c6935acedf&lang=ru_RU" type="text/javascript"></script>
+
+    <!-- Навигация -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="bi bi-egg-fried me-2"></i>RedRolls
+            </a>
+
+            <!-- Mobile phone -->
+            <div class="mobile-phone-wrapper">
+                <a class="mobile-phone-btn" href="tel:+79991234567" title="Phone">
+                    <i class="bi bi-telephone-fill"></i>
+                </a>
+            </div>
+
+            <!-- Mobile top bar with cart -->
+            <div class="mobile-top-bar d-flex d-lg-none align-items-center justify-content-between">
+                <!-- Mobile cart -->
+                <div class="mobile-cart-wrapper">
+                    <a class="mobile-cart-btn position-relative" th:href="@{/cart}">
+                        <i class="bi bi-cart3"></i>
+                        <span class="mobile-cart-badge" th:text="${cart.totalItems ?: 0}">0</span>
+                    </a>
+                </div>
+
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+
+            <!-- Admin-style mobile menu -->
+            <div class="mobile-menu" id="mobileMenu">
+                <div class="mobile-menu-header">
+                    <div class="mobile-user-info" sec:authorize="isAuthenticated()">
+                        <i class="bi bi-person-circle"></i>
+                        <span sec:authentication="name">user</span>
+                    </div>
+                    <div class="mobile-user-info" sec:authorize="!isAuthenticated()">
+                        <i class="bi bi-person-circle"></i>
+                        <span>Гость</span>
+                    </div>
+                </div>
+
+                <nav class="mobile-nav-links">
+                    <a th:href="@{/}" class="mobile-nav-link">
+                        <i class="bi bi-house-door"></i>
+                        <span>Меню</span>
+                    </a>
+                    <a th:href="@{/promotions}" class="mobile-nav-link">
+                        <i class="bi bi-percent"></i>
+                        <span>Акции</span>
+                    </a>
+                    <a th:href="@{/delivery}" class="mobile-nav-link">
+                        <i class="bi bi-truck"></i>
+                        <span>Доставка</span>
+                    </a>
+                    <a th:href="@{/contacts}" class="mobile-nav-link">
+                        <i class="bi bi-telephone"></i>
+                        <span>Контакты</span>
+                    </a>
+
+                    <!-- Authenticated user links -->
+                    <div sec:authorize="isAuthenticated()">
+                        <a th:href="@{/profile}" class="mobile-nav-link">
+                            <i class="bi bi-person"></i>
+                            <span>Профиль</span>
+                        </a>
+                        <a th:href="@{/profile/orders}" class="mobile-nav-link">
+                            <i class="bi bi-receipt"></i>
+                            <span>Мои заказы</span>
+                        </a>
+                        <a th:href="@{/admin}" class="mobile-nav-link" sec:authorize="hasRole('ADMIN')">
+                            <i class="bi bi-shield-lock"></i>
+                            <span>Админ панель</span>
+                        </a>
+                    </div>
+                </nav>
+
+                <div class="mobile-menu-footer">
+                    <div sec:authorize="!isAuthenticated()">
+                        <a th:href="@{/login}" class="mobile-footer-link">
+                            <i class="bi bi-box-arrow-in-right"></i> Войти
+                        </a>
+                        <a th:href="@{/register}" class="mobile-footer-link">
+                            <i class="bi bi-person-plus"></i> Регистрация
+                        </a>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="mobile-logout-btn">
+                                <i class="bi bi-box-arrow-right"></i> Выйти
+                            </button>
+                        </form>
+                    </div>
+                    <a href="tel:+79991234567" class="mobile-footer-link">
+                        <i class="bi bi-telephone-fill"></i> +7 999 123-45-67
+                    </a>
+                </div>
+            </div>
+
+            <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
+            <!-- Desktop navigation -->
+            <div class="collapse navbar-collapse d-lg-flex" id="navbarNav">
+                <!-- Основное меню -->
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/}">
+                            <i class="bi bi-house-door"></i> Меню
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/promotions}">
+                            <i class="bi bi-percent"></i> Акции
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/delivery}">
+                            <i class="bi bi-truck"></i> Доставка
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/contacts}">
+                            <i class="bi bi-telephone"></i> Контакты
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Правая часть навигации (для десктопа) -->
+                <ul class="navbar-nav align-items-center">
+
+                    <!-- ВЫБОР АДРЕСА (ДЕСКТОП) -->
+                    <li class="nav-item me-3 d-none d-lg-block">
+                        <div class="address-selector" id="addressSelector" style="cursor: pointer;">
+                            <i class="bi bi-geo-alt-fill text-danger"></i>
+                            <span id="selectedAddress" class="fw-semibold">Выберите адрес</span>
+                            <i class="bi bi-chevron-down ms-1"></i>
+                        </div>
+                    </li>
+
+                    <!-- Номер телефона (десктоп) -->
+                    <li class="nav-item me-2">
+                        <a class="nav-link phone-icon" href="tel:+79991234567" title="Позвонить">
+                            <i class="bi bi-telephone-fill"></i>
+                        </a>
+                    </li>
+
+                    <!-- Корзина -->
+                    <li class="nav-item me-3">
+                        <a class="nav-link position-relative" th:href="@{/cart}">
+                            <i class="bi bi-cart3 fs-5"></i>
+                            <span id="cartCount" class="badge bg-danger cart-badge" th:text="${cart.totalItems ?: 0}">0</span>
+                        </a>
+                    </li>
+
+                    <!-- Авторизация -->
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="btn btn-outline-primary me-2" th:href="@{/login}">
+                            <i class="bi bi-box-arrow-in-right"></i> Войти
+                        </a>
+                    </li>
+
+                    <!-- Профиль (только для авторизованных) -->
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown"
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-5"></i>
+                            <!-- Убираем текст с почтой -->
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li class="dropdown-header" sec:authentication="name">
+                                <i class="bi bi-person"></i> <span sec:authentication="name"></span>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li sec:authorize="hasRole('ADMIN')">
+                                <a class="dropdown-item" th:href="@{/admin}">
+                                    <i class="bi bi-shield-lock-fill"></i> Админ панель
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/profile}">
+                                    <i class="bi bi-person"></i> Профиль
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/profile/orders}">
+                                    <i class="bi bi-receipt"></i> Мои заказы
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/profile/addresses}">
+                                    <i class="bi bi-geo-alt"></i> Мои адреса
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post">
+                                    <button class="dropdown-item" type="submit">
+                                        <i class="bi bi-box-arrow-right"></i> Выйти
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ВЫБОРА АДРЕСА -->
+    <div class="modal fade" id="addressModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="header-row">
+                        <span class="city-name">Пермь</span>
+                        <div class="delivery-tabs">
+                            <button class="delivery-tab active" id="deliveryTabBtn">Доставка</button>
+                            <button class="delivery-tab" id="pickupTabBtn">Самовывоз</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- СОХРАНЕННЫЕ АДРЕСА (только для авторизованных) -->
+                    <div id="savedAddressesBlock" class="saved-addresses-block" style="display: none;" sec:authorize="isAuthenticated()">
+                        <select id="savedAddressesSelect" class="form-select saved-addresses-select">
+                            <option value="">-- Выберите сохраненный адрес --</option>
+                        </select>
+                        <div class="saved-addresses-divider">
+                            <span>или выберите на карте</span>
+                        </div>
+                    </div>
+
+                    <!-- ПОИСК -->
+                    <div class="search-wrapper">
+                        <input type="text" class="search-input" id="addressSearchInput"
+                               placeholder="Введите улицу и номер дома"
+                               autocomplete="off">
+                        <div class="suggestions-dropdown" id="addressSuggestions" style="display: none;"></div>
+                    </div>
+
+                    <div id="pickupPointsContainer" class="pickup-points-container" style="display: none;">
+                        <div id="pickupPointsList" class="pickup-points-list"></div>
+                    </div>
+
+                    <!-- ИНФОРМАЦИЯ О ЗОНЕ ДОСТАВКИ (показывается при доставке) -->
+                    <div class="delivery-zone-info" id="deliveryZoneInfo" style="display: none;">
+                        <div class="zone-status" id="zoneStatus"></div>
+                        <div class="zone-message" id="zoneMessage"></div>
+                    </div>
+
+                    <!-- КАРТА -->
+                    <div class="map-wrapper">
+                        <div id="addressMap" style="width: 100%; height: 100%;"></div>
+                    </div>
+
+                    <!-- КНОПКА -->
+                    <button class="confirm-btn" id="confirmBtn" disabled>Выбрать</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/maps.js}"></script>
+
+    <script>
+        console.log('🔍 DEBUG: Начинаю загрузку JavaScript...');
+        
+        // Проверка загрузки
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 DEBUG: DOM загружен');
+            
+            // Проверяем элементы
+            const addressSelector = document.getElementById('addressSelector');
+            const modal = document.getElementById('addressModal');
+            
+            console.log('🔍 DEBUG: addressSelector найден:', !!addressSelector);
+            console.log('🔍 DEBUG: modal найден:', !!modal);
+            
+            if (addressSelector) {
+                console.log('🔍 DEBUG: Добавляю обработчик на addressSelector');
+                addressSelector.addEventListener('click', function(e) {
+                    console.log('🔍 DEBUG: Клик на addressSelector');
+                    e.preventDefault();
+                    openAddressModal();
+                });
+            }
+            
+            // Загружаем сохраненный адрес
+            loadSavedAddress();
+        });
+
+        function loadSavedAddress() {
+            console.log('🔍 DEBUG: Загружаю сохраненный адрес');
+            const savedAddress = localStorage.getItem('deliveryAddress');
+            if (savedAddress) {
+                try {
+                    const address = JSON.parse(savedAddress);
+                    updateAddressDisplay(address.text);
+                } catch(e) {
+                    console.error('🔍 DEBUG: Ошибка парсинга адреса:', e);
+                }
+            }
+        }
+
+        function updateAddressDisplay(addressText) {
+            console.log('🔍 DEBUG: Обновляю отображение адреса:', addressText);
+            let displayText = addressText;
+
+            if (displayText && displayText !== 'Самовывоз') {
+                // Используем глобальную функцию из maps.js
+                if (typeof window.formatShortAddress === 'function') {
+                    displayText = window.formatShortAddress(addressText);
+                } else {
+                    // Fallback если функция недоступна (на случай ошибки)
+                    displayText = displayText.replace(/^(г\.?\s*)?Пермь,\s*/i, '');
+                    displayText = displayText.replace(/^Пермь\s*/i, '');
+                    displayText = displayText.replace(/^(улица|ул\.|проспект|пр\.|переулок|пер\.|бульвар|б-р\.|шоссе|ш\.|площадь|пл\.|набережная|наб\.)\s*/i, '');
+                    displayText = displayText.replace(/\s+(дом|д\.|строение|стр\.|корпус|к\.|литера)\s*/gi, ' ');
+                    if (displayText.length > 0) {
+                        displayText = displayText.charAt(0).toUpperCase() + displayText.slice(1);
+                    }
+                }
+            } else if (displayText === 'Самовывоз') {
+                displayText = '🏪 Самовывоз';
+            }
+
+            // Обрезаем если слишком длинный
+            if (displayText && displayText.length > 25) {
+                displayText = displayText.substring(0, 22) + '...';
+            }
+
+            const desktopSpan = document.getElementById('selectedAddress');
+            if (desktopSpan) {
+                desktopSpan.textContent = displayText || 'Выберите адрес';
+                console.log('🔍 DEBUG: Текст адреса обновлен:', displayText);
+            }
+
+            const mobileSpan = document.getElementById('selectedAddressMobile');
+            if (mobileSpan) {
+                mobileSpan.textContent = displayText || 'Выберите адрес';
+            }
+        }
+
+        // При выборе адреса в модалке, обновляем страницу оформления (если она открыта)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'deliveryAddress' && window.location.pathname === '/order/checkout') {
+                // Если мы на странице оформления и адрес изменился - обновляем страницу
+                location.reload();
+            }
+        });
+
+        // Функция для синхронизации с сервером (сохраняем выбор в корзину)
+        window.syncAddressWithServer = async function(addressData) {
+            try {
+                const response = await fetch('/cart/delivery-info', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(addressData)
+                });
+                const result = await response.json();
+                console.log('✅ Адрес синхронизирован с сервером:', result);
+            } catch (error) {
+                console.error('❌ Ошибка синхронизации адреса:', error);
+            }
+        };
+
+        // Управление мобильным меню
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 DEBUG: Настраиваю мобильное меню');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('open');
+                    document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+                });
+            }
+        });
+
+        // Простая функция открытия модального окна
+        function openAddressModal() {
+            console.log('🔍 DEBUG: Открываю модальное окно адреса...');
+            
+            const modal = document.getElementById('addressModal');
+            if (!modal) {
+                console.error('🔍 DEBUG: Модальное окно не найдено!');
+                return;
+            }
+
+            console.log('🔍 DEBUG: Модальное окно найдено, настраиваю стили...');
+            
+            // Простое отображение
+            modal.style.display = 'block';
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            modal.style.zIndex = '9999';
+            
+            // Закрытие по клику на фон
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            // Закрытие по кнопке
+            const closeBtn = modal.querySelector('.btn-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    modal.style.display = 'none';
+                });
+            }
+            
+            console.log('🔍 DEBUG: Модальное окно настроено и показано');
+        }
+        
+        console.log('🔍 DEBUG: JavaScript загружен успешно');
+    </script>
+</header>
+</body>
+</html>

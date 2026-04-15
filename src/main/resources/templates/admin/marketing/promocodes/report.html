@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <title th:text="${pageTitle}">Отчет по промокодам</title>
+</head>
+<body>
+<main>
+    <div class="report-container">
+
+        <!-- Заголовок -->
+        <div class="report-header">
+            <div>
+                <h2>📊 Отчет по промокодам</h2>
+                <p>Статистика использования и эффективность</p>
+            </div>
+            <a th:href="@{/admin/marketing}" class="btn-minimal btn-minimal-outline"
+               style="background: white; color: #667eea;">
+                ← Назад
+            </a>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" th:text="${totalPromoCodes}">12</div>
+                <div class="stat-label">Всего промокодов</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${activePromoCodes}">8</div>
+                <div class="stat-label">Активных сейчас</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${expiredPromoCodes}">4</div>
+                <div class="stat-label">Истекших</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${totalUsage}">342</div>
+                <div class="stat-label">Всего использований</div>
+            </div>
+        </div>
+
+        <!-- Популярные промокоды -->
+        <div class="section-title">
+            🔥 Самые популярные промокоды
+        </div>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Код</th>
+                    <th>Скидка</th>
+                    <th>Описание</th>
+                    <th>Использовано</th>
+                    <th>Статус</th>
+                    <th>Действует до</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="promo : ${popularPromoCodes}">
+                    <td>
+                        <span class="promo-code" th:text="${promo.code}">WELCOME10</span>
+                    </td>
+                    <td th:text="${promo.discountType.name() == 'PERCENTAGE' ?
+                                    promo.discountValue + '%' :
+                                    promo.discountValue + ' ₽'}">
+                        10%
+                    </td>
+                    <td th:text="${promo.description}">10% на первый заказ</td>
+                    <td>
+                        <span th:text="${promo.usedCount} + '/' + ${promo.usageLimit}">15/100</span>
+                    </td>
+                    <td>
+                        <span th:if="${promo.active and promo.validUntil > #temporals.createNow()}"
+                              class="badge-success">Активен</span>
+                        <span th:if="${!promo.active or promo.validUntil <= #temporals.createNow()}"
+                              class="badge-warning">Неактивен</span>
+                    </td>
+                    <td th:text="${#temporals.format(promo.validUntil, 'dd.MM.yyyy')}">31.12.2024</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Последние добавленные -->
+        <div class="section-title">
+            🆕 Недавно добавленные
+        </div>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Код</th>
+                    <th>Скидка</th>
+                    <th>Описание</th>
+                    <th>Создан</th>
+                    <th>Статус</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="promo : ${recentPromoCodes}">
+                    <td>
+                        <span class="promo-code" th:text="${promo.code}">WELCOME10</span>
+                    </td>
+                    <td th:text="${promo.discountType.name() == 'PERCENTAGE' ?
+                                    promo.discountValue + '%' :
+                                    promo.discountValue + ' ₽'}">
+                        10%
+                    </td>
+                    <td th:text="${promo.description}">10% на первый заказ</td>
+                    <td th:text="${#temporals.format(promo.validFrom, 'dd.MM.yyyy')}">01.01.2024</td>
+                    <td>
+                        <span th:if="${promo.active}" class="badge-success">Активен</span>
+                        <span th:if="${!promo.active}" class="badge-warning">Неактивен</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+</main>
+</body>
+</html>

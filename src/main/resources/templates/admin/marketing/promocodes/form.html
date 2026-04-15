@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin-layout :: html(content=~{::main})}">
+<head>
+    <title th:text="${promoCode.id == null} ? 'Создание промокода' : 'Редактирование промокода'">
+        Управление промокодом
+    </title>
+</head>
+<body>
+<main>
+    <div class="promo-form-container">
+
+        <!-- Заголовок -->
+        <div class="promo-header-minimal">
+            <div>
+                <h1 th:text="${promoCode.id == null} ? '🎫 Создание промокода' : '✏️ Редактирование промокода'">
+                    Создание промокода
+                </h1>
+                <div class="subtitle" th:text="${promoCode.id == null} ?
+                    'Заполните форму для создания нового промокода' :
+                    'Измените параметры промокода'">
+                    Заполните форму
+                </div>
+            </div>
+            <a th:href="@{/admin/marketing/promocodes}" class="btn-minimal btn-minimal-outline">
+                <i class="bi bi-arrow-left me-2"></i>Назад
+            </a>
+        </div>
+
+        <!-- Сообщения об ошибках -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${error}">Ошибка</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Форма -->
+        <div class="edit-card">
+            <form th:action="@{/admin/marketing/promocodes/save}"
+                  th:object="${promoCode}"
+                  method="post">
+
+                <input type="hidden" name="id" th:value="*{id}">
+
+                <!-- Основная информация -->
+                <h4 class="section-title-minimal">📋 Основная информация</h4>
+
+                <div class="form-group">
+                    <label>Код промокода <span class="text-danger">*</span></label>
+                    <input type="text"
+                           th:field="*{code}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('code')} ? 'is-invalid' : ''"
+                           placeholder="Например: WELCOME10"
+                           maxlength="50"
+                           required>
+                    <div class="form-text">Только заглавные буквы, цифры и символы (_, -)</div>
+                    <div th:if="${#fields.hasErrors('code')}"
+                         class="invalid-feedback"
+                         th:errors="*{code}"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Тип скидки <span class="text-danger">*</span></label>
+                            <select name="discountType" class="form-control" required>
+                                <option value="">-- Выберите тип --</option>
+                                <option value="PERCENTAGE" th:selected="${promoCode.discountType != null and promoCode.discountType.name() == 'PERCENTAGE'}">Процентная (%)</option>
+                                <option value="FIXED" th:selected="${promoCode.discountType != null and promoCode.discountType.name() == 'FIXED'}">Фиксированная (₽)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Значение скидки <span class="text-danger">*</span></label>
+                            <input type="number"
+                                   th:field="*{discountValue}"
+                                   class="form-control"
+                                   min="1"
+                                   th:max="*{discountType == 'PERCENTAGE' ? 100 : 999999}"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Мин. сумма заказа (₽)</label>
+                            <input type="number"
+                                   th:field="*{minOrderAmount}"
+                                   class="form-control"
+                                   min="0">
+                            <div class="form-text">0 - без ограничений</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Макс. скидка (₽)</label>
+                            <input type="number"
+                                   th:field="*{maxDiscount}"
+                                   class="form-control"
+                                   min="0"
+                                   placeholder="Только для процентных">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Сроки действия -->
+                <h4 class="section-title-minimal">📅 Сроки действия</h4>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Начало действия <span class="text-danger">*</span></label>
+                            <input type="datetime-local"
+                                   th:name="validFrom"
+                                   th:value="${validFromFormatted}"
+                                   class="form-control"
+                                   id="validFrom"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Окончание действия <span class="text-danger">*</span></label>
+                            <input type="datetime-local"
+                                   th:name="validUntil"
+                                   th:value="${validUntilFormatted}"
+                                   class="form-control"
+                                   id="validUntil"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========== ТИП ИСПОЛЬЗОВАНИЯ ========== -->
+                <h4 class="section-title-minimal">🔒 Тип использования</h4>
+
+                <div class="form-group">
+                    <label>Тип использования <span class="text-danger">*</span></label>
+                    <select th:field="*{usageType}" class="form-control" id="usageTypeSelect" required>
+                        <option value="SINGLE_PER_USER">👤 Один раз на пользователя</option>
+                        <option value="MULTIPLE">🔄 Много раз (общий лимит)</option>
+                    </select>
+
+                    <div id="singleUserHint" class="usage-type-hint" style="display: none;">
+                        <i class="bi bi-info-circle"></i>
+                        Каждый пользователь может использовать промокод только один раз.
+                        <strong>Требуется авторизация!</strong>
+                    </div>
+
+                    <div id="multipleHint" class="usage-type-hint" style="display: none;">
+                        <i class="bi bi-info-circle"></i>
+                        Промокод можно использовать несколько раз, но не более указанного лимита.
+                        Могут использовать и гости, и авторизованные пользователи.
+                    </div>
+                </div>
+
+                <div class="form-group" id="usageLimitGroup">
+                    <label>Лимит использований <span class="text-danger">*</span></label>
+                    <input type="number"
+                           th:field="*{usageLimit}"
+                           class="form-control"
+                           min="1"
+                           id="usageLimitInput"
+                           required>
+                    <div class="form-text" id="usageLimitHint">
+                        Максимальное количество использований промокода
+                    </div>
+                </div>
+                <!-- ================================================ -->
+
+                <!-- Счастливые часы -->
+                <h4 class="section-title-minimal">🕐 Счастливые часы</h4>
+
+                <div class="checkbox-group">
+                    <input type="checkbox"
+                           th:field="*{hasTimeRestriction}"
+                           id="hasTimeRestriction">
+                    <label for="hasTimeRestriction">
+                        Ограничить по времени (счастливые часы)
+                    </label>
+                </div>
+
+                <div id="happyHoursSection" class="happy-hours-section"
+                     th:style="${promoCode.hasTimeRestriction} ? '' : 'display: none;'">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Время начала</label>
+                                <input type="time"
+                                       th:field="*{timeStart}"
+                                       class="form-control"
+                                       step="3600">
+                                <div class="form-text">Например: 18:00</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Время окончания</label>
+                                <input type="time"
+                                       th:field="*{timeEnd}"
+                                       class="form-control"
+                                       step="3600">
+                                <div class="form-text">Например: 21:00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Дни недели</label>
+                        <div class="days-checkbox-group">
+                            <div class="day-checkbox">
+                                <input type="checkbox" name="daysOfWeek" value="MONDAY"
+                                       th:checked="${promoCode.daysOfWeek != null and #strings.contains(promoCode.daysOfWeek, 'MONDAY')}">
+                                <label>Пн</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" name="daysOfWeek" value="TUESDAY"
+                                       th:checked="${promoCode.daysOfWeek != null and #strings.contains(promoCode.daysOfWeek, 'TUESDAY')}">
+                                <label>Вт</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" name="daysOfWeek" value="WEDNESDAY"
+                                       th:checked="${promoCode.daysOfWeek != null and #strings.contains(promoCode.daysOfWeek, 'WEDNESDAY')}">
+                                <label>Ср</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" name="daysOfWeek" value="THURSDAY"
+                                       th:checked="${promoCode.daysOfWeek != null and #strings.contains(promoCode.daysOfWeek, 'THURSDAY')}">
+                                <label>Чт</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" name="daysOfWeek" value="FRIDAY"
+                                       th:checked="${promoCode.daysOfWeek != null and #strings.contains(promoCode.daysOfWeek, 'FRIDAY')}">
+                                <label>Пт</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" name="daysOfWeek" value="SATURDAY"
+                                       th:checked="${promoCode.daysOfWeek != null and #strings.contains(promoCode.daysOfWeek, 'SATURDAY')}">
+                                <label>Сб</label>
+                            </div>
+                            <div class="day-checkbox">
+                                <input type="checkbox" name="daysOfWeek" value="SUNDAY"
+                                       th:checked="${promoCode.daysOfWeek != null and #strings.contains(promoCode.daysOfWeek, 'SUNDAY')}">
+                                <label>Вс</label>
+                            </div>
+                        </div>
+                        <div class="form-text">Выберите дни, в которые действует промокод</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Часовой пояс</label>
+                        <select th:field="*{timezone}" class="form-control">
+                            <option value="Europe/Moscow">Москва (МСК)</option>
+                            <option value="Europe/Kaliningrad">Калининград (МСК-1)</option>
+                            <option value="Europe/Samara">Самара (МСК+1)</option>
+                            <option value="Asia/Yekaterinburg">Екатеринбург (МСК+2)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Описание -->
+                <h4 class="section-title-minimal">📝 Описание</h4>
+
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea th:field="*{description}"
+                              class="form-control"
+                              rows="3"
+                              maxlength="500"
+                              placeholder="Для отображения пользователям. Например: 10% на первый заказ"></textarea>
+                    <div class="form-text">Максимум 500 символов. Сейчас: <span id="charCount">0</span>/500</div>
+                </div>
+
+                <!-- Статус -->
+                <div class="checkbox-group">
+                    <input type="checkbox" th:field="*{active}" id="activeCheck">
+                    <label for="activeCheck">Промокод активен</label>
+                </div>
+
+                <!-- Кнопки -->
+                <div class="action-bar-minimal" style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                    <a th:href="@{/admin/marketing/promocodes}" class="btn-minimal btn-minimal-outline">
+                        <i class="bi bi-x-circle me-2"></i>Отмена
+                    </a>
+                    <button type="submit" class="btn-minimal btn-minimal-primary">
+                        <i class="bi bi-check-circle me-2"></i>
+                        <span th:text="${promoCode.id == null} ? 'Создать промокод' : 'Сохранить изменения'">
+                            Сохранить
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Счетчик символов
+            const descriptionField = document.querySelector('textarea[name="description"]');
+            const charCount = document.getElementById('charCount');
+            if (descriptionField && charCount) {
+                charCount.textContent = descriptionField.value.length;
+                descriptionField.addEventListener('input', function() {
+                    charCount.textContent = this.value.length;
+                });
+            }
+
+            // ========== ЛОГИКА ДЛЯ ТИПА ИСПОЛЬЗОВАНИЯ ==========
+            const usageTypeSelect = document.getElementById('usageTypeSelect');
+            const singleUserHint = document.getElementById('singleUserHint');
+            const multipleHint = document.getElementById('multipleHint');
+            const usageLimitInput = document.getElementById('usageLimitInput');
+            const usageLimitHint = document.getElementById('usageLimitHint');
+
+            function updateUsageTypeUI() {
+                const isSingleUser = usageTypeSelect.value === 'SINGLE_PER_USER';
+
+                // Показываем/скрываем подсказки
+                if (singleUserHint) singleUserHint.style.display = isSingleUser ? 'block' : 'none';
+                if (multipleHint) multipleHint.style.display = isSingleUser ? 'none' : 'block';
+
+                // Для SINGLE_PER_USER лимит всегда 1
+                if (isSingleUser) {
+                    usageLimitInput.value = 1;
+                    usageLimitInput.readOnly = true;
+                    if (usageLimitHint) {
+                        usageLimitHint.innerHTML = 'Для типа "Один раз на пользователя" лимит всегда равен 1';
+                    }
+                } else {
+                    usageLimitInput.readOnly = false;
+                    if (usageLimitHint) {
+                        usageLimitHint.innerHTML = 'Максимальное количество использований промокода';
+                    }
+                }
+            }
+
+            if (usageTypeSelect) {
+                usageTypeSelect.addEventListener('change', updateUsageTypeUI);
+                updateUsageTypeUI();
+            }
+            // ==================================================
+
+            // Счастливые часы
+            const hasTimeRestrictionCheck = document.getElementById('hasTimeRestriction');
+            const happyHoursSection = document.getElementById('happyHoursSection');
+
+            if (hasTimeRestrictionCheck && happyHoursSection) {
+                hasTimeRestrictionCheck.addEventListener('change', function() {
+                    happyHoursSection.style.display = this.checked ? 'block' : 'none';
+                });
+            }
+
+            // Сбор дней недели
+            const form = document.querySelector('form');
+            const dayCheckboxes = document.querySelectorAll('input[name="daysOfWeek"]');
+
+            form.addEventListener('submit', function() {
+                const selectedDays = [];
+                dayCheckboxes.forEach(cb => {
+                    if (cb.checked) {
+                        selectedDays.push(cb.value);
+                    }
+                });
+
+                let hiddenInput = document.querySelector('input[name="daysOfWeek"]');
+                if (!hiddenInput || hiddenInput.type !== 'hidden') {
+                    hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'daysOfWeek';
+                    form.appendChild(hiddenInput);
+                }
+                hiddenInput.value = selectedDays.join(',');
+
+                dayCheckboxes.forEach(cb => {
+                    cb.removeAttribute('name');
+                });
+            });
+        });
+    </script>
+</main>
+</body>
+</html>

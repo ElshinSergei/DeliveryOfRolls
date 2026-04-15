@@ -1,0 +1,409 @@
+/* ========== MODERN MOBILE MENU ========== */
+
+/* Mobile top bar */
+.mobile-top-bar {
+    padding: 8px 0;
+    position: relative;
+    z-index: 1031;
+}
+
+/* Modern burger button */
+.modern-burger {
+    background: transparent !important;
+    border: none !important;
+    padding: 8px !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.modern-burger .burger-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 24px;
+    height: 18px;
+    justify-content: space-between;
+}
+
+.modern-burger .burger-lines span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: #2d3748;
+    border-radius: 2px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+/* Burger animation when menu is open */
+.modern-burger.active .burger-lines span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.modern-burger.active .burger-lines span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-10px);
+}
+
+.modern-burger.active .burger-lines span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* Mobile cart button */
+.mobile-cart-wrapper {
+    position: relative;
+}
+
+.mobile-cart-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: #f8fafc;
+    border-radius: 50%;
+    color: #2d3748;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.mobile-cart-btn:hover {
+    background: #fff5f5;
+    border-color: #e74c3c;
+    color: #e74c3c;
+    transform: translateY(-2px);
+}
+
+.mobile-cart-btn i {
+    font-size: 20px;
+}
+
+.mobile-cart-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 30px;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(231, 76, 60, 0.4);
+}
+
+/* Modern mobile menu header */
+.mobile-menu-header {
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    background: linear-gradient(135deg, #fff5f5, #ffe9e9);
+}
+
+.mobile-menu-brand {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 800;
+    color: #2c3e50;
+}
+
+.mobile-menu-brand i {
+    color: #e74c3c;
+    font-size: 22px;
+}
+
+.mobile-menu-close {
+    background: none;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #64748b;
+}
+
+.mobile-menu-close:hover {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    transform: rotate(90deg);
+}
+
+.mobile-menu-close i {
+    font-size: 20px;
+}
+
+/* Mobile menu address section */
+.mobile-menu-address {
+    padding: 16px 24px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.mobile-menu-address .address-selector-mobile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-address .address-selector-mobile:hover {
+    border-color: #e74c3c;
+    background: #fff5f5;
+    transform: translateY(-1px);
+}
+
+.mobile-menu-address .address-selector-mobile i {
+    font-size: 18px;
+    color: #e74c3c;
+}
+
+.mobile-menu-address .address-selector-mobile span {
+    flex: 1;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+/* Enhanced mobile menu navigation */
+@media (max-width: 991px) {
+    .mobile-menu-header {
+        display: flex !important;
+    }
+    
+    /* Override navbar-nav alignment for mobile menu */
+    header .navbar-collapse .navbar-nav.align-items-center {
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 12px !important;
+        margin: 0 !important;
+        width: 100% !important;
+        padding: 0 20px !important;
+    }
+    
+    header .navbar-collapse {
+        background: white !important;
+        z-index: 1060 !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        width: 85% !important;
+        max-width: 400px !important;
+        box-shadow: 5px 0 30px rgba(0, 0, 0, 0.15) !important;
+        display: none !important;
+        overflow-y: auto;
+    }
+
+    header .navbar-collapse.show {
+        display: block !important;
+        animation: slideInLeft 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* Modern nav items */
+    header .navbar-collapse .navbar-nav {
+        padding: 20px 24px;
+    }
+
+    header .navbar-collapse .nav-item {
+        margin-bottom: 4px;
+    }
+
+    header .navbar-collapse .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 20px !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        font-size: 15px !important;
+        color: #475569 !important;
+        transition: all 0.3s ease !important;
+        background: transparent !important;
+        border: 1px solid transparent !important;
+    }
+
+    header .navbar-collapse .nav-link:hover {
+        background: #f8fafc !important;
+        color: #e74c3c !important;
+        transform: translateX(4px);
+        border-color: #e2e8f0 !important;
+    }
+
+    header .navbar-collapse .nav-link.active {
+        background: linear-gradient(135deg, #fff5f5, #ffe9e9) !important;
+        color: #e74c3c !important;
+        border-color: #fca5a5 !important;
+    }
+
+    header .navbar-collapse .nav-link i {
+        font-size: 18px !important;
+        width: 24px;
+        text-align: center;
+    }
+
+    /* Auth buttons in mobile menu */
+    header .navbar-collapse .btn {
+        width: 100% !important;
+        margin: 8px auto !important;
+        padding: 14px 20px !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        font-size: 15px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        text-align: center !important;
+    }
+
+    /* Phone icon in mobile menu */
+    header .navbar-collapse .phone-icon {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        margin: 12px 0 !important;
+        padding: 12px !important;
+        background: #f8fafc !important;
+        border-radius: 12px !important;
+        border: 1px solid #e2e8f0 !important;
+        width: 100% !important;
+        text-decoration: none !important;
+    }
+
+    header .navbar-collapse .phone-icon i {
+        font-size: 20px !important;
+        color: #e74c3c !important;
+    }
+
+    header .navbar-collapse .btn-outline-primary {
+        background: #f8fafc !important;
+        border: 2px solid #e2e8f0 !important;
+        color: #475569 !important;
+    }
+
+    header .navbar-collapse .btn-outline-primary:hover {
+        background: #e74c3c !important;
+        border-color: #e74c3c !important;
+        color: white !important;
+    }
+
+    /* Dropdown in mobile menu */
+    header .navbar-collapse .dropdown-menu {
+        position: static !important;
+        transform: none !important;
+        box-shadow: none !important;
+        border: none !important;
+        background: #f8fafc !important;
+        border-radius: 12px !important;
+        margin: 8px 0 0 20px !important;
+        padding: 8px !important;
+    }
+
+    header .navbar-collapse .dropdown-item {
+        padding: 10px 16px !important;
+        border-radius: 8px !important;
+        font-size: 14px !important;
+        margin-bottom: 4px !important;
+    }
+
+    header .navbar-collapse .dropdown-item:hover {
+        background: white !important;
+        color: #e74c3c !important;
+        padding-left: 20px !important;
+    }
+}
+
+/* Smooth animation for menu items */
+@keyframes slideInLeft {
+    from { 
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to { 
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Stagger animation for menu items */
+header .navbar-collapse.show .nav-item {
+    animation: fadeInUp 0.3s ease forwards;
+    opacity: 0;
+}
+
+header .navbar-collapse.show .nav-item:nth-child(1) { animation-delay: 0.1s; }
+header .navbar-collapse.show .nav-item:nth-child(2) { animation-delay: 0.15s; }
+header .navbar-collapse.show .nav-item:nth-child(3) { animation-delay: 0.2s; }
+header .navbar-collapse.show .nav-item:nth-child(4) { animation-delay: 0.25s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile phone button */
+.mobile-phone-wrapper {
+    position: relative;
+    display: none; /* Hide on desktop */
+}
+
+/* Show only on mobile */
+@media (max-width: 991px) {
+    .mobile-phone-wrapper {
+        display: block;
+    }
+}
+
+.mobile-phone-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: #f8fafc;
+    border-radius: 50%;
+    color: #2d3748;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.mobile-phone-btn:hover {
+    background: #fff5f5;
+    border-color: #e74c3c;
+    color: #e74c3c;
+    transform: translateY(-2px);
+}
+
+.mobile-phone-btn i {
+    font-size: 20px;
+}
+
+/* Hide phone from mobile dropdown menu */
+@media (max-width: 991px) {
+    header .navbar-collapse .phone-icon {
+        display: none !important;
+    }
+}

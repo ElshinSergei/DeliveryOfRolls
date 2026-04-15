@@ -33,6 +33,14 @@
                         <i class="bi bi-box"></i>
                         <span>Мои заказы</span>
                     </a>
+                    <a th:href="@{/profile/addresses}" class="profile-menu-item">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>Мои адреса</span>
+                    </a>
+                    <a th:href="@{/profile/bonuses}" class="profile-menu-item">
+                        <i class="bi bi-gem"></i>
+                        <span>Мои бонусы</span>
+                    </a>
                     <a th:href="@{/profile/change-password}" class="profile-menu-item">
                         <i class="bi bi-key"></i>
                         <span>Сменить пароль</span>
@@ -67,6 +75,10 @@
                         <tr>
                             <td>Фамилия</td>
                             <td th:text="${user.lastName}">Иванов</td>
+                        </tr>
+                        <tr>
+                            <td>Дата рождения</td>
+                            <td th:text="${#temporals.format(user.birthDate, 'dd.MM.yyyy')}">01.01.1990</td>
                         </tr>
                         <tr>
                             <td>Email</td>

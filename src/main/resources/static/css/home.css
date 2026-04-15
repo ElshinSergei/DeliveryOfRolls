@@ -1,15 +1,26 @@
 /* Навигация по категориям (стики) */
 .categories-sticky-nav {
     position: sticky;
-    top: 65px;
+    top: 60px;
     background: transparent;
-    z-index: 1020;
-    padding: 2px 0;
-}
+    z-index: 1040;
+    padding: 10px 0;
+    backdrop-filter: blur(10px); /* Добавляем размытие для лучшей видимости */
+    }
 
 body {
-    padding-top: 65px !important;
     background: linear-gradient(135deg, #fff5f5 0%, #ffe9e9 100%);
+    min-height: 100vh;
+}
+
+main {
+    margin-top: 65px;
+}
+
+@media (max-width: 768px) {
+    main {
+        margin-top: 45px;
+    }
 }
 
 html {
@@ -23,6 +34,13 @@ html {
     padding: 5px 0;
     scrollbar-width: thin;
     -webkit-overflow-scrolling: touch;
+    background: transparent;
+}
+
+@media (max-width: 768px) {
+    .categories-wrapper {
+        padding: 0 0 5px 0;
+    }
 }
 
 .categories-wrapper::-webkit-scrollbar {
@@ -45,6 +63,7 @@ html {
     white-space: nowrap;
     transition: all 0.2s ease;
     border: 1px solid transparent;
+    cursor: pointer;
 }
 
 .category-link:hover {
@@ -56,13 +75,6 @@ html {
     background: #e74c3c;
     color: white;
     box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
-}
-
-/* Блоки категорий */
-.category-block {
-    scroll-margin-top: 140px;
-    padding: 40px 0;
-    border-bottom: 1px solid #f0f0f0;
 }
 
 .category-block:last-child {
@@ -87,13 +99,6 @@ html {
     height: 3px;
     background: #e74c3c;
     border-radius: 3px;
-}
-
-/* Сетка блюд */
-.dishes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
 }
 
 /* Карточка блюда */
@@ -257,23 +262,6 @@ html {
     font-size: 16px;
 }
 
-/* Для очень маленьких экранов */
-@media (max-width: 480px) {
-    .card-text {
-        -webkit-line-clamp: 2;
-        min-height: 39px;
-    }
-
-    .dish-price {
-        font-size: 18px;
-    }
-
-    .btn-sm {
-        padding: 6px 12px;
-        font-size: 13px;
-    }
-}
-
 /* Преимущества */
 .features-section {
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
@@ -340,68 +328,6 @@ html {
     color: #7f8c8d;
 }
 
-/* Адаптивность */
-@media (max-width: 1024px) {
-    .dishes-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .category-block {
-        scroll-margin-top: 120px;
-    }
-    .categories-sticky-nav {
-        padding: 10px 0;
-    }
-
-    .category-link {
-        padding: 6px 18px;
-        font-size: 13px;
-    }
-
-    .category-title {
-        font-size: 24px;
-    }
-
-    .dishes-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-    }
-
-    .dish-img {
-        height: 160px;
-    }
-
-    .features-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-    }
-
-    .feature i {
-        font-size: 36px;
-    }
-}
-
-@media (max-width: 480px) {
-    .dishes-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .category-title {
-        font-size: 22px;
-    }
-
-    .dish-price {
-        font-size: 20px;
-    }
-
-    .btn-sm {
-        padding: 6px 12px;
-        font-size: 13px;
-    }
-}
-
 /* Анимации */
 @keyframes fadeIn {
     from {
@@ -416,7 +342,7 @@ html {
 
 .category-block {
     animation: fadeIn 0.5s ease-out;
-    scroll-margin-top: 100px;
+    scroll-margin-top: 70px;
 }
 
 /* Счетчик блюд в категории (опционально) */
@@ -440,8 +366,8 @@ html {
 
 /* ========== БЛОК АКЦИЙ С ФИКСИРОВАННЫМИ РАЗМЕРАМИ ========== */
 .promo-slider-section {
-    padding: 40px 0;
-    background: rgba(255, 255, 255, 0.3);
+    padding: 15px 0;
+    background: transparent;
 }
 
 .section-header {
@@ -516,16 +442,30 @@ html {
 /* Трек с карточками */
 .promo-slider-track {
     display: flex;
-    gap: 20px;
+    gap: 15px;
+    -ms-overflow-style: none;  /* IE и Edge */
+    scrollbar-width: none;  /* Firefox */
     overflow-x: auto;
     scroll-behavior: smooth;
     padding: 20px 10px;
-    scrollbar-width: thin;
+}
+/* Добавляем плавную прокрутку */
+.promo-slider-track {
+    scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
 }
 
+/* Добавим отступы по бокам для первой и последней карточки */
+.promo-slide:first-child {
+    margin-left: 5px;
+}
+
+.promo-slide:last-child {
+    margin-right: 5px;
+}
+
 .promo-slider-track::-webkit-scrollbar {
-    height: 6px;
+    display: none;
 }
 
 .promo-slider-track::-webkit-scrollbar-track {
@@ -545,10 +485,11 @@ html {
 }
 
 .promo-card {
-    background: white;
+    background: transparent;
+    backdrop-filter: blur(5px);
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    box-shadow: none;
     transition: all 0.3s ease;
     height: 300px;
     display: flex;
@@ -556,6 +497,7 @@ html {
 }
 
 .promo-card:hover {
+    background: rgba(255, 255, 255, 0.98);
     transform: translateY(-5px);
     box-shadow: 0 20px 40px rgba(231, 76, 60, 0.15);
 }
@@ -568,6 +510,7 @@ html {
 }
 
 .promo-image {
+    border-radius: 16px;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -584,7 +527,7 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: white;
+    background: transparent;
 }
 
 .promo-card-title {
@@ -704,6 +647,11 @@ html {
     z-index: 999999;
 }
 
+#myCustomModal[style*="flex"] {
+    align-items: center;
+    justify-content: center;
+}
+
 /* Затемнение */
 #modalOverlay {
     position: absolute;
@@ -719,12 +667,14 @@ html {
     position: relative;
     width: 90%;
     max-width: 800px;
-    margin: 100px auto;
+    margin: 0;
     background: white;
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     z-index: 1000000;
     animation: modalSlideDown 0.3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 /* Анимация появления */
@@ -897,27 +847,6 @@ html {
     box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-    #myCustomModal .modal-body .row {
-        flex-direction: column;
-    }
-
-    #myCustomModal .modal-content {
-        margin: 20px auto;
-        width: 95%;
-    }
-
-    #myCustomModal .modal-footer {
-        flex-direction: column;
-    }
-
-    #myCustomModal .btn {
-        width: 100%;
-        justify-content: center;
-    }
-}
-
 @media (max-width: 480px) {
     #customModalName {
         font-size: 20px;
@@ -941,15 +870,40 @@ html {
     }
 }
 
-/* ========== СЧЕТЧИК ТОВАРОВ ========== */
-.quantity-simple {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #f8f9fa;
-    padding: 4px;
-    border-radius: 30px;
-    border: 1px solid #e74c3c;
+/* Адаптивность */
+@media (max-width: 768px) {
+    #myCustomModal {
+        z-index: 1050 !important;
+        position: fixed !important;
+        top: 50px !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: calc(100% - 80px) !important;
+    }
+
+    #myCustomModal .modal-content {
+        z-index: 1021 !important;
+        position: relative !important;
+    }
+
+    #myCustomModal .modal-body .row {
+        flex-direction: column;
+    }
+
+    #myCustomModal .modal-content {
+        margin: 20px auto;
+        width: 95%;
+        max-height: calc(95vh - 100px);
+    }
+
+    #myCustomModal .modal-footer {
+        flex-direction: column;
+    }
+
+    #myCustomModal .btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 .quantity-minus, .quantity-plus {
@@ -1076,4 +1030,913 @@ html {
 main, footer, .container {
     position: relative;
     z-index: 2;  /* Выше роллов, но ниже хедера */
+}
+
+/* Стили для слайдера с поддержкой драга */
+.promo-slider-track {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 20px 10px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    cursor: grab;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.promo-slider-track.dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
+}
+
+.promo-slider-track::-webkit-scrollbar {
+    display: none;
+}
+
+/* Для лучшего отклика */
+.promo-slider-track {
+    scroll-snap-type: x mandatory;
+}
+
+.promo-slide {
+    scroll-snap-align: start;
+}
+
+/* Запрещаем перетаскивание картинок */
+.promo-slider-track img {
+    pointer-events: none;  /* Картинки не перехватывают события мыши */
+    user-drag: none;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+/* Или альтернативный вариант - только запрет перетаскивания */
+.promo-slider-track img {
+    -webkit-user-drag: none;
+    user-drag: none;
+}
+
+/* Плавный скролл для слайдера */
+.promo-slider-track {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 20px 10px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    cursor: grab;
+    -webkit-user-select: none;
+    user-select: none;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.promo-slide {
+    scroll-snap-align: start;
+    flex: 0 0 250px;
+    transition: transform 0.3s ease;
+}
+
+/* Плавное появление карточек */
+.promo-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.promo-card:hover {
+    transform: translateY(-5px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Кнопки с плавной анимацией */
+.slider-nav {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slider-nav:hover {
+    transform: scale(1.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Анимация при наведении */
+.modern-notification:hover {
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+    transform: translateX(-5px);
+}
+
+.modern-notification:hover .notification-progress {
+    animation-play-state: paused;
+}
+
+/* Ссылка на акцию */
+.promo-link {
+    display: block;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.promo-link:hover {
+    opacity: 0.95;
+}
+
+.promo-link:hover .promo-image {
+    transform: scale(1.05);
+}
+
+/* ========== ГЛОБАЛЬНЫЕ СБРОСЫ И БАЗОВЫЕ СТИЛИ ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Убираем отступы у контейнеров на главной странице */
+.container {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+@media (min-width: 768px) {
+    .container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
+.categories-wrapper {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 4px 0;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+}
+
+.categories-wrapper::-webkit-scrollbar {
+    height: 3px;
+}
+
+.categories-wrapper::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
+
+.categories-wrapper::-webkit-scrollbar-thumb {
+    background: #e74c3c;
+    border-radius: 10px;
+}
+
+.category-link {
+    padding: 8px 20px;
+    border-radius: 30px;
+    background: white;
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(231, 76, 60, 0.2);
+    cursor: pointer;
+    scroll-snap-align: start;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.category-link:active {
+    transform: scale(0.96);
+}
+
+.category-link.active {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+/* Карточка блюда - мобильная версия */
+.dish-card {
+    height: 100%;
+    display: flex;
+    cursor: pointer;
+}
+
+.dish-card-inner {
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.dish-card-inner:active {
+    transform: scale(0.98);
+}
+
+.dish-img {
+    height: 200px;
+    width: 100%;
+    object-fit: cover;
+}
+
+@media (min-width: 768px) {
+    .dish-img {
+        height: 220px;
+    }
+}
+
+.card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.card-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #2c3e50;
+    line-height: 1.3;
+}
+
+/* Цена на мобильных */
+.dish-price {
+    font-size: 20px;
+    font-weight: 800;
+    color: #e74c3c;
+}
+
+@media (min-width: 768px) {
+    .dish-price {
+        font-size: 22px;
+    }
+}
+
+/* Кнопка добавления */
+.btn-sm {
+    padding: 8px 14px;
+    font-size: 13px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+.btn-sm:active {
+    transform: scale(0.95);
+}
+
+/* Счетчик количества */
+.quantity-simple {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f8f9fa;
+    padding: 3px;
+    border-radius: 40px;
+    border: 1px solid #e74c3c;
+}
+
+.quantity-minus, .quantity-plus {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quantity-value {
+    font-size: 15px;
+    font-weight: 700;
+    min-width: 22px;
+    text-align: center;
+}
+
+/* ========== СЛАЙДЕР АКЦИЙ ========== */
+.promo-slider-section {
+    padding: 20px 0;
+    background: transparent;
+}
+
+@media (max-width: 768px) {
+    .promo-slider-section {
+        padding: 0 0 20px 0;
+    }
+}
+
+.promo-slider-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+.promo-slider-track {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 8px 0 16px 0;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.promo-slide {
+    flex: 0 0 280px;
+    scroll-snap-align: start;
+}
+
+@media (max-width: 480px) {
+    .promo-slide {
+        flex: 0 0 260px;
+    }
+}
+
+.promo-card {
+    border-radius: 20px;
+    overflow: hidden;
+    height: 280px;
+}
+
+@media (max-width: 480px) {
+    .promo-card {
+        height: 240px;
+    }
+}
+
+.promo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Скрываем кнопки навигации на мобильных */
+@media (max-width: 768px) {
+    .slider-nav {
+        display: none;
+    }
+
+    /* Показываем одну акцию по центру на мобильных */
+    .promo-slider-track {
+        scroll-snap-type: x mandatory;
+        scroll-snap-align: center;
+    }
+
+    .promo-slide {
+        scroll-snap-align: center;
+        flex: 0 0 90vw;
+        max-width: 320px;
+    }
+}
+
+/* ========== БЛОК ПРЕИМУЩЕСТВ ========== */
+.features-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    padding: 40px 16px;
+    margin-top: 20px;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .features-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+    }
+}
+
+.feature {
+    padding: 16px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.feature:active {
+    transform: scale(0.98);
+}
+
+.feature i {
+    font-size: 32px;
+    color: #e74c3c;
+    margin-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+    .feature i {
+        font-size: 48px;
+    }
+}
+
+.feature h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 4px;
+}
+
+@media (min-width: 768px) {
+    .feature h3 {
+        font-size: 18px;
+    }
+}
+
+.feature p {
+    font-size: 11px;
+    color: #7f8c8d;
+}
+
+@media (min-width: 768px) {
+    .feature p {
+        font-size: 14px;
+    }
+}
+
+.category-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+    .category-title {
+        font-size: 28px;
+        margin-bottom: 30px;
+    }
+}
+
+.category-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, #e74c3c, #ff6b6b);
+    border-radius: 3px;
+}
+
+/* ========== МОДАЛЬНОЕ ОКНО - МОБИЛЬНАЯ ВЕРСИЯ ========== */
+#myCustomModal .modal-content {
+    position: relative;
+    width: 95%;
+    max-width: 800px;
+    margin: 60px auto;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    z-index: 1000000;
+    animation: modalSlideDown 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    #myCustomModal .modal-content {
+        width: 92%;
+        margin: 20px auto;
+        border-radius: 20px;
+    }
+
+    #myCustomModal .modal-body .row {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    #customModalImage {
+        max-height: 200px;
+        border-radius: 16px;
+    }
+
+    #customModalName {
+        font-size: 20px;
+    }
+
+    #customModalPrice {
+        font-size: 20px;
+        padding: 8px 16px;
+    }
+
+    .meta-row {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+}
+
+@media (min-width: 768px) {
+    .modern-notification {
+        left: auto;
+        right: 20px;
+        min-width: 320px;
+        max-width: 400px;
+    }
+}
+
+.modern-notification.show {
+    transform: translateY(0);
+}
+
+/* ========== ПАДАЮЩИЕ РОЛЛЫ - УМЕНЬШАЕМ НА МОБИЛЬНЫХ ========== */
+@media (max-width: 768px) {
+    .sushi-item {
+        opacity: 0.06;
+        font-size: 20px;
+    }
+
+    .sushi-item:nth-child(n+11) {
+        display: none;
+    }
+}
+
+/* ========== ДОПОЛНИТЕЛЬНЫЕ УЛУЧШЕНИЯ ========== */
+
+/* Убираем горизонтальный скролл */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+}
+
+/* Улучшаем тап-таргеты */
+button,
+.btn,
+.category-link,
+.dish-card-inner {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Добавляем отступы для безопасной зоны на iPhone */
+@supports (padding: max(0px)) {
+    .categories-sticky-nav {
+        padding-left: max(16px, env(safe-area-inset-left));
+        padding-right: max(16px, env(safe-area-inset-right));
+    }
+
+    .container {
+        padding-left: max(16px, env(safe-area-inset-left));
+        padding-right: max(16px, env(safe-area-inset-right));
+    }
+
+    .modern-notification {
+        left: max(16px, env(safe-area-inset-left));
+        right: max(16px, env(safe-area-inset-right));
+        bottom: max(20px, env(safe-area-inset-bottom));
+    }
+}
+
+/* Анимация загрузки карточек */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dish-card {
+    animation: fadeInUp 0.4s ease-out forwards;
+}
+
+.dish-card:nth-child(n) {
+    animation-delay: calc(var(--index, 0) * 0.05s);
+}
+
+/* Плавный скролл для всей страницы */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Улучшаем скроллбар на всей странице */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #e74c3c;
+    border-radius: 10px;
+}
+
+/* Оптимизация для touch-устройств */
+@media (hover: none) and (pointer: coarse) {
+    .dish-card-inner:hover {
+        transform: none;
+    }
+
+    .btn-sm:hover {
+        transform: none;
+    }
+
+    .category-link:hover {
+        transform: none;
+    }
+}
+
+/* Пустое состояние */
+.text-center.py-5 {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.text-center.py-5 i {
+    font-size: 48px;
+    color: #bdc3c7;
+    margin-bottom: 16px;
+}
+
+.text-center.py-5 h3 {
+    font-size: 20px;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+@media (min-width: 768px) {
+    .text-center.py-5 {
+        padding: 60px 20px;
+    }
+}
+
+/* ========== УВЕДОМЛЕНИЯ ========== */
+
+/* Базовые стили уведомлений */
+.modern-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    left: auto;
+    min-width: 320px;
+    max-width: 400px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    z-index: 9999;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.modern-notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Иконка уведомления */
+.notification-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.modern-notification-success .notification-icon {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+}
+
+.modern-notification-error .notification-icon {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+.modern-notification-info .notification-icon {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+}
+
+.modern-notification-warning .notification-icon {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+}
+
+/* Контент уведомления */
+.notification-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 2px;
+    line-height: 1.3;
+}
+
+.notification-message {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+/* Кнопка закрытия */
+.notification-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
+    color: #6b7280;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.notification-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #374151;
+}
+
+/* Прогресс-бар */
+.notification-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #e74c3c, #c0392b);
+    border-radius: 0 0 16px 16px;
+    animation: progress 3s linear forwards;
+    width: 100%;
+}
+
+@keyframes progress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+/* Эффекты при наведении */
+.modern-notification:hover {
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
+    transform: translateX(-5px);
+}
+
+.modern-notification:hover .notification-progress {
+    animation-play-state: paused;
+}
+
+/* На мобильных — чуть выше и уже */
+@media (max-width: 768px) {
+    .modern-notification {
+        right: 16px !important;
+        left: auto !important;
+        bottom: 80px !important;
+        min-width: 280px !important;
+        max-width: calc(100% - 32px) !important;
+    }
+}
+
+/* На совсем маленьких */
+@media (max-width: 480px) {
+    .modern-notification {
+        right: 12px !important;
+        bottom: 70px !important;
+        min-width: 260px !important;
+    }
+}
+
+/* 8. Убираем горизонтальный скролл */
+html, body {
+    overflow-x: hidden !important;
+}
+
+/* 9. Улучшаем тап-таргеты на мобильных */
+@media (hover: none) and (pointer: coarse) {
+    .btn-sm,
+    .category-link,
+    .quantity-minus,
+    .quantity-plus {
+        min-height: 44px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+}
+
+/* Убираем все overflow, которые ломают sticky */
+html,
+body,
+main,
+.container,
+.categories-sticky-nav .container {
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+}
+
+/* Принудительно включаем sticky */
+.categories-sticky-nav {
+    position: sticky;
+    top: 60px;
+    background: rgba(255, 255, 255, 0.4);
+    z-index: 1040;
+    backdrop-filter: blur(10px);
+    transform: none !important;
+    display: block;
+    width: 100%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Добавляем отступ, чтобы контент не перекрывался */
+.category-block {
+    scroll-margin-top: 70px;
+}
+
+.dish-card {
+    margin-bottom: 0;
+}
+
+/* Отступ сверху для названий категорий */
+.category-title {
+    margin-top: 40px !important;
+}
+
+/* Mobile adjustments for sticky navigation */
+@media (max-width: 991px) {
+    body {
+        padding-top: 50px !important;
+    }
+
+    .categories-sticky-nav {
+        top: 70px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    body {
+        padding-top: 45px !important;
+    }
+
+    .categories-sticky-nav {
+        top: 65px !important;
+    }
+}
+
+/* Hide quantity counter by default on mobile */
+@media (max-width: 991px) {
+    .quantity-simple {
+        display: none !important;
+    }
+    /* Show quantity counter when item is in cart */
+    .has-in-cart .quantity-simple {
+        display: flex !important;
+    }
+    /* Hide add-to-cart button when item is in cart */
+    .has-in-cart .add-to-cart-btn {
+        display: none !important;
+    }
 }

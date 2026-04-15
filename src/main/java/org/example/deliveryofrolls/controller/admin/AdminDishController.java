@@ -95,6 +95,7 @@ public class AdminDishController {
         model.addAttribute("dish", new Dish());
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("pageTitle", "Добавление блюда");
+        model.addAttribute("pageCss", "dish.css");
         return "admin/dishes/form";
     }
 
@@ -107,6 +108,7 @@ public class AdminDishController {
         model.addAttribute("dish", dish);
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("pageTitle", "Редактирование блюда");
+        model.addAttribute("pageCss", "dish.css");
         return "admin/dishes/form";
     }
 
